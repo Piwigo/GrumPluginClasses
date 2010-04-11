@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.0.0
+Version: 3.0.1
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://phpwebgallery.net/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -35,6 +35,18 @@ Author URI: http://photos.grum.fr/
 | 3.0.0   | 2010/03/28 | * Uses piwigo pwg_db_* functions instead of mysql_* functions
 |         |            | * update classes & functions names
 |         |            | * include the JpegMetaData class
+|         |            |
+| 3.0.1   | 2010/04/11 | * little bug on the template (call of an undefined var)
+|         |            | * Add new languages
+|         |            |   . es_ES
+|         |            |   . hu_HU
+|         |            |   . it_IT
+|         |            |
+|         |            |
+|         |            |
+|         |            |
+|         |            |
+|         |            |
 |         |            |
 |         |            |
 

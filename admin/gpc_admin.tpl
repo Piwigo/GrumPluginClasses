@@ -4,7 +4,5 @@
 
 </div>
 
-{$tabsheet}
-
 {$GPC_BODY_PAGE}
 
