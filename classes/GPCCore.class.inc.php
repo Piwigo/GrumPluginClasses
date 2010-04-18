@@ -52,6 +52,7 @@ class GPCCore
         Array('name' => "GPCPagesNavigations", 'version' => "2.0.0"),
         Array('name' => "GPCPublicIntegration", 'version' => "2.0.0"),
         Array('name' => "GPCTables", 'version' => "1.5.0"),
+        Array('name' => "GPCTabSheet", 'version' => "1.0.0"),
         Array('name' => "GPCTranslate", 'version' => "2.1.0"),
         Array('name' => "GPCUsersGroups", 'version' => "2.0.0"),
       )
