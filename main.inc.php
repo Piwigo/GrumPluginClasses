@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.0.1
+Version: 3.1.0
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
-Plugin URI: http://phpwebgallery.net/ext/extension_view.php?eid=199
+Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
 Author URI: http://photos.grum.fr/
 */
@@ -13,7 +13,6 @@ Author URI: http://photos.grum.fr/
   Author     : Grum
     email    : grum@piwigo.org
     website  : http://photos.grum.fr
-    PWG user : http://forum.phpwebgallery.net/profile.php?id=3706
 
     << May the Little SpaceFrog be with you ! >>
 --------------------------------------------------------------------------------
@@ -42,6 +41,15 @@ Author URI: http://photos.grum.fr/
 |         |            |   . hu_HU
 |         |            |   . it_IT
 |         |            |
+| 3.1.0   | 2010/04/18 | * add the GPCTabSheet class
+|         |            | * Add new languages
+|         |            |   . nl_NL
+|         |            |   . de_DE
+|         |            |
+|         |            |
+|         |            |
+|         |            |
+|         |            |
 |         |            |
 |         |            |
 |         |            |
@@ -65,6 +73,7 @@ Classes version for this package
     GPCTables.class.php -v1.5
     GPCTranslate.class.inc.php + google_translate.js
     GPCUsersGroups.class.inc.php
+    GPCTabSheet.class.inc.php
 
     genericjs.class.inc.php  + genericjs.js
 
