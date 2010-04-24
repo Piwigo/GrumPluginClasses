@@ -11,7 +11,7 @@
 
    this classes provides base functions to add genericjs.js file into html page
 
-   > see genericjs.js file to know javascript functions added 
+   > see genericjs.js file to know javascript functions added
 
     - constructor genericjs()
    ---------------------------------------------------------------------- */
@@ -28,7 +28,7 @@ class genericjs
   {
     global $template;
 
-    $name='plugins/'.basename(dirname(__FILE__)).'/genericjs.js';
+    $name='plugins/'.basename(dirname(dirname(__FILE__))).'/js/genericjs.js';
 
     $template->append('head_elements', '<script src="'.$name.'" type="text/javascript"></script>');
 

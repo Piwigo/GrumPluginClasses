@@ -2,8 +2,8 @@
 
 /* -----------------------------------------------------------------------------
   class name     : GPCCore
-  class version  : 3.0.0
-  plugin version : 3.0.0
+  class version  : 1.1.0
+  plugin version : 3.1.0
   date           : 2010-03-30
   ------------------------------------------------------------------------------
   author: grum at piwigo.org
@@ -13,8 +13,9 @@
   :: HISTORY
 
 | release | date       |
-| 3.0.0   | 2010/03/30 | * Update class & function names
+| 1.0.0   | 2010/03/30 | * Update class & function names
 |         |            |
+| 1.1.0   | 2010/03/30 | * add the BBtoHTML function
 |         |            |
 |         |            |
 |         |            |
@@ -30,6 +31,7 @@
     - static function getModulesInfos
     - static function register
     - static function unregister
+    - static function BBtoHTML
    ---------------------------------------------------------------------- */
 
 
@@ -47,7 +49,7 @@ class GPCCore
       Array(
         Array('name' => "CommonPlugin", 'version' => "2.1.0"),
         Array('name' => "GPCAjax", 'version' => "3.0.0"),
-        Array('name' => "GPCCore", 'version' => "1.0.0"),
+        Array('name' => "GPCCore", 'version' => "1.1.0"),
         Array('name' => "GPCCss", 'version' => "3.0.0"),
         Array('name' => "GPCPagesNavigations", 'version' => "2.0.0"),
         Array('name' => "GPCPublicIntegration", 'version' => "2.0.0"),
@@ -220,6 +222,47 @@ class GPCCore
     { return true; }
     else
     { return false; }
+  }
+
+
+  /**
+   * convert (light) BB tag to HTML tag
+   *
+   * all BB codes are not recognized, only :
+   *  - [ul] [/ul]
+   *  - [li] [/li]
+   *  - [b] [/b]
+   *  - [i] [/i]
+   *  - [url] [/url]
+   *  - carriage return is replaced by a <br>
+   *
+   * @param String $text : text to convert
+   * @return String : BB to HTML text
+   */
+  static public function BBtoHTML($text)
+  {
+    $patterns = Array(
+      '/\[li\](.*?)\[\/li\]\n*/im',
+      '/\[b\](.*?)\[\/b\]/ism',
+      '/\[i\](.*?)\[\/i\]/ism',
+      '/\[url\]([\w]+?:\/\/[^ \"\n\r\t<]*?)\[\/url\]/ism',
+      '/\[url=([\w]+?:\/\/[^ \"\n\r\t<]*?)\](.*?)\[\/url\]/ism',
+      '/\n{0,1}\[ul\]\n{0,1}/im',
+      '/\n{0,1}\[\/ul\]\n{0,1}/im',
+      '/\n/im',
+    );
+    $replacements = Array(
+      '<li>\1</li>',
+      '<b>\1</b>',
+      '<i>\1</i>',
+      '<a href="\1">\1</a>',
+      '<a href="\1">\2</a>',
+      '<ul>',
+      '</ul>',
+      '<br>',
+    );
+
+    return(preg_replace($patterns, $replacements, $text));
   }
 
 } //class

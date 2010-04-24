@@ -224,7 +224,7 @@ class CommonPlugin
   }
 
   /*
-    intialize plugin's events
+    initialize plugin's events
     to be surcharged by child's classes
   */
   public function initEvents()

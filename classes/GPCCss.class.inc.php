@@ -41,6 +41,27 @@ class GPCCss
 {
   private $filename;
 
+  static public function applyGpcCss()
+  {
+    add_event_handler('loc_end_page_header', array('GPCCss', 'applyCSSFile'));
+  }
+
+  static public function applyCSSFile($fileName="")
+  {
+    global $template;
+
+    if($fileName=="")
+    {
+      //if no filename given, load the gpc.css file
+      $fileName=basename(dirname(dirname(__FILE__))).'/css/gpc.css';
+      $template->append('head_elements', '<link rel="stylesheet" type="text/css" href="plugins/'.$fileName.'">');
+    }
+    elseif(file_exists($fileName))
+    {
+      $template->append('head_elements', '<link rel="stylesheet" type="text/css" href="plugins/'.basename(dirname($fileName))."/".basename($fileName).'">');
+    }
+  }
+
   public function __construct($filename)
   {
     $this->filename=$filename;
@@ -85,11 +106,10 @@ class GPCCss
   {
     global $template;
 
-    if($this->fileExists())
-    {
-      $template->append('head_elements', '<link rel="stylesheet" type="text/css" href="plugins/'.basename(dirname($this->filename))."/".basename($this->filename).'">');
-    }
+    GPCCss::applyCSSFile($this->filename);
   }
+
+
 } //class
 
 ?>

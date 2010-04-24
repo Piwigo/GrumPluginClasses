@@ -41,7 +41,8 @@ Author URI: http://photos.grum.fr/
 |         |            |   . hu_HU
 |         |            |   . it_IT
 |         |            |
-| 3.1.0   | 2010/04/18 | * add the GPCTabSheet class
+| 3.1.0   | 2010/04/24 | * add the GPCTabSheet class
+|         |            | * update the GPCCore class
 |         |            | * Add new languages
 |         |            |   . nl_NL
 |         |            |   . de_DE
