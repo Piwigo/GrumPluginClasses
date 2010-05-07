@@ -1,0 +1,20 @@
+ul.rbResultList {
+  list-style:none;
+  padding:0px;
+}
+
+ul.rbResultList li {
+  width:45%;
+  display:inline-block;
+  overflow:hidden;
+  min-height:140px;
+}
+
+ul.rbResultList td.rbResultItemDetail {
+  padding-left:15px;
+  vertical-align:top;
+}
+
+ul.rbResultList table {
+  margin-left:0px;
+}

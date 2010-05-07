@@ -40,7 +40,7 @@
 class GPCTables
 {
   public $tables;    //array of tables names
-  public $version = "1.4";
+  public $version = "1.5";
 
   public function __construct($tables)
   {

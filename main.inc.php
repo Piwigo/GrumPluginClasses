@@ -91,9 +91,9 @@ include_once('gpc_version.inc.php'); // => Don't forget to update this file !!
 
 global $prefixeTable;
 
-//GPC admin interface is loaded and active only if in admin page
-if(basename($_SERVER["PHP_SELF"])=='admin.php')
+if(defined('IN_ADMIN'))
 {
+  //GPC admin interface is loaded and active only if in admin page
   include_once("gpc_aim.class.inc.php");
 
   $obj = new GPC_AIM($prefixeTable, __FILE__);
