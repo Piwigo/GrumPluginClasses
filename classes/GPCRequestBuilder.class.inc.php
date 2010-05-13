@@ -99,6 +99,51 @@ class GPCSearchCallback {
   }
 
 
+  /**
+   * this function is called by the request builder to make the search page, and
+   * must return the HTML & JS code of the dialogbox used to select criterion
+   *
+   * Notes :
+   *  - the dialogbox is a JS object with a public method 'show'
+   *  - when the method show is called, one parameter is given by the request
+   *    builder ; the parameter is an object defined as this :
+   *      {
+   *        cBuilder: an instance of the criteriaBuilder object used in the page,
+   *      }
+   *
+   *
+   *
+   *
+   * @param String $mode : can take 'admin' or 'public' values, allowing to
+   *                       return different interface if needed
+   * @return String : HTML formatted value
+   */
+  static public function getInterfaceContent($mode='admin')
+  {
+    return("");
+  }
+
+  /**
+   * this function returns the label displayed in the criterion menu
+   *
+   * @return String : label displayed in the criterions menu
+   */
+  static public function getInterfaceLabel()
+  {
+    return(l10n('gpc_rb_unknown_interface'));
+  }
+
+  /**
+   * this function returns the name of the dialog box class
+   *
+   * @return String : name of the dialogbox class
+   */
+  static public function getInterfaceDBClass()
+  {
+    return('');
+  }
+
+
 }
 
 
@@ -118,7 +163,7 @@ class GPCRequestBuilder {
    *                           be found
    * @return Boolean : true if registering is Ok, otherwise false
    */
-  static public function register($pluginName, $fileName)
+  static public function register($pluginName, $fileName, $dialogBoxObject)
   {
     $config=Array();
     if(GPCCore::loadConfig(self::$pluginName, $config))
@@ -126,6 +171,7 @@ class GPCRequestBuilder {
       $config['registered'][$pluginName]=Array(
         'name' => $pluginName,
         'fileName' => $fileName,
+        'dialogBox' => $dialogBoxObject,
         'date' => date("Y-m-d H:i:s"),
         'version' => self::$version,
       );
@@ -878,6 +924,49 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
     return(false);
   }
 
+
+
+  /**
+   * display search page
+   */
+  static public function displaySearchPage()
+  {
+    global $template, $lang;
+
+    load_language('rbuilder.lang', GPC_PATH);
+
+    $template->set_filename('gpc_search_page',
+                dirname(dirname(__FILE__)).'/templates/GPCRequestBuilder_search.tpl');
+
+    $registeredPlugin=self::getRegistered();
+    $dialogBox=Array();
+    foreach($registeredPlugin as $key=>$val)
+    {
+      if(array_key_exists($key, $registeredPlugin))
+      {
+        if(file_exists($registeredPlugin[$key]['fileName']))
+        {
+          include_once($registeredPlugin[$key]['fileName']);
+
+          $dialogBox[]=Array(
+            'handle' => $val['name'].'DB',
+            'dialogBoxClass' => call_user_func(Array('RBCallBack'.$key, 'getInterfaceDBClass')),
+            'label' => call_user_func(Array('RBCallBack'.$key, 'getInterfaceLabel')),
+            'content' => call_user_func(Array('RBCallBack'.$key, 'getInterfaceContent')),
+          );
+        }
+      }
+    }
+
+    $datas=Array(
+      'dialogBox' => $dialogBox,
+      'themeName' => $template->get_themeconf('name'),
+    );
+
+    $template->assign('datas', $datas);
+
+    return($template->parse('gpc_search_page', true));
+  } //displaySearchPage
 
 }
 

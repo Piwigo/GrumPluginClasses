@@ -62,6 +62,16 @@ class GPCTabSheet extends tabsheet
   }
 
 
+  function add($name, $caption, $url, $selected = false, $onClick='')
+  {
+    if(parent::add($name,$caption,$url,$selected))
+    {
+      $this->sheets[$name]['onClick'] = $onClick;
+      return(true);
+    }
+    return(false);
+  }
+
   public function setClasses($classes)
   {
     $this->classes=$classes;
