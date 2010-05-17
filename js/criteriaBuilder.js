@@ -304,6 +304,8 @@ function criteriaBuilder(container)
     if($('#'+itemId).length!=0)
     {
       $('#'+itemId).remove();
+      re=/[0-9]*$/;
+      extraData[eval(re.exec(itemId)[0])]=null;
       manage();
     }
   }

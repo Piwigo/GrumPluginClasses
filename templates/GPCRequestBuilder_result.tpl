@@ -4,14 +4,14 @@
     <table>
       <tr>
         <td>
-          <img src='{$row.imageThumbnail}'>
+          <img class="thumbnail" src='{$row.imageThumbnail}'>
         </td>
 
         <td class="rbResultItemDetail">
-          {$row.imageId}<br>
-          {$row.imageName}<br>
-          {$row.imagePath}<br>
-          {$row.imageCategories}<br>
+          {if $row.imageName!=''}{$row.imageName}<br>{/if}
+          {foreach from=$row.imageCategories key=catname item=catdata name=catlist}
+<a href="{$catdata.link}">{$catdata.name}</a>{if $smarty.foreach.catlist.last}<br/>{else},&nbsp;{/if}
+          {/foreach}
           <hr>
           {foreach from=$row.plugin item=plugin}
           {$plugin}<br>

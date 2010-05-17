@@ -148,6 +148,14 @@ var cb=null;
       if(isSuccess)
       {
         $('#iResultQueryContent').html(nfo);
+        $('.tiptip').tipTip(
+          {
+            'delay' : 0,
+            'fadeIn' : 0,
+            'fadeOut' : 0,
+            'edgeOffset' : 5,
+          }
+        );
       }
       else
       {

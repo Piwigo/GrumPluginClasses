@@ -365,13 +365,14 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
   {
     if($clearAll)
     {
-      $sql="DELETE FROM ".$this->tables['result_cache'];
+      $sql="DELETE FROM ".self::$tables['result_cache'];
     }
     else
     {
-      $sql="DELETE FROM ".$this->tables['result_cache']." pgrc, ".$this->tables['request']." pgr
-            WHERE pgrc.id = pgr.id
-              AND pgr.date < '".date('Y-m-d H:i:s', strtotime("-2 hour"))."'";
+      $sql="DELETE pgrc FROM ".self::$tables['result_cache']." pgrc
+              LEFT JOIN ".self::$tables['request']." pgr
+                ON pgrc.id = pgr.id
+              WHERE pgr.date < '".date('Y-m-d H:i:s', strtotime("-2 hour"))."'";
     }
     pwg_query($sql);
   }
@@ -385,6 +386,8 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
   static private function doCache()
   {
     global $user;
+
+    self::clearCache();
 
     $registeredPlugin=self::getRegistered();
 
@@ -427,7 +430,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
     foreach($_REQUEST['extraData'] as $key => $val)
     {
       $pluginNeeded[$val['owner']][$key]=$_REQUEST['extraData'][$key]['param'];
-      $pluginList[]=$val['owner'];
+      $pluginList[$val['owner']]=$val['owner'];
     }
 
     /* for each needed plugin :
@@ -511,12 +514,11 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
       $numberItems=pwg_db_changes($result);
       self::updateRequest($requestNumber, $numberItems, 0, implode(',', $pluginList));
 
+
       return("$requestNumber;".$numberItems);
     }
 
-    self::clearCache();
-
-    return($sql);
+    return("0;0");
   }
 
   /**
@@ -537,8 +539,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
       return("KO");
     }
 
-    $limitFrom=$numPerPage*($pageNumber-1)+1;
-    $limitTo=$numPerPage*$pageNumber;
+    $limitFrom=$numPerPage*($pageNumber-1);
 
     $pluginNeeded=explode(',', $request['connected_plugin']);
     $registeredPlugin=self::getRegistered();
@@ -553,7 +554,9 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
       'SELECT' => Array(
         'RB_PIT' => "pit.id AS imageId, pit.name AS imageName, pit.path AS imagePath", // from the piwigo's image table
         'RB_PIC' => "GROUP_CONCAT(pic.category_id SEPARATOR ',') AS imageCategoriesId",     // from the piwigo's image_category table
-        'RB_PCT' => "GROUP_CONCAT(pct.name SEPARATOR '#sep#') AS imageCategoriesNames",   //from the piwigo's categories table
+        'RB_PCT' => "GROUP_CONCAT(CASE WHEN pct.name IS NULL THEN '' ELSE pct.name END SEPARATOR '#sep#') AS imageCategoriesNames,
+                     GROUP_CONCAT(CASE WHEN pct.permalink IS NULL THEN '' ELSE pct.permalink END SEPARATOR '#sep#') AS imageCategoriesPLink,
+                     GROUP_CONCAT(CASE WHEN pct.dir IS NULL THEN 'V' ELSE 'P' END) AS imageCategoriesDir",   //from the piwigo's categories table
       ),
       'FROM' => Array(
         // join rb result_cache table with piwigo's images table, joined with the piwigo's image_category table, joined with the categories table
@@ -634,7 +637,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
         .' WHERE '.$build['WHERE']
         .' GROUP BY '.$build['GROUPBY']
         .' ORDER BY pit.id '
-        .' LIMIT '.$limitFrom.', '.$limitTo;
+        .' LIMIT '.$limitFrom.', '.$numPerPage;
 
     $result=pwg_query($sql);
     if($result)
@@ -646,8 +649,31 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
         $datas['imageId']=$row['imageId'];
         $datas['imagePath']=$row['imagePath'];
         $datas['imageName']=$row['imageName'];
+
         $datas['imageCategoriesId']=explode(',', $row['imageCategoriesId']);
         $datas['imageCategoriesNames']=explode('#sep#', $row['imageCategoriesNames']);
+        $datas['imageCategoriesPLink']=explode('#sep#', $row['imageCategoriesPLink']);
+        $datas['imageCategoriesDir']=explode(',', $row['imageCategoriesDir']);
+
+
+        $datas['imageCategories']=Array();
+        for($i=0;$i<count($datas['imageCategoriesId']);$i++)
+        {
+          $datas['imageCategories'][]=array(
+            'id' => $datas['imageCategoriesId'][$i],
+            'name' => $datas['imageCategoriesNames'][$i],
+            'dirType' => $datas['imageCategoriesDir'][$i],
+            'pLinks' => $datas['imageCategoriesPLink'][$i],
+            'link'=> make_index_url(
+                              array(
+                                'category' => array(
+                                  'id' => $datas['imageCategoriesId'][$i],
+                                  'name' => $datas['imageCategoriesNames'][$i],
+                                  'permalink' => $datas['imageCategoriesPLink'][$i])
+                              )
+                            )
+          );
+        }
 
         /* affect datas for each plugin
          *
