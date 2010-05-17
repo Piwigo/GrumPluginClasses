@@ -163,7 +163,7 @@ class GPCRequestBuilder {
    *                           be found
    * @return Boolean : true if registering is Ok, otherwise false
    */
-  static public function register($pluginName, $fileName, $dialogBoxObject)
+  static public function register($pluginName, $fileName)
   {
     $config=Array();
     if(GPCCore::loadConfig(self::$pluginName, $config))
@@ -171,7 +171,6 @@ class GPCRequestBuilder {
       $config['registered'][$pluginName]=Array(
         'name' => $pluginName,
         'fileName' => $fileName,
-        'dialogBox' => $dialogBoxObject,
         'date' => date("Y-m-d H:i:s"),
         'version' => self::$version,
       );
@@ -399,10 +398,12 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
     );
     $tmpBuild=Array(
       'FROM' => Array(
-        '('.IMAGES_TABLE.' pit LEFT JOIN '.IMAGE_CATEGORY_TABLE.' pic ON pit.id = pic.image_id)', //JOIN IMAGES & IMAGE_CATEGORY tables
+        '('.IMAGES_TABLE.' pit LEFT JOIN '.IMAGE_CATEGORY_TABLE.' pic ON pit.id = pic.image_id)' /*JOIN IMAGES & IMAGE_CATEGORY tables*/
+       .'   JOIN '.USER_CACHE_CATEGORIES_TABLE.' pucc ON pucc.cat_id=pic.category_id',  /* IMAGE_CATEGORY & USER_CACHE_CATEGORIES_TABLE tables*/
+
       ),
       'WHERE' => Array(),
-      'JOIN' => Array(),
+      'JOIN' => Array(999=>'pucc.user_id='.$user['id']),
       'GROUPBY' => Array(
         'pit.id'
       )
@@ -462,7 +463,6 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
      */
     $build['FROM']=implode(',', $tmpBuild['FROM']);
     unset($tmpBuild['FROM']);
-
 
     /* build WHERE
      */
@@ -531,7 +531,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
    */
   static private function getPage($requestNumber, $pageNumber, $numPerPage)
   {
-    global $conf;
+    global $conf, $user;
     $request=self::getRequest($requestNumber);
 
     if($request===false)
@@ -560,16 +560,18 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
       ),
       'FROM' => Array(
         // join rb result_cache table with piwigo's images table, joined with the piwigo's image_category table, joined with the categories table
-        'RB' => "((".self::$tables['result_cache']." pgrc
+        'RB' => "(((".self::$tables['result_cache']." pgrc
                   RIGHT JOIN ".IMAGES_TABLE." pit
                   ON pgrc.image_id = pit.id)
                     RIGHT JOIN ".IMAGE_CATEGORY_TABLE." pic
                     ON pit.id = pic.image_id)
-                       RIGHT JOIN piwigo_categories pct
-                       ON pct.id = pic.category_id ",
+                       RIGHT JOIN ".CATEGORIES_TABLE." pct
+                       ON pct.id = pic.category_id)
+                          RIGHT JOIN ".USER_CACHE_CATEGORIES_TABLE." pucc
+                          ON pucc.cat_id = pic.category_id",
       ),
       'WHERE' => Array(
-        'RB' => "pgrc.id=".$requestNumber,
+        'RB' => "pgrc.id=".$requestNumber." AND pucc.user_id=".$user['id'],
         ),
       'JOIN' => Array(),
       'GROUPBY' => Array(
