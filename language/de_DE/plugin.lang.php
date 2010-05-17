@@ -8,5 +8,5 @@ $lang['Plugin'] = 'Erweiterung';
 $lang['GPC required'] = 'Benötigte GPC Version';
 $lang['Installed'] = 'Installiert am';
 $lang['Infos'] = 'Informationen';
-
+$lang['Some plugins are dependent on Grum Plugin Classes: before uninstall, you must first uninstall the plugins dependent'] = 'Einige Erweiterungen benötigen Grum Plugin Classes: Sie müssen diese de-installieren, bevor Sie Grum Plugin Classes entfernen';
 ?>
