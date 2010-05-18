@@ -42,6 +42,8 @@ Author URI: http://photos.grum.fr/
 |         |            |   . it_IT
 |         |            |
 | 3.1.0   | 2010/04/24 | * add the GPCTabSheet class
+|         |            | * add the GPCRequestBuilder class
+|         |            | * add the pageNavigator.js
 |         |            | * update the GPCCore class
 |         |            | * Add new languages
 |         |            |   . nl_NL
