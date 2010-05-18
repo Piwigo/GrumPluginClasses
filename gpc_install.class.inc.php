@@ -17,6 +17,7 @@
   if(!defined('PHPWG_ROOT_PATH')) die('Hacking attempt!');
 
   include_once('gpc_version.inc.php'); // => Don't forget to update this file !!
+  include_once(PHPWG_PLUGINS_PATH.'GrumPluginClasses/classes/CommonPlugin.class.inc.php');
   include_once(PHPWG_PLUGINS_PATH.'GrumPluginClasses/classes/GPCCore.class.inc.php');
   include_once(PHPWG_PLUGINS_PATH.'GrumPluginClasses/classes/GPCRequestBuilder.class.inc.php');
 

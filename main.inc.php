@@ -49,7 +49,8 @@ Author URI: http://photos.grum.fr/
 |         |            |   . nl_NL
 |         |            |   . de_DE
 |         |            |
-|         |            |
+| 3.1.1   | 2010/05/18 | * fix bug in the install process (CommonPlugin not
+|         |            |   included)
 |         |            |
 |         |            |
 |         |            |
