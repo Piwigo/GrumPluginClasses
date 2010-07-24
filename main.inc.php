@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.1.1
+Version: 3.2.0
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -52,7 +52,9 @@ Author URI: http://photos.grum.fr/
 | 3.1.1   | 2010/05/18 | * fix bug in the install process (CommonPlugin not
 |         |            |   included)
 |         |            |
-|         |            |
+| 3.2.0   | 2010/06/20 | * Enhance GPCTabSheet functionnalities
+|         |            |   - possibility to choose tab classes
+|         |            | * Add the simpleTip.js
 |         |            |
 |         |            |
 |         |            |

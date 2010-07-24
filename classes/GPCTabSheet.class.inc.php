@@ -1,9 +1,9 @@
 <?php
 /* -----------------------------------------------------------------------------
   class name     : GPCTabSheet
-  class version  : 1.0.0
-  plugin version : 3.0.2
-  date           : 2010-04-18
+  class version  : 1.1.0
+  plugin version : 3.2.0
+  date           : 2010-06-20
   ------------------------------------------------------------------------------
   author: grum at piwigo.org
   << May the Little SpaceFrog be with you >>
@@ -14,6 +14,7 @@
 | release | date       |
 | 1.0.0   | 2010/04/18 | * create class
 |         |            |
+| 1.1.0   | 2010/06/20 | * add possibility to manage the class names for tabs
 |         |            |
 |         |            |
 |         |            |
@@ -26,20 +27,6 @@
 
    this class extends the Piwigo tabsheet class
 
-    - constructor GPCPagesNavigation()
-    - (public) function setNbItems($nbitems)
-    - (public) function getNbItems()
-    - (public) function setNbItemsPerPage($nbitems)
-    - (public) function getNbItemsPerPage()
-    - (public) function getNbPages()
-    - (public) function setCurrentPage($page)
-    - (public) function getCurrentPage()
-    - (public) function setBaseUrl($url)
-    - (public) function getBaseUrl()
-    - (public) function setOptions($var)
-    - (public) function getOptions()
-    - (public) function makeNavigation()
-    - (private) function calcNbPages()
    ---------------------------------------------------------------------- */
 
 include_once(PHPWG_ROOT_PATH.'admin/include/tabsheet.class.php');
@@ -49,6 +36,11 @@ class GPCTabSheet extends tabsheet
   protected $classes;
   protected $id;
   protected $tplFile;
+  protected $selectedTabClasses='selected_tab';
+  protected $unselectedTabClasses='normal_tab';
+  protected $normalTabClasses='';
+
+
   /*
     $name is the tabsheet's name inside the template .tpl file
     $titlename in the template is affected by $titlename value
@@ -81,6 +73,43 @@ class GPCTabSheet extends tabsheet
   public function getClasses()
   {
     return($this->classes);
+  }
+
+  public function setTabsClasses($state, $classes)
+  {
+    if($state=='unselected')
+    {
+      $this->unselectedTabClasses=$classes;
+      return($this->unselectedTabClasses);
+    }
+    elseif($state=='selected')
+    {
+      $this->selectedTabClasses=$classes;
+      return($this->selectedTabClasses);
+    }
+    elseif($state=='normal')
+    {
+      $this->normalTabClasses=$classes;
+      return($this->normalTabClasses);
+    }
+    return("");
+  }
+
+  public function getTabsClasses($state)
+  {
+    if($state=='unselected')
+    {
+      return($this->unselectedTabClasses);
+    }
+    elseif($state=='selected')
+    {
+      return($this->selectedTabClasses);
+    }
+    elseif($state=='normal')
+    {
+      return($this->normalTabClasses);
+    }
+    return("");
   }
 
   public function setId($id)
@@ -142,6 +171,14 @@ class GPCTabSheet extends tabsheet
 
     if($this->classes!="") $template->assign('tabsheet_classes', $this->classes);
     if($this->id!="") $template->assign('tabsheet_id', $this->id);
+
+    $template->assign('tab_classes',
+      array(
+        'unselected' => $this->getTabsClasses('unselected'),
+        'selected' => $this->getTabsClasses('selected'),
+        'normal' => $this->getTabsClasses('normal')
+      )
+    );
 
     $template->assign_var_from_handle($this->name, 'tabsheet');
     $template->clear_assign('tabsheet');
