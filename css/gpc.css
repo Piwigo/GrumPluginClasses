@@ -13,7 +13,12 @@ table.littlefont td { padding:1px 3px; }
 .warning ul { margin-top:0em; margin-bottom:0.5em; }
 .pctBarroma { height:6px; background:#FF7700; }
 .pctBarclear { height:6px; background:#005E89; }
-li.groupItems { border:1px solid #666666; margin-bottom:5px; padding:0 5px; width:90%; cursor:move; padding:4px; }
+li.groupItems { border:1px solid #666666; margin-bottom:5px; padding:0 5px; width:90%; cursor:move; padding:4px;
+-moz-border-radius:8px;
+-webkit-border-radius:8px;
+-khtml-border-radius:8px;
+border-radius:8px;
+}
 
 .ui-dialog { border-width:1px; border-style:solid; }
 .ui-dialog-buttonpane { padding:4px; }

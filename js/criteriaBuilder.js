@@ -507,7 +507,7 @@ function criteriaBuilder(container)
   }
 
   /**
-   * this function make the groups&items readey to be sorted & grouped
+   * this function make the groups&items ready to be sorted & grouped
    */
   var applyNested = function ()
   {
