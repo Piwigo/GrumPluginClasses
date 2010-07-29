@@ -2,9 +2,9 @@
 
 /* -----------------------------------------------------------------------------
   class name     : GPCCore
-  class version  : 1.1.0
-  plugin version : 3.1.0
-  date           : 2010-03-30
+  class version  : 1.2.0
+  plugin version : 3.2.0
+  date           : 2010-07-28
   ------------------------------------------------------------------------------
   author: grum at piwigo.org
   << May the Little SpaceFrog be with you >>
@@ -17,6 +17,7 @@
 |         |            |
 | 1.1.0   | 2010/03/30 | * add the BBtoHTML function
 |         |            |
+| 1.2.0   | 2010/07/28 | * add the loadConfigFromFile function
 |         |            |
 |         |            |
 |         |            |
@@ -25,6 +26,7 @@
   ------------------------------------------------------------------------------
     no constructor, only static function are provided
     - static function loadConfig
+    - static function loadConfigFromFile
     - static function saveConfig
     - static function deleteConfig
     - static function getRegistered
@@ -47,15 +49,15 @@ class GPCCore
   {
     return(
       Array(
-        Array('name' => "CommonPlugin", 'version' => "2.1.0"),
+        Array('name' => "CommonPlugin", 'version' => "2.2.0"),
         Array('name' => "GPCAjax", 'version' => "3.0.0"),
-        Array('name' => "GPCCore", 'version' => "1.1.0"),
+        Array('name' => "GPCCore", 'version' => "1.2.0"),
         Array('name' => "GPCCss", 'version' => "3.0.0"),
         Array('name' => "GPCPagesNavigations", 'version' => "2.0.0"),
         Array('name' => "GPCPublicIntegration", 'version' => "2.0.0"),
         Array('name' => "GPCRequestBuilder", 'version' => "1.0.0"),
         Array('name' => "GPCTables", 'version' => "1.5.0"),
-        Array('name' => "GPCTabSheet", 'version' => "1.0.0"),
+        Array('name' => "GPCTabSheet", 'version' => "1.1.0"),
         Array('name' => "GPCTranslate", 'version' => "2.1.0"),
         Array('name' => "GPCUsersGroups", 'version' => "2.0.0"),
       )
@@ -188,6 +190,36 @@ class GPCCore
   }
 
   /**
+   *  load config from a file into an array
+   *
+   *  note : the config file is a PHP file one var $conf used as an array,
+   *  like the piwigo $conf var
+   *
+   * @param String $fileName : the file name
+   * @param Array $config : array, initialized or not with default values ; the
+   *                        config values are loaded in this value
+   * @return Boolean : true if config is loaded, otherwise false
+   */
+  static public function loadConfigFromFile($fileName, &$config=Array())
+  {
+    $conf=array();
+
+    if(!is_array($config) or !file_exists($fileName))
+    {
+      return(false);
+    }
+
+    include_once($fileName);
+
+    foreach($conf as $key=>$val)
+    {
+      $config[$key]=$val;
+    }
+    return(true);
+  }
+
+
+  /**
    * save var $my_config into CONFIG_TABLE
    *
    * @param String $pluginName : the plugin name, must contain only alphanumerical
@@ -246,6 +278,7 @@ class GPCCore
       '/\[li\](.*?)\[\/li\]\n*/im',
       '/\[b\](.*?)\[\/b\]/ism',
       '/\[i\](.*?)\[\/i\]/ism',
+      '/\[p\](.*?)\[\/p\]/ism',
       '/\[url\]([\w]+?:\/\/[^ \"\n\r\t<]*?)\[\/url\]/ism',
       '/\[url=([\w]+?:\/\/[^ \"\n\r\t<]*?)\](.*?)\[\/url\]/ism',
       '/\n{0,1}\[ul\]\n{0,1}/im',
@@ -256,6 +289,7 @@ class GPCCore
       '<li>\1</li>',
       '<b>\1</b>',
       '<i>\1</i>',
+      '<p>\1</p>',
       '<a href="\1">\1</a>',
       '<a href="\1">\2</a>',
       '<ul>',

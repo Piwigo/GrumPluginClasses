@@ -1,9 +1,9 @@
 <?php
 /* -----------------------------------------------------------------------------
   class name: CommonPlugin
-  class version  : 2.1.0
+  class version  : 2.2.0
   plugin version : 3.0.0
-  date           : 2010-03-30
+  date           : 2010-07-28
 
   ------------------------------------------------------------------------------
   Author     : Grum
@@ -26,6 +26,7 @@
     - getAdminLink()
     - initConfig()
     - loadConfig()
+    - loadConfigFromFile()
     - saveConfig()
     - deleteConfig()
 
@@ -45,7 +46,7 @@
 |         |            |   functions
 |         |            | * Update class & function names
 |         |            |
-|         |            |
+| 2.2.0   | 2010/07/28 | * Add the loadConfigFromFile function
 |         |            |
 |         |            |
 |         |            |
@@ -167,6 +168,19 @@ class CommonPlugin
   {
     $this->initConfig();
     return(GPCCore::loadConfig($this->plugin_name_files, $this->config));
+  }
+
+  /**
+   * load config from a file into var $my_config
+   *
+   * this function don't initialize the default value !
+   * if needed, use the loadConfig() function before using it
+   *
+   * @param String $fileName : name of file to load
+   */
+  public function loadConfigFromFile($fileName)
+  {
+    return(GPCCore::loadConfigFromFile($fileName, $this->config));
   }
 
   /* save var $my_config into CONFIG_TABLE */
