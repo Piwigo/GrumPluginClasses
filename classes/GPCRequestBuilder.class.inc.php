@@ -1,9 +1,9 @@
 <?php
 /* -----------------------------------------------------------------------------
   class name: GCPRequestBuilder
-  class version  : 1.0.0
+  class version  : 1.1.0
   plugin version : 3.1.0
-  date           : 2010-04-29
+  date           : 2010-09-08
 
   ------------------------------------------------------------------------------
   Author     : Grum
@@ -13,19 +13,59 @@
 
     << May the Little SpaceFrog be with you ! >>
   ------------------------------------------------------------------------------
-
+  *
   * theses classes provides base functions to manage search pictures in the
   * database
   *
-
-
+  *
+  * HOW TO USE IT ?
+  * ===============
+  *
+  * when installing the plugin, you have to register the usage of the request
+  * builder
+  *
+  * 1/ Create a RBCallback class
+  *  - extends the GPCSearchCallback class ; the name of the extended class must
+  *    be "RBCallBack%" => replace the "%" by the plugin name
+  *     for example : 'ThePlugin' => 'RBCallBackThePlugin'
+  *
+  * 2/ In the plugin 'maintain.inc.php' file :
+  *  - function plugin_install, add :
+  *       GPCRequestBuilder::register('plugin name', 'path to the RBCallback classe');
+  *          for example : GPCRequestBuilder::register('ThePlugin', $piwigo_path.'plugins/ThePlugin/rbcallback_file_name.php');
+  *
+  *
+  *  - function plugin_uninstall, add :
+  *       GPCRequestBuilder::unregister('plugin name');
+  *          for example : GPCRequestBuilder::unregister('ThePlugin');
+  *
+  * 3/ In the plugin code, put somewhere
+  *     GPCRequestBuilder::loadJSandCSS();
+  *     => this will load specific JS and CSS in the page, by adding url in the
+  *        the header, so try to put this where you're used to prepare the header
+  *
+  * 4/ to display the request builder, just add the returned string in the html
+  *    page
+  *       $stringForTheTemplate=GPCRequestBuilder::displaySearchPage();
+  *
+  *
+  *
+  * HOW DOES THE REQUEST BUILDER WORKS ?
+  * ====================================
+  *
+  * the request builder works in 2 steps :
+  *  - first step  : build a cache, to associate all image id corresponding to
+  *                  the search criterion
+  *                  the cache is an association of request ID/image id
+  *  - second step : use the cache to retrieve images informations
+  *
   ------------------------------------------------------------------------------
   :: HISTORY
 
 | release | date       |
 | 1.0.0   | 2010/04/30 | * start coding
 |         |            |
-|         |            |
+| 1.1.0   | 2010/09/08 | * add functionnalities to manage complex requests
 |         |            |
 |         |            |
 |         |            |
@@ -41,13 +81,85 @@
 include_once('GPCAjax.class.inc.php');
 include_once('GPCTables.class.inc.php');
 
-
+/**
+ *
+ * Preparing the cache
+ * -------------------
+ * To prepare the cache, the request builder use the following functions :
+ *  - getFrom
+ *  - getWhere
+ *  - getJoin
+ *  - getImageId (used for multirecord requests only)
+ *
+ * Retrieving the results
+ * ----------------------
+ * To retrieve the image informations, the request builder uses the following
+ * functions :
+ *  - getSelect
+ *  - getFrom
+ *  - getJoin
+ *  - getFilter (in fact, the result of this function is stored while the cache
+ *               is builded, but it is used only when retrieving the results for
+ *               multirecord tables)
+ *
+ *
+ * Example 1 : single record request
+ * ---------------------------------
+ * Consider the table "tableA" like this
+ *
+ *  - (*) imageId
+ *  -     att1
+ *  -     att2
+ *  The primary key is the 'imageId' attribute
+ *    => for one imageId, you can only have ZERO or ONE record
+ *
+ *  getSelect returns : "tableA.att1, tableA.att2"
+ *  getFrom returns   : "tableA"
+ *  getWhere returns  : "tableA.att1 = zzzz"
+ *  getJoin returns   : "tableA.imageId = pit.id"
+ *  getFilter returns : ""
+ *
+ *
+ * Example 2 : multi records request
+ * ---------------------------------
+ * Consider the table "tableA" like this
+ *
+ *  - (*) imageId
+ *  - (*) localId
+ *  -     att1
+ *  -     att2
+ *  The primary key is the 'imageId'+'localId' attributes
+ *    => for one imageId, you can have ZERO or more than ONE record
+ *       when you register the class, you have to set the $multiRecord parameter
+ *       to 'y'
+ *
+ *  gatImageId returns : "tableA.imageId"
+ *  getSelect returns  : "tableA.att1, tableA.att2"
+ *  getFrom returns    : "tableA"
+ *  getWhere returns   : "tableA.att1 = zzzz AND tableA.att1 = xxxx"
+ *  getJoin returns    : "tableA.id = pit.id"
+ *  getFilter returns  : ""
+ *
+ */
 class GPCSearchCallback {
+
+  /**
+   * the getImageId returns the name of the image id attribute
+   * return String
+   */
+  static public function getImageId()
+  {
+    return("");
+  }
 
   /**
    * the getSelect function must return an attribute list separated with a comma
    *
    * "att1, att2, att3, att4"
+   *
+   * you can specifie tables names and aliases
+   *
+   * "table1.att1 AS alias1, table1.att2 AS alias2, table2.att3 AS alias3"
    */
   static public function getSelect($param="")
   {
@@ -75,8 +187,8 @@ class GPCSearchCallback {
   }
 
   /**
-   * the getJoin function must return a ready to use where allowing to join the
-   * IMAGES table (key : pit.id) with given conditions
+   * the getJoin function must return a ready to use sql statement allowing to
+   * join the IMAGES table (key : pit.id) with given conditions
    *
    * "att3 = pit.id "
    */
@@ -85,6 +197,20 @@ class GPCSearchCallback {
     return("");
   }
 
+
+  /**
+   * the getFilter function must return a ready to use where clause
+   * this where clause is used to filter the cache when the used tables can
+   * return more than one result
+   *
+   * the filter can be empty, can be equal to the where clause, or can be equal
+   * to a sub part of the where clause
+   *
+   */
+  static public function getFilter($param="")
+  {
+    return(self::getWhere($param));
+  }
 
   /**
    * this function is called by the request builder, allowing to display plugin
@@ -151,9 +277,10 @@ class GPCSearchCallback {
 class GPCRequestBuilder {
 
   static public $pluginName = 'GPCRequestBuilder';
-  static public $version = '1.0.0';
+  static public $version = '1.1.0';
 
   static private $tables = Array();
+  static protected $tGlobalId=0;
 
   /**
    * register a plugin using GPCRequestBuilder
@@ -172,7 +299,7 @@ class GPCRequestBuilder {
         'name' => $pluginName,
         'fileName' => $fileName,
         'date' => date("Y-m-d H:i:s"),
-        'version' => self::$version,
+        'version' => self::$version
       );
       return(GPCCore::saveConfig(self::$pluginName, $config));
     }
@@ -231,7 +358,7 @@ class GPCRequestBuilder {
    */
   static public function init($prefixeTable, $pluginNameFile)
   {
-    $list=Array('request', 'result_cache');
+    $list=Array('request', 'result_cache', 'temp');
 
     for($i=0;$i<count($list);$i++)
     {
@@ -252,6 +379,7 @@ class GPCRequestBuilder {
   `num_items` int(10) unsigned NOT NULL default '0',
   `execution_time` float unsigned NOT NULL default '0',
   `connected_plugin` char(255) NOT NULL,
+  `filter` text NOT NULL,
   PRIMARY KEY  (`id`)
 )
 CHARACTER SET utf8 COLLATE utf8_general_ci",
@@ -260,6 +388,13 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
   `id` int(10) unsigned NOT NULL,
   `image_id` int(10) unsigned NOT NULL,
   PRIMARY KEY  (`id`,`image_id`)
+)
+CHARACTER SET utf8 COLLATE utf8_general_ci",
+
+"CREATE TABLE `".self::$tables['temp']."` (
+  `requestId` char(30) NOT NULL,
+  `imageId` mediumint(8) unsigned NOT NULL,
+  PRIMARY KEY  (`request`,`id`)
 )
 CHARACTER SET utf8 COLLATE utf8_general_ci",
   );
@@ -276,7 +411,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
   static public function deleteTables()
   {
     $tablef= new GPCTables(self::$tables);
-    $tablef->drop($tables_def);
+    $tablef->drop();
     return(true);
   }
 
@@ -377,6 +512,45 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
   }
 
   /**
+   * prepare the temporary table used for multirecord requests
+   *
+   * @param Integer $requestNumber : id of request
+   * @return String : name of the request key temporary table
+   */
+  static private function prepareTempTable($requestNumber)
+  {
+    //$tableName=call_user_func(Array('RBCallBack'.$plugin, 'getFrom'));
+    //$imageIdName=call_user_func(Array('RBCallBack'.$plugin, 'getImageId'));
+
+    $tempWHERE=array();
+    foreach($_REQUEST['extraData'] as $key => $extraData)
+    {
+      $tmpWHERE[$key]=array(
+        'plugin' => $extraData['owner'],
+        'where' => call_user_func(Array('RBCallBack'.$extraData['owner'], 'getWhere'), $extraData['param'])
+      );
+    }
+
+    $sql="INSERT INTO ".self::$tables['temp']." ".self::buildGroupRequest($_REQUEST[$_REQUEST['requestName']], $tmpWHERE, $_REQUEST['operator'], ' AND ', $requestNumber);
+//echo $sql;
+    $result=pwg_query($sql);
+
+    return($requestNumber);
+  }
+
+  /**
+   * clear the temporary table used for multirecord requests
+   *
+   * @param Array $requestNumber : the requestNumber to delete
+   */
+  static private function clearTempTable($requestNumber)
+  {
+    $sql="DELETE FROM ".self::$tables['temp']." WHERE requestId = '$requestNumber';";
+    pwg_query($sql);
+  }
+
+
+  /**
    * execute a query, and place result in cache
    *
    *
@@ -389,12 +563,14 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
     self::clearCache();
 
     $registeredPlugin=self::getRegistered();
+    $requestNumber=self::getNewRequest($user['id']);
 
     $build=Array(
       'SELECT' => 'pit.id',
       'FROM' => '',
       'WHERE' => '',
       'GROUPBY' => '',
+      'FILTER' => '',
     );
     $tmpBuild=Array(
       'FROM' => Array(
@@ -406,7 +582,8 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
       'JOIN' => Array(999=>'pucc.user_id='.$user['id']),
       'GROUPBY' => Array(
         'pit.id'
-      )
+      ),
+      'FILTER' => Array(),
     );
 
     /* build data request for plugins
@@ -428,32 +605,34 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
      */
     $pluginNeeded=Array();
     $pluginList=Array();
+    $tempName=Array();
     foreach($_REQUEST['extraData'] as $key => $val)
     {
       $pluginNeeded[$val['owner']][$key]=$_REQUEST['extraData'][$key]['param'];
       $pluginList[$val['owner']]=$val['owner'];
     }
 
-    /* for each needed plugin :
-     *  - include the file
-     *  - call the static public function getWhere
-     */
+    /* for each plugin, include the rb callback class file */
+    foreach($pluginList as $val)
+    {
+      if(file_exists($registeredPlugin[$val]['fileName']))
+      {
+        include_once($registeredPlugin[$val]['fileName']);
+      }
+    }
+
+    /* prepare the temp table for the request */
+    self::prepareTempTable($requestNumber);
+    $tmpBuild['FROM'][]=self::$tables['temp'];
+    $tmpBuild['JOIN'][]=self::$tables['temp'].".requestId = '".$requestNumber."'
+                        AND ".self::$tables['temp'].".imageId = pit.id";
+
+    /* for each needed plugin, prepare the filter */
     foreach($pluginNeeded as $key => $val)
     {
-      if(array_key_exists($key, $registeredPlugin))
+      foreach($val as $itemNumber => $param)
       {
-        if(file_exists($registeredPlugin[$key]['fileName']))
-        {
-          include_once($registeredPlugin[$key]['fileName']);
-
-          $tmpBuild['FROM'][]=call_user_func(Array('RBCallBack'.$key, 'getFrom'));
-          $tmpBuild['JOIN'][]=call_user_func(Array('RBCallBack'.$key, 'getJoin'));
-
-          foreach($val as $itemNumber => $param)
-          {
-            $tmpBuild['WHERE'][$itemNumber]=call_user_func(Array('RBCallBack'.$key, 'getWhere'), $param);
-          }
-        }
+        $tmpBuild['FILTER'][$key][]='('.call_user_func(Array('RBCallBack'.$key, 'getFilter'), $param).')';
       }
     }
 
@@ -474,12 +653,30 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
     unset($tmpBuild['WHERE']);
 
 
+    /* build FILTER
+     */
+    self::cleanArray($tmpBuild['FILTER']);
+    if(count($tmpBuild['FILTER'])>0)
+    {
+      $tmp=array();
+      foreach($tmpBuild['FILTER'] as $key=>$val)
+      {
+        $tmp[$key]='('.implode(' OR ', $val).')';
+      }
+      $build['FILTER']=' ('.implode(' AND ', $tmp).') ';
+      // array_flip twice => simply remove identical values...
+      //$build['FILTER']=' ('.implode(' AND ', array_flip(array_flip($tmpBuild['FILTER']))).') ';
+    }
+    unset($tmpBuild['FILTER']);
+
+
     /* for each plugin, adds jointure with the IMAGE table
      */
     self::cleanArray($tmpBuild['JOIN']);
     if(count($tmpBuild['JOIN'])>0)
     {
-      $build['WHERE'].=' AND ('.implode(' AND ', $tmpBuild['JOIN']).') ';
+      if($build['WHERE']!='') $build['WHERE'].=' AND ';
+      $build['WHERE'].=' ('.implode(' AND ', $tmpBuild['JOIN']).') ';
     }
     unset($tmpBuild['JOIN']);
 
@@ -504,21 +701,24 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
 
     $sql.=" ORDER BY pit.id ";
 
-    $requestNumber=self::getNewRequest($user['id']);
-
     $sql="INSERT INTO ".self::$tables['result_cache']." (SELECT DISTINCT $requestNumber, ".$build['SELECT']." $sql)";
+
+//echo $sql;
+
+    $returned="0;0";
 
     $result=pwg_query($sql);
     if($result)
     {
       $numberItems=pwg_db_changes($result);
-      self::updateRequest($requestNumber, $numberItems, 0, implode(',', $pluginList));
+      self::updateRequest($requestNumber, $numberItems, 0, implode(',', $pluginList), $build['FILTER']);
 
-
-      return("$requestNumber;".$numberItems);
+      $returned="$requestNumber;".$numberItems;
     }
 
-    return("0;0");
+    self::clearTempTable($requestNumber);
+
+    return($returned);
   }
 
   /**
@@ -553,10 +753,10 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
     $tmpBuild=Array(
       'SELECT' => Array(
         'RB_PIT' => "pit.id AS imageId, pit.name AS imageName, pit.path AS imagePath", // from the piwigo's image table
-        'RB_PIC' => "GROUP_CONCAT(pic.category_id SEPARATOR ',') AS imageCategoriesId",     // from the piwigo's image_category table
-        'RB_PCT' => "GROUP_CONCAT(CASE WHEN pct.name IS NULL THEN '' ELSE pct.name END SEPARATOR '#sep#') AS imageCategoriesNames,
-                     GROUP_CONCAT(CASE WHEN pct.permalink IS NULL THEN '' ELSE pct.permalink END SEPARATOR '#sep#') AS imageCategoriesPLink,
-                     GROUP_CONCAT(CASE WHEN pct.dir IS NULL THEN 'V' ELSE 'P' END) AS imageCategoriesDir",   //from the piwigo's categories table
+        'RB_PIC' => "GROUP_CONCAT(DISTINCT pic.category_id SEPARATOR ',') AS imageCategoriesId",     // from the piwigo's image_category table
+        'RB_PCT' => "GROUP_CONCAT(DISTINCT CASE WHEN pct.name IS NULL THEN '' ELSE pct.name END SEPARATOR '#sep#') AS imageCategoriesNames,
+                     GROUP_CONCAT(DISTINCT CASE WHEN pct.permalink IS NULL THEN '' ELSE pct.permalink END SEPARATOR '#sep#') AS imageCategoriesPLink,
+                     GROUP_CONCAT(DISTINCT CASE WHEN pct.dir IS NULL THEN 'V' ELSE 'P' END) AS imageCategoriesDir",   //from the piwigo's categories table
       ),
       'FROM' => Array(
         // join rb result_cache table with piwigo's images table, joined with the piwigo's image_category table, joined with the categories table
@@ -590,7 +790,13 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
         if(file_exists($registeredPlugin[$val]['fileName']))
         {
           include_once($registeredPlugin[$val]['fileName']);
-          $tmpBuild['SELECT'][$val]=call_user_func(Array('RBCallBack'.$val, 'getSelect'));
+
+          $tmp=explode(',', call_user_func(Array('RBCallBack'.$val, 'getSelect')));
+          foreach($tmp as $key2=>$val2)
+          {
+            $tmp[$key2]=self::groupConcatAlias($val2, '#sep#');
+          }
+          $tmpBuild['SELECT'][$val]=implode(',', $tmp);
           $tmpBuild['FROM'][$val]=call_user_func(Array('RBCallBack'.$val, 'getFrom'));
           $tmpBuild['JOIN'][$val]=call_user_func(Array('RBCallBack'.$val, 'getJoin'));
         }
@@ -611,6 +817,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
 
     /* build WHERE
      */
+    if($request['filter']!='') $tmpBuild['WHERE'][]=$request['filter'];
     $build['WHERE']=implode(' AND ', $tmpBuild['WHERE']);
     unset($tmpBuild['WHERE']);
 
@@ -640,7 +847,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
         .' GROUP BY '.$build['GROUPBY']
         .' ORDER BY pit.id '
         .' LIMIT '.$limitFrom.', '.$numPerPage;
-
+//echo $sql;
     $result=pwg_query($sql);
     if($result)
     {
@@ -736,24 +943,30 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
   {
     foreach($array as $key => $val)
     {
-      if(trim($val)=='') unset($array[$key]);
+      if(is_array($val))
+      {
+        self::cleanArray($val);
+        if(count($val)==0) unset($array[$key]);
+      }
+      elseif(trim($val)=='') unset($array[$key]);
     }
   }
 
   /**
    * returns the alias for an attribute
    *
-   *  item1                  => returns item1
-   *  table1.item1           => returns item1
-   *  table1.item1 AS alias1 => returns alias1
-   *  item1 AS alias1        => returns alias1
+   *  item1                          => returns item1
+   *  table1.item1                   => returns item1
+   *  table1.item1 AS alias1         => returns alias1
+   *  item1 AS alias1                => returns alias1
+   *  GROUP_CONCAT( .... ) AS alias1 => returns alias1
    *
-   * @param String $var : value ti examine
+   * @param String $var : value to examine
    * @return String : the attribute name
    */
   static private function getAttribute($val)
   {
-    preg_match('/(?:(?:[A-Z0-9_]*)\.)?([A-Z0-9_]*)(?:\s+AS\s+([A-Z0-9_]*))?/i', trim($val), $result);
+    preg_match('/(?:GROUP_CONCAT\(.*\)|(?:[A-Z0-9_]*)\.)?([A-Z0-9_]*)(?:\s+AS\s+([A-Z0-9_]*))?/i', trim($val), $result);
     if(array_key_exists(2, $result))
     {
       return($result[2]);
@@ -770,6 +983,43 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
 
 
   /**
+   * returns a a sql statement GROUP_CONCAT for an alias
+   *
+   *  item1                  => returns GROUP_CONCAT(item1 SEPARATOR $sep) AS item1
+   *  table1.item1           => returns GROUP_CONCAT(table1.item1 SEPARATOR $sep) AS item1
+   *  table1.item1 AS alias1 => returns GROUP_CONCAT(table1.item1 SEPARATOR $sep) AS alias1
+   *  item1 AS alias1        => returns GROUP_CONCAT(item1 SEPARATOR $sep) AS alias1
+   *
+   * @param String $val : value to examine
+   * @param String $sep : the separator
+   * @return String : the attribute name
+   */
+  static private function groupConcatAlias($val, $sep=',')
+  {
+    /*
+     * table1.item1 AS alias1
+     *
+     * $result[3] = alias1
+     * $result[2] = item1
+     * $result[1] = table1.item1
+     */
+    preg_match('/((?:(?:[A-Z0-9_]*)\.)?([A-Z0-9_]*))(?:\s+AS\s+([A-Z0-9_]*))?/i', trim($val), $result);
+    if(array_key_exists(3, $result))
+    {
+      return("GROUP_CONCAT(".$result[1]." SEPARATOR '$sep') AS ".$result[3]);
+    }
+    elseif(array_key_exists(2, $result))
+    {
+      return("GROUP_CONCAT(".$result[1]." SEPARATOR '$sep') AS ".$result[2]);
+    }
+    else
+    {
+      return("GROUP_CONCAT($val SEPARATOR '$sep') AS ".$val);
+    }
+  }
+
+
+  /**
    * get a new request number and create it in the request table
    *
    * @param Integer $userId : id of the user
@@ -777,7 +1027,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
    */
   static private function getNewRequest($userId)
   {
-    $sql="INSERT INTO ".self::$tables['request']." VALUES('', '$userId', '".date('Y-m-d H:i:s')."', 0, 0, '')";
+    $sql="INSERT INTO ".self::$tables['request']." VALUES('', '$userId', '".date('Y-m-d H:i:s')."', 0, 0, '', '')";
     $result=pwg_query($sql);
     if($result)
     {
@@ -795,12 +1045,13 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
    * @param String $pluginList : list of used plugins
    * @return Boolean : true if request was updated, otherwise false
    */
-  static private function updateRequest($requestId, $numItems, $executionTime, $pluginList)
+  static private function updateRequest($requestId, $numItems, $executionTime, $pluginList, $additionalFilter)
   {
     $sql="UPDATE ".self::$tables['request']."
             SET num_items = $numItems,
                 execution_time = $executionTime,
-                connected_plugin = '$pluginList'
+                connected_plugin = '$pluginList',
+                filter = '".mysql_escape_string($additionalFilter)."'
             WHERE id = $requestId";
     $result=pwg_query($sql);
     if($result)
@@ -819,7 +1070,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
   static private function getRequest($requestId)
   {
     $returned=false;
-    $sql="SELECT user_id, date, num_items, execution_time, connected_plugin
+    $sql="SELECT user_id, date, num_items, execution_time, connected_plugin, filter
           FROM ".self::$tables['request']."
           WHERE id = $requestId";
     $result=pwg_query($sql);
@@ -835,7 +1086,8 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
 
 
   /**
-   * internal function used by the executeRequest function
+   * internal function used by the executeRequest function for single record
+   * requests
    *
    * this function is called recursively
    *
@@ -860,6 +1112,99 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
       }
     }
     return('('.implode($operator, $returned).')');
+  }
+
+
+  /**
+   * internal function used by the executeRequest function for multi records
+   * requests
+   *
+   * this function is called recursively
+   *
+   * @param Array $groupContent :
+   * @param Array $items :
+   * @return String : a SQL request
+   */
+  static private function buildGroupRequest($groupContent, $whereItems, $groups, $operator, $requestNumber)
+  {
+    $returnedS='';
+    $returned=Array();
+    foreach($groupContent as $key => $val)
+    {
+      if(strpos($val['id'], 'iCbGroup')!==false)
+      {
+        preg_match('/[0-9]*$/i', $val['id'], $groupNumber);
+
+        $groupValue=self::buildGroupRequest($val['children'], $whereItems, $groups, $groups[$groupNumber[0]], $requestNumber);
+
+        if($groupValue!='')
+          $returned[]=array(
+            'mode'  => 'group',
+            'value' => $groupValue
+          );
+      }
+      else
+      {
+        preg_match('/[0-9]*$/i', $val['id'], $itemNumber);
+
+        $returned[]=array(
+          'mode'  => 'item',
+          'plugin' => $whereItems[$itemNumber[0]]['plugin'],
+          'value' => " (".$whereItems[$itemNumber[0]]['where'].") "
+        );
+      }
+    }
+
+    if(count($returned)>0)
+    {
+      if(strtolower(trim($operator))=='and')
+      {
+        $tId=0;
+        foreach($returned as $key=>$val)
+        {
+          if($tId>0) $returnedS.=" JOIN ";
+
+          if($val['mode']=='item')
+          {
+            $returnedS.="(SELECT ".call_user_func(Array('RBCallBack'.$val['plugin'], 'getImageId'))." AS imageId
+                          FROM ".call_user_func(Array('RBCallBack'.$val['plugin'], 'getFrom'))."
+                          WHERE ".$val['value'].") t".self::$tGlobalId." ";
+          }
+          else
+          {
+            $returnedS.="(".$val['value'].") t".self::$tGlobalId." ";
+          }
+
+          if($tId>0) $returnedS.=" ON t".(self::$tGlobalId-1).".imageId = t".self::$tGlobalId.".imageId ";
+          $tId++;
+          self::$tGlobalId++;
+        }
+        $returnedS="SELECT '$requestNumber', t".(self::$tGlobalId-$tId).".imageId FROM ".$returnedS;
+      }
+      else
+      {
+        foreach($returned as $key=>$val)
+        {
+          if($returnedS!='') $returnedS.=" UNION DISTINCT ";
+
+          if($val['mode']=='item')
+          {
+            $returnedS.="SELECT '$requestNumber', t".self::$tGlobalId.".imageId
+                          FROM (SELECT ".call_user_func(Array('RBCallBack'.$val['plugin'], 'getImageId'))." AS imageId
+                                FROM ".call_user_func(Array('RBCallBack'.$val['plugin'], 'getFrom'))."
+                                WHERE ".$val['value'].") t".self::$tGlobalId." ";
+          }
+          else
+          {
+            $returnedS.="SELECT '$requestNumber', t".self::$tGlobalId.".imageId FROM (".$val['value'].") t".self::$tGlobalId;
+          }
+
+          self::$tGlobalId++;
+        }
+      }
+    }
+
+    return($returnedS);
   }
 
 
@@ -956,12 +1301,21 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
 
   /**
    * display search page
+   *
+   * @param Array $filter : an array of string ; each item is the name of a
+   *                        registered plugin
+   *                        if no parameters are given, no filter is applied
+   *                        otherwise only plugin wich name is given are
+   *                        accessible
    */
-  static public function displaySearchPage()
+  static public function displaySearchPage($filter=array())
   {
     global $template, $lang;
 
     load_language('rbuilder.lang', GPC_PATH);
+
+    if(is_string($filter)) $filter=array($filter);
+    $filter=array_flip($filter);
 
     $template->set_filename('gpc_search_page',
                 dirname(dirname(__FILE__)).'/templates/GPCRequestBuilder_search.tpl');
@@ -970,7 +1324,8 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
     $dialogBox=Array();
     foreach($registeredPlugin as $key=>$val)
     {
-      if(array_key_exists($key, $registeredPlugin))
+      if(array_key_exists($key, $registeredPlugin) and
+         (count($filter)==0 or array_key_exists($key, $filter)))
       {
         if(file_exists($registeredPlugin[$key]['fileName']))
         {

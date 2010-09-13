@@ -67,6 +67,15 @@ var cb=null;
             setOptions(arguments[1]);
           }
           break;
+        case 'fillCaddie':
+          /* function 'fillCaddie' : allows to fill the caddie with the search result
+           *
+           */
+          if(arguments.length==2)
+          {
+            fillCaddie(arguments[1], this.getRequestNumber());
+          }
+          break;
       }
     }
 
@@ -131,7 +140,7 @@ var cb=null;
       {
         //$('#'+options.requestResultContent).html("");
         show('buildQuery');
-        alert('Something is wrong on the server-side !');
+        alert('{/literal}{"gpc_something_is_wrong_on_the_server_side"|@translate}{literal}');
       }
     }
 
@@ -159,7 +168,7 @@ var cb=null;
       }
       else
       {
-        alert('Something is wrong on the server-side !');
+        alert('{/literal}{"gpc_something_is_wrong_on_the_server_side"|@translate}{literal}');
       }
     }
 
@@ -200,6 +209,39 @@ var cb=null;
       );
 
       requestNumber=options.requestResultRequestNumber;
+    }
+
+    /**
+     * fill the caddie with the search results
+     * @param String mode : 'add' or 'fill'
+     */
+    var fillCaddie = function (mode, requestNumber)
+    {
+      $('#iMenuCaddieImg').css('display', 'inline-block');
+      $('#iMenuCaddieItems ul').css('display', 'none');
+
+      $.ajax(
+        {
+          type: "POST",
+          url: "plugins/GrumPluginClasses/gpc_ajax.php",
+          async: true,
+          data: { ajaxfct:"admin.rbuilder.fillCaddie", fillMode:mode, requestNumber:requestNumber },
+          success:
+            function(msg)
+            {
+              $('#iMenuCaddieImg').css('display', 'none');
+              $('#iMenuCaddieItems ul').css('display', 'block');
+              alert('{/literal}{"gpc_the_caddie_is_updated"|@translate}{literal}');
+            },
+          error:
+            function(msg)
+            {
+              $('#iMenuCaddieImg').css('display', 'none');
+              $('#iMenuCaddieItems ul').css('display', 'block');
+              alert('{/literal}{"gpc_something_is_wrong_on_the_server_side"|@translate}{literal}');
+            },
+        }
+      );
     }
 
     init(optionsToSet);
@@ -251,6 +293,7 @@ var cb=null;
 {foreach from=$datas.dialogBox item=dialogBox}
   {$dialogBox.content}
 {/foreach}
+<div id='iRBCaddieNfo'></div>
 
 <form>
   <fieldset>
@@ -263,7 +306,7 @@ var cb=null;
       </div>
 
       <div id='iMenuCriterions' >
-        <div id='iMenuCTitle' class='gcLink gcBgInput cbButtons'>{'gpc_rb_add_criterions'|@translate}</div>
+        <div id='iMenuCTitle' class='gcLink gcBgInput cbButtons'>{'gpc_rb_add_criterions'|@translate}&nbsp;&dArr;</div>
         <div id='iMenuCItems'>
           <ul class='gcBgInput'>
             {foreach from=$datas.dialogBox item=dialogBox}
@@ -291,7 +334,22 @@ var cb=null;
 
     <div class='gcBgInput gcTextInput'>
       <div id='iPagesNavigator' style='float:right;'></div>
-      <div style='text-align:left;padding:4px;'>{'gpc_rb_number_of_item_found'|@translate}&nbsp;:&nbsp;<span id='iResultQueryNfo'></span></div>
+      <div style='text-align:left;padding:4px;'>
+        {'gpc_rb_number_of_item_found'|@translate}&nbsp;:&nbsp;<span id='iResultQueryNfo'></span>
+        <div id='iMenuCaddie' style='display:inline-block;'>
+          <div id='iMenuCaddieBar'>
+            <div id='iMenuCaddieText' class='gcLink gcBgInput'>{'gpc_manage_caddie'|@translate}&dArr;
+            <div id='iMenuCaddieImg' style='display:none;width:16px;height:16px;background:url(./plugins/GrumPluginClasses/icons/processing.gif) no-repeat 0 0 transparent;'>&nbsp;</div>
+            <div id='iMenuCaddieItems'>
+              <ul class='gcBgInput'>
+                <li class='gcBgInput'><a onclick="im.doAction('fillCaddie', 'add');">{'gpc_add_caddie'|@translate}</a></li>
+                <li class='gcBgInput'><a onclick="im.doAction('fillCaddie', 'replace');">{'gpc_replace_caddie'|@translate}</a></li>
+              </ul>
+            </div>
+          </div>
+
+        </span>
+      </div>
     </div>
 
   </fieldset>

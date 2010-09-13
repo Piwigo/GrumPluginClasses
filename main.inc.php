@@ -52,11 +52,11 @@ Author URI: http://photos.grum.fr/
 | 3.1.1   | 2010/05/18 | * fix bug in the install process (CommonPlugin not
 |         |            |   included)
 |         |            |
-| 3.2.0   | 2010/06/20 | * Enhance GPCTabSheet functionnalities
+| 3.2.0   | 2010/09/12 | * Enhance GPCTabSheet functionnalities
 |         |            |   - possibility to choose tab classes
 |         |            | * Add the simpleTip.js
-|         |            |
-|         |            |
+|         |            | * Enhance GPCRequestBuilder functionnalities
+|         |            |   - now abble to manage complex request with multi-record
 |         |            |
 |         |            |
 |         |            |
