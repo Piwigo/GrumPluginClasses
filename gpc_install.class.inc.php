@@ -45,6 +45,11 @@
     */
     public function install()
     {
+      $this->initConfig();
+      $this->loadConfig();
+      $this->config['installed']=GPC_VERSION2;
+      $this->saveConfig();
+
       $result=GPCRequestBuilder::createTables();
       return($result);
     }
@@ -69,6 +74,30 @@
 
     public function activate()
     {
+      global $template, $user;
+
+      $this->initConfig();
+      $this->loadConfig();
+
+      /*
+       * if there is no version information available, assume the previous
+       *  installed release of the plugin is 3.1.0
+       */
+      if(!isset($this->config['installed'])) $this->config['installed']='03.01.00';
+
+      /*
+      switch($this->config['installed'])
+      {
+        case '03.01.00':
+          GPCRequestBuilder::updateTables($this->config['installed']);
+          break;
+      }
+      */
+      GPCRequestBuilder::updateTables($this->config['installed']);
+
+
+      $this->config['installed']=GPC_VERSION2; //update the installed release number
+      $this->saveConfig();
     }
 
     public function deactivate()

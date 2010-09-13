@@ -2,7 +2,7 @@
 /* -----------------------------------------------------------------------------
   class name: GCPRequestBuilder
   class version  : 1.1.0
-  plugin version : 3.1.0
+  plugin version : 3.2.0
   date           : 2010-09-08
 
   ------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ include_once('GPCTables.class.inc.php');
  *  - getFrom
  *  - getWhere
  *  - getJoin
- *  - getImageId (used for multirecord requests only)
+ *  - getImageId
  *
  * Retrieving the results
  * ----------------------
@@ -101,27 +101,11 @@ include_once('GPCTables.class.inc.php');
  *  - getFilter (in fact, the result of this function is stored while the cache
  *               is builded, but it is used only when retrieving the results for
  *               multirecord tables)
+ *  - formatData
  *
  *
- * Example 1 : single record request
- * ---------------------------------
- * Consider the table "tableA" like this
- *
- *  - (*) imageId
- *  -     att1
- *  -     att2
- *  The primary key is the 'imageId' attribute
- *    => for one imageId, you can only have ZERO or ONE record
- *
- *  getSelect returns : "tableA.att1, tableA.att2"
- *  getFrom returns   : "tableA"
- *  getWhere returns  : "tableA.att1 = zzzz"
- *  getJoin returns   : "tableA.imageId = pit.id"
- *  getFilter returns : ""
- *
- *
- * Example 2 : multi records request
- * ---------------------------------
+ * Example
+ * -------
  * Consider the table "tableA" like this
  *
  *  - (*) imageId
@@ -136,9 +120,9 @@ include_once('GPCTables.class.inc.php');
  *  gatImageId returns : "tableA.imageId"
  *  getSelect returns  : "tableA.att1, tableA.att2"
  *  getFrom returns    : "tableA"
- *  getWhere returns   : "tableA.att1 = zzzz AND tableA.att1 = xxxx"
- *  getJoin returns    : "tableA.id = pit.id"
- *  getFilter returns  : ""
+ *  getWhere returns   : "tableA.localId= xxxx AND tableA.att1 = zzzz"
+ *  getJoin returns    : "tableA.imageId = pit.id"
+ *  getFilter returns  : "tableA.localId= xxxx"
  *
  */
 class GPCSearchCallback {
@@ -401,6 +385,39 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
 
     $tablef= new GPCTables(self::$tables);
     $tablef->create($tablesDef);
+
+    return(true);
+  }
+
+  /**
+   * update the tables needed by RequestBuilder (used during the gpc process
+   * activation)
+   */
+  static public function updateTables($pluginPreviousRelease)
+  {
+    $tablesCreate=array();
+    $tablesUpdate=array();
+
+    switch($pluginPreviousRelease)
+    {
+      case '03.01.00':
+        $tablesCreate[]=
+"CREATE TABLE `".self::$tables['temp']."` (
+  `requestId` char(30) NOT NULL,
+  `imageId` mediumint(8) unsigned NOT NULL,
+  PRIMARY KEY  (`request`,`id`)
+)
+CHARACTER SET utf8 COLLATE utf8_general_ci";
+
+        $tablesUpdate[self::$tables['request']]['filter']=
+"ADD COLUMN  `filter` text NOT NULL default '' ";
+        break;
+    }
+
+    $tablef=new GPCTables(self::$tables);
+
+    if(count($tablesCreate)>0) $tablef->create($tablesCreate);
+    if(count($tablesUpdate)>0) $tablef->updateTablesFields($tablesUpdate);
 
     return(true);
   }
