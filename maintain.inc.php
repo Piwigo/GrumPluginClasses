@@ -25,6 +25,13 @@ function plugin_install($plugin_id, $plugin_version, &$errors)
 
 function plugin_activate($plugin_id, $plugin_version, &$errors)
 {
+  $obj = new GPC_Install($prefixeTable, __FILE__);
+  $result=$obj->activate();
+  if(!$result)
+  {
+    array_push($errors, "error");
+  }
+  unset($obj);
 }
 
 function plugin_deactivate($plugin_id)
