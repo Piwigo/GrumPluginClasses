@@ -44,51 +44,7 @@ class GPC_AIM extends CommonPlugin
     add_event_handler('get_admin_plugin_menu_links', array(&$this, 'pluginAdminMenu') );
   }
 
-  /*
-    surchage of CommonPlugin->saveConfig function
-  */
-  function loadConfig()
-  {
-    parent::loadConfig();
-    if(!$this->css->fileExists())
-    {
-      $this->css->makeCSS($this->generate_CSS());
-    }
-  }
 
-  /*
-    surchage of CommonPlugin->saveConfig function
-  */
-  function saveConfig()
-  {
-    if(parent::saveConfig())
-    {
-      $this->css->makeCSS($this->generate_CSS());
-      return(true);
-    }
-    return(false);
-  }
-
-  /*
-    generate the css code
-  */
-  function generate_CSS()
-  {
-    $text = "
-.formtable, .formtable P { text-align:left; display:block; }
-.formtable tr { vertical-align:top; }
-.invisible { visibility:hidden; display:none; }
-.littlefont { font-size:90%; }
-table.table2.littlefont td { text-align:center;padding:0px;padding-left:3px;padding-right:3px; }
-.throw { line-height:auto; font-size:100%; }
-table.table2 tr.throw { height:26px; }
-table.table2 td.toLeft  { text-align:left; }
-div.table { margin-bottom:15px; }
-pointerHand { cursor:pointer; }
-    ";
-
-    return($text);
-  }
 
   /* ---------------------------------------------------------------------------
   Function needed for plugin activation

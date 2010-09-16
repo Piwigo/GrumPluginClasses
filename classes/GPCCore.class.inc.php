@@ -55,7 +55,7 @@ class GPCCore
         Array('name' => "GPCCss", 'version' => "3.0.0"),
         Array('name' => "GPCPagesNavigations", 'version' => "2.0.0"),
         Array('name' => "GPCPublicIntegration", 'version' => "2.0.0"),
-        Array('name' => "GPCRequestBuilder", 'version' => "1.0.0"),
+        Array('name' => "GPCRequestBuilder", 'version' => "1.1.0"),
         Array('name' => "GPCTables", 'version' => "1.5.0"),
         Array('name' => "GPCTabSheet", 'version' => "1.1.0"),
         Array('name' => "GPCTranslate", 'version' => "2.1.0"),
@@ -283,6 +283,8 @@ class GPCCore
       '/\[url=([\w]+?:\/\/[^ \"\n\r\t<]*?)\](.*?)\[\/url\]/ism',
       '/\n{0,1}\[ul\]\n{0,1}/im',
       '/\n{0,1}\[\/ul\]\n{0,1}/im',
+      '/\n{0,1}\[ol\]\n{0,1}/im',
+      '/\n{0,1}\[\/ol\]\n{0,1}/im',
       '/\n/im',
     );
     $replacements = Array(
@@ -294,6 +296,8 @@ class GPCCore
       '<a href="\1">\2</a>',
       '<ul>',
       '</ul>',
+      '<ol>',
+      '</ol>',
       '<br>',
     );
 

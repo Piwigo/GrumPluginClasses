@@ -57,6 +57,16 @@ Author URI: http://photos.grum.fr/
 |         |            | * Add the simpleTip.js
 |         |            | * Enhance GPCRequestBuilder functionnalities
 |         |            |   - now abble to manage complex request with multi-record
+|         |            |   - result can be stored in the caddie
+|         |            |
+|         |            |
+|         |            |
+|         |            |
+|         |            |
+|         |            |
+|         |            |
+|         |            |
+|         |            |
 |         |            |
 |         |            |
 |         |            |
