@@ -63,10 +63,11 @@
       $registeredPlugin=GPCCore::getRegistered();
       if(count($registeredPlugin)>0)
       {
-        return("Some plugins are dependent on Grum Plugin Classes: before uninstall, you must first uninstall the plugins dependent");
+        return(l10n("Some plugins are dependent on Grum Plugin Classes: before uninstall, you must first uninstall the plugins dependent"));
       }
       else
       {
+        $this->deleteConfig();
         $result=GPCRequestBuilder::deleteTables();
         return($result);
       }
@@ -98,6 +99,8 @@
 
       $this->config['installed']=GPC_VERSION2; //update the installed release number
       $this->saveConfig();
+
+      return(true);
     }
 
     public function deactivate()

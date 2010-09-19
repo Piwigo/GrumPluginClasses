@@ -103,8 +103,27 @@ define('GPC_DIR' , basename(dirname(__FILE__)));
 define('GPC_PATH' , PHPWG_PLUGINS_PATH . GPC_DIR . '/');
 
 include_once('gpc_version.inc.php'); // => Don't forget to update this file !!
+include_once(GPC_PATH.'classes/GPCCore.class.inc.php');
 
 global $prefixeTable;
+
+
+
+$config=Array();
+GPCCore::loadConfig('gpc', $config);
+
+if(!isset($config['installed'])) $config['installed']='03.01.00';
+if($config['installed']!=GPC_VERSION2)
+{
+  /* the plugin was updated without being deactivated
+   * deactivate + activate the plugin to process the database upgrade
+   */
+  include(GPC_PATH."gpc_install.class.inc.php");
+  $gpc=new GPC_Install($prefixeTable, __FILE__);
+  $gpc->deactivate();
+  $gpc->activate();
+}
+
 
 if(defined('IN_ADMIN'))
 {

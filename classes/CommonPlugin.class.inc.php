@@ -2,7 +2,7 @@
 /* -----------------------------------------------------------------------------
   class name: CommonPlugin
   class version  : 2.2.0
-  plugin version : 3.0.0
+  plugin version : 3.2.0
   date           : 2010-07-28
 
   ------------------------------------------------------------------------------
@@ -46,8 +46,9 @@
 |         |            |   functions
 |         |            | * Update class & function names
 |         |            |
-| 2.2.0   | 2010/07/28 | * Add the loadConfigFromFile function
-|         |            |
+| 2.2.0   | 2010/09/18 | * Add the loadConfigFromFile function
+|         |            | * Change parameters mode for the checkGPCRelease
+|         |            |   function
 |         |            |
 |         |            |
 |         |            |
@@ -73,15 +74,47 @@ class CommonPlugin
 
 
   /**
-   * this function return true if class release if greater or equal than needed by the plugin
+   * this function return true if class release if greater or equal than needed
+   * by the plugin
+   *
+   * the function can be called :
+   *   - with 1 String parameter   : checkGPCRelease("3.2.0")
+   *                                 => implemented with the release 3.2.0, this
+   *                                    is the new method recommanded to use
+   *   - with 3 Integer parameters : checkGPCRelease(3,2,0)
+   *                                 => this method is kept for older plugin
+   *                                    compatibility but it's not recommanded
+   *                                    to use it anymore
+   *
+   * @param String $neededRelease : the needed release
+   * @return Boolean : true if the current release is greater or equal than the
+   *                   needed release
+   *
+   * old calling method :
+   * @param Integer $neededRelease : the major release
+   * @param Integer $minor :
+   * @param Integer $minor2 :
+   * @return Boolean;
    */
-  static public function checkGPCRelease($major, $minor, $minor2)
+  static public function checkGPCRelease($neededRelease=0, $minor=0, $minor2=0)
   {
-    $release = explode(".", GPC_VERSION);
+    $currentRelease = explode(".", GPC_VERSION);
 
-    if(($release[0]>$major) ||
-       ($release[0]==$major)&&($release[1]>$minor) ||
-       ($release[0]==$major)&&($release[1]==$minor)&&($release[2]>=$minor2))
+    if(is_string($neededRelease))
+    {
+      $neededRelease=explode('.', $neededRelease);
+      $major=$neededRelease[0];
+      $minor=$neededRelease[1];
+      $minor2=$neededRelease[2];
+    }
+    else
+    {
+      $major=$neededRelease;
+    }
+
+    if(($currentRelease[0]>$major) ||
+       ($currentRelease[0]==$major)&&($currentRelease[1]>$minor) ||
+       ($currentRelease[0]==$major)&&($currentRelease[1]==$minor)&&($currentRelease[2]>=$minor2))
     {
       return(true);
     }

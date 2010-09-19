@@ -25,6 +25,8 @@ function plugin_install($plugin_id, $plugin_version, &$errors)
 
 function plugin_activate($plugin_id, $plugin_version, &$errors)
 {
+  global $prefixeTable;
+
   $obj = new GPC_Install($prefixeTable, __FILE__);
   $result=$obj->activate();
   if(!$result)
@@ -36,6 +38,10 @@ function plugin_activate($plugin_id, $plugin_version, &$errors)
 
 function plugin_deactivate($plugin_id)
 {
+  global $prefixeTable;
+
+  $obj = new GPC_Install($prefixeTable, __FILE__);
+  $result=$obj->deactivate();
 }
 
 function plugin_uninstall($plugin_id)

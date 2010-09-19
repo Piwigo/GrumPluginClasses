@@ -274,13 +274,13 @@ class GPCRequestBuilder {
    *                           be found
    * @return Boolean : true if registering is Ok, otherwise false
    */
-  static public function register($pluginName, $fileName)
+  static public function register($plugin, $fileName)
   {
     $config=Array();
     if(GPCCore::loadConfig(self::$pluginName, $config))
     {
-      $config['registered'][$pluginName]=Array(
-        'name' => $pluginName,
+      $config['registered'][$plugin]=Array(
+        'name' => $plugin,
         'fileName' => $fileName,
         'date' => date("Y-m-d H:i:s"),
         'version' => self::$version
@@ -378,7 +378,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
 "CREATE TABLE `".self::$tables['temp']."` (
   `requestId` char(30) NOT NULL,
   `imageId` mediumint(8) unsigned NOT NULL,
-  PRIMARY KEY  (`request`,`id`)
+  PRIMARY KEY  (`requestId`,`imageId`)
 )
 CHARACTER SET utf8 COLLATE utf8_general_ci",
   );
@@ -405,7 +405,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
 "CREATE TABLE `".self::$tables['temp']."` (
   `requestId` char(30) NOT NULL,
   `imageId` mediumint(8) unsigned NOT NULL,
-  PRIMARY KEY  (`request`,`id`)
+  PRIMARY KEY  (`requestId`,`imageId`)
 )
 CHARACTER SET utf8 COLLATE utf8_general_ci";
 
@@ -414,7 +414,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
         break;
     }
 
-    $tablef=new GPCTables(self::$tables);
+    $tablef=new GPCTables(array(self::$tables['temp']));
 
     if(count($tablesCreate)>0) $tablef->create($tablesCreate);
     if(count($tablesUpdate)>0) $tablef->updateTablesFields($tablesUpdate);
