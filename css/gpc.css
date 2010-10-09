@@ -1,4 +1,4 @@
-.formtable, .formtable P { text-align:justify; display:block; }
+.formtable, .formtable P { text-align:justify; display:block; margin-left:0px; }
 .formtable tr { vertical-align:top; }
 .littlefont { font-size:90%; }
 .littlefont td { padding:1px; }
@@ -40,7 +40,7 @@ border-radius:4px;
 .tabsheet2 {
 display:table;
 font-family:verdana,arial,helvetica,sans-serif; font-size:8px;
-list-style-image:none; padding: 0 0 0 10px; position:relative; text-decoration:none;
+list-style:none; padding: 0 0 0 10px; position:relative; text-decoration:none;
 white-space:nowrap; margin: 0 0 0 -6px;top:-21px;border-bottom:1px solid;
 width:100%;
 }

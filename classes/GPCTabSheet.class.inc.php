@@ -1,9 +1,9 @@
 <?php
 /* -----------------------------------------------------------------------------
   class name     : GPCTabSheet
-  class version  : 1.1.0
-  plugin version : 3.2.0
-  date           : 2010-06-20
+  class version  : 1.1.1
+  plugin version : 3.2.1
+  date           : 2010-10-01
   ------------------------------------------------------------------------------
   author: grum at piwigo.org
   << May the Little SpaceFrog be with you >>
@@ -16,6 +16,7 @@
 |         |            |
 | 1.1.0   | 2010/06/20 | * add possibility to manage the class names for tabs
 |         |            |
+| 1.1.1   | 2010/10/01 | * add attribute 'id' for tabs (<li> items)
 |         |            |
 |         |            |
 |         |            |

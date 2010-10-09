@@ -225,7 +225,7 @@ function criteriaBuilder(container)
   {
     counters.group++;
 
-    content="<li id='"+itemsId.group+counters.group+"' class='cbGroup cbSortable cbOpAND "+options.classGroup+"'>";
+    var content="<li id='"+itemsId.group+counters.group+"' class='cbGroup cbSortable cbOpAND "+options.classGroup+"'>";
     content+="<ul></ul></li>";
 
     $('#'+itemId).wrap(content);
@@ -263,7 +263,7 @@ function criteriaBuilder(container)
   {
     counters.item++;
 
-    content="<li id='"+itemsId.item+counters.item+"' class='cbItem cbSortable "+options.classItem+"'>";
+    var content="<li id='"+itemsId.item+counters.item+"' class='cbItem cbSortable "+options.classItem+"'>";
     content+="<div class='cbItemButtons' style='float:right;'>";
 
     if(options.imgEditUrl!='' &&

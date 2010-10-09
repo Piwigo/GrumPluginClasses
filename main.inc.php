@@ -59,8 +59,10 @@ Author URI: http://photos.grum.fr/
 |         |            |   - now abble to manage complex request with multi-record
 |         |            |   - result can be stored in the caddie
 |         |            |
+| 3.2.1   | 2010/10/09 | * Enhance GPCTabSheet functionnalities
+|         |            |   - add 'id' attribute for tabs (<li> items)
 |         |            |
-|         |            |
+|         |            | * Fix JS & CSS bug with IE8
 |         |            |
 |         |            |
 |         |            |

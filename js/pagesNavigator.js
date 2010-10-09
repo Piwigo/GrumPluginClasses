@@ -153,11 +153,11 @@ function pagesNavigator(container)
     re=/1/;
     if( (re.exec(options.hideMode)==null)==false && pages.num==1)
     {
-      $('#'+itemsId.container).html(content);
+      $('#'+itemsId.container).html('');
       return('');
     }
 
-    content="<ul id='"+container+"PageNavigator'>";
+    var content="<ul id='"+container+"PageNavigator'>";
 
     styleLI=" list-style:none;float:left; ";
     re=/</;
