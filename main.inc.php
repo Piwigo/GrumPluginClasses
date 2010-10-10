@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.2.0
+Version: 3.2.1
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -64,7 +64,9 @@ Author URI: http://photos.grum.fr/
 |         |            |
 |         |            | * Fix JS & CSS bug with IE8
 |         |            |
+| 3.2.2   | 2010/mm/dd | *
 |         |            |
+|         |            | ===== Don't forget to update the plugin version ! =====
 |         |            |
 |         |            |
 |         |            |
