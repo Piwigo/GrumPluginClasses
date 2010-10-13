@@ -14,6 +14,6 @@
 
   if(!defined('PHPWG_ROOT_PATH')) die('Hacking attempt!');
 
-  if(!defined('GPC_VERSION')) define('GPC_VERSION',  '3.3.0');
-  if(!defined('GPC_VERSION2')) define('GPC_VERSION2', '03.03.00');
+  if(!defined('GPC_VERSION')) define('GPC_VERSION',  '3.3.1');
+  if(!defined('GPC_VERSION2')) define('GPC_VERSION2', '03.03.01');
 ?>
