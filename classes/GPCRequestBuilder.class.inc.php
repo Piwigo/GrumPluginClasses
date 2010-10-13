@@ -465,7 +465,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     $baseName=basename(dirname(dirname(__FILE__))).'/js/';
     $template->append('head_elements', '<script type="text/javascript" src="plugins/'.$baseName.'external/interface/interface.js"></script>');
     $template->append('head_elements', '<script type="text/javascript" src="plugins/'.$baseName.'external/inestedsortable.pack.js"></script>');
-    $template->append('head_elements', '<script type="text/javascript" src="plugins/'.$baseName.'criteriaBuilder.js"></script>');
+    $template->append('head_elements', '<script type="text/javascript" src="plugins/'.$baseName.'criteriaBuilder.packed.js"></script>');
     $template->append('head_elements',
 "<script type=\"text/javascript\">
   requestBuilderOptions = {

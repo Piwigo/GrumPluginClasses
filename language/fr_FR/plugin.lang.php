@@ -9,4 +9,10 @@ $lang['GPC required'] = 'GPC requis';
 $lang['Installed'] = 'Installé le';
 $lang['Infos'] = 'Informations';
 $lang['Some plugins are dependent on Grum Plugin Classes: before uninstall, you must first uninstall the plugins dependent'] = 'Certains plugins sont dépendants de Grum Plugin Classes : avant le désinstaller, il faut au préalable désinstaller les plugins dépendants';
+
+// gpc > 3.3.0
+$lang['Public'] = 'Publique';
+$lang['Private'] = 'Privée';
+$lang['All the gallery'] = 'Toute la galerie';
+
 ?>

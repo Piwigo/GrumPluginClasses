@@ -2,8 +2,8 @@
 
 /* -----------------------------------------------------------------------------
   class name     : GPCCore
-  class version  : 1.2.0
-  plugin version : 3.2.0
+  class version  : 1.3.0
+  plugin version : 3.3.0
   date           : 2010-07-28
   ------------------------------------------------------------------------------
   author: grum at piwigo.org
@@ -19,7 +19,7 @@
 |         |            |
 | 1.2.0   | 2010/07/28 | * add the loadConfigFromFile function
 |         |            |
-|         |            |
+| 1.3.0   | 2010/10/13 | * add the addHeaderCSS, addHeaderJS functions
 |         |            |
 |         |            |
 
@@ -34,6 +34,8 @@
     - static function register
     - static function unregister
     - static function BBtoHTML
+    - static function addHeaderCSS
+    - static function addHeaderJS
    ---------------------------------------------------------------------- */
 
 
@@ -41,6 +43,10 @@
 class GPCCore
 {
   static public $pluginName = "GPCCore";
+  static protected $headerItems = array(
+    'css' => array(),
+    'js'  => array()
+  );
 
   /* ---------------------------------------------------------------------------
    * grum plugin classes informations functions
@@ -304,6 +310,52 @@ class GPCCore
     return(preg_replace($patterns, $replacements, $text));
   }
 
+  /**
+   * used to add a css file in the header
+   *
+   * @param String $id : a unique id for the file
+   * @param String $file : the css file
+   */
+  static public function addHeaderCSS($id, $file)
+  {
+    if(!array_key_exists($file, self::$headerItems['css']))
+    {
+      self::$headerItems['css'][$id]=$file;
+    }
+  }
+  static public function addHeaderJS($id, $file)
+  {
+    global $template;
+
+    if(!array_key_exists($id,  $template->known_scripts) and !array_key_exists($file, self::$headerItems['js']))
+    {
+     $template->known_scripts[$id]=$url;
+     self::$headerItems['js'][$id]=$file;
+    }
+  }
+
+  /**
+   * declared as public to be accessible by the event manager, but this funcion
+   * is not aimed to be used directly
+   */
+  static public function applyHeaderItems()
+  {
+    global $template;
+
+    foreach(self::$headerItems['css'] as $file)
+    {
+      $template->block_html_head(null, '<link rel="stylesheet" type="text/css" href="'.$file.'"/>', $template->smarty, $false);
+    }
+
+    foreach(self::$headerItems['js'] as $file)
+    {
+      $template->block_html_head(null, '<script type="text/javascript" src="'.$file.'"></script>', $template->smarty, $false);
+    }
+  }
+
 } //class
+
+add_event_handler('loc_end_page_header', array('GPCCore', 'applyHeaderItems'));
+
 
 ?>

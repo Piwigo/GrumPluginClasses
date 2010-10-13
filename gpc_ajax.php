@@ -15,6 +15,11 @@
  * See main.inc.php for release information
  *
  * manage all the ajax requests
+ *
+ * known functions :
+ *  - admin.rbuilder.fillCaddie
+ *  - admin.categorySelector.getList
+ *
  * -----------------------------------------------------------------------------
  */
 
@@ -67,7 +72,9 @@
 
       // check if asked function is valid
       if(!(
-           $_REQUEST['ajaxfct']=='admin.rbuilder.fillCaddie'
+           $_REQUEST['ajaxfct']=='admin.rbuilder.fillCaddie' or
+           $_REQUEST['ajaxfct']=='admin.categorySelector.getList' or
+           $_REQUEST['ajaxfct']=='public.categorySelector.getList'
           )
         ) $_REQUEST['ajaxfct']='';
 
@@ -76,7 +83,7 @@
       if($_REQUEST['ajaxfct']!='')
       {
         /*
-         * check admin.makeStats.getList values
+         * check admin.rbuilder.fillCaddie values
          */
         if($_REQUEST['ajaxfct']=="admin.rbuilder.fillCaddie")
         {
@@ -87,8 +94,36 @@
 
           if(!isset($_REQUEST['requestNumber'])) $_REQUEST['ajaxfct']="";
         }
+
+        /*
+         * check admin.categorySelector.getList values
+         */
+        if($_REQUEST['ajaxfct']=="admin.categorySelector.getList" or
+           $_REQUEST['ajaxfct']=="public.categorySelector.getList")
+        {
+          if(!isset($_REQUEST['filter'])) $_REQUEST['filter']="accessible";
+
+          if(!($_REQUEST['filter']=="public" or
+               $_REQUEST['filter']=="accessible" or
+               $_REQUEST['filter']=="all")
+            ) $_REQUEST['filter']="accessible";
+
+          if(!isset($_REQUEST['galleryRoot'])) $_REQUEST['galleryRoot']="y";
+
+          if(!($_REQUEST['galleryRoot']=="y" or
+               $_REQUEST['galleryRoot']=="n")
+            ) $_REQUEST['galleryRoot']="y";
+
+          if(!isset($_REQUEST['tree'])) $_REQUEST['tree']="n";
+
+          if(!($_REQUEST['tree']=="y" or
+               $_REQUEST['tree']=="n")
+            ) $_REQUEST['tree']="n";
+        }
+
+
       }
-    }
+    } //checkRequest()
 
 
     /**
@@ -101,6 +136,12 @@
       {
         case 'admin.rbuilder.fillCaddie':
           $result=$this->ajax_gpc_admin_rbuilderFillCaddie($_REQUEST['fillMode'], $_REQUEST['requestNumber']);
+          break;
+        case 'admin.categorySelector.getList':
+          $result=$this->ajax_gpc_admin_CategorySelectorGetList($_REQUEST['filter'], $_REQUEST['galleryRoot'], $_REQUEST['tree']);
+          break;
+        case 'public.categorySelector.getList':
+          $result=$this->ajax_gpc_public_CategorySelectorGetList($_REQUEST['filter'], $_REQUEST['galleryRoot'], $_REQUEST['tree']);
           break;
       }
       GPCAjax::returnResult($result);
@@ -139,6 +180,86 @@
           break;
       }
     }
+
+
+
+    /**
+     * return the list of all categories
+     *
+     * @param String $filter : 'public' or 'accessible' or 'all'
+     * @param String $galleryRoot : 'y' if the gallery root is in the list
+     * @param String $tree : 'y' to obtain a recursive array, 'n' to obtain a flat array
+     * @return String : json string
+     */
+    private function ajax_gpc_admin_CategorySelectorGetList($filter, $galleryRoot, $tree)
+    {
+      global $user;
+
+      include_once(PHPWG_PLUGINS_PATH.'GrumPluginClasses/classes/GPCCategorySelector.class.inc.php');
+
+      $categorySelector=new GPCCategorySelector(
+        array(
+          'filter' => $filter,
+          'galleryRoot' => ($galleryRoot=='y')?true:false,
+          'tree' => ($tree=='y')?true:false,
+          'userMode' => 'admin'
+        )
+      );
+
+      $returned=array(
+        'userId' => $user['id'],
+        'nbCategories' => 0,
+        'categories' => $categorySelector->getCategoryList(),
+        'status' => array(
+          0=>l10n('Private'),
+          1=>l10n('Public')
+        )
+      );
+      $returned['nbCategories']=count($returned['categories']);
+
+      return(json_encode($returned));
+    } //ajax_gpc_admin_CategorySelectorGetList
+
+
+    /**
+     * return the list of all categories
+     *
+     * @param String $filter : 'public' or 'accessible' or 'all'
+     * @param String $galleryRoot : 'y' if the gallery root is in the list
+     * @param String $tree : 'y' to obtain a recursive array, 'n' to obtain a flat array
+     * @param String $userMode : 'public' or 'admin'
+     * @return String : json string
+     */
+    private function ajax_gpc_public_CategorySelectorGetList($filter, $galleryRoot, $tree)
+    {
+      global $user;
+
+      include_once(PHPWG_PLUGINS_PATH.'GrumPluginClasses/classes/GPCCategorySelector.class.inc.php');
+
+      $categorySelector=new GPCCategorySelector(
+        array(
+          'filter' => $filter,
+          'galleryRoot' => ($galleryRoot=='y')?true:false,
+          'tree' => ($tree=='y')?true:false,
+          'userMode' => 'public'
+        )
+      );
+
+      $returned=array(
+        'userId' => $user['id'],
+        'nbCategories' => 0,
+        'categories' => $categorySelector->getCategoryList(),
+        'status' => array(
+          0=>l10n('Private'),
+          1=>l10n('Public')
+        )
+      );
+      $returned['nbCategories']=count($returned['categories']);
+
+      return(json_encode($returned));
+    } //ajax_gpc_public_CategorySelectorGetList
+
+
 
   } //class
 

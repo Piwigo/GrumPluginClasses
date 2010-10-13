@@ -68,37 +68,34 @@
 function criteriaBuilder(container)
 {
   var itemsId = {
-    group:'iCbGroup',
-    item:'iCbItem',
-    container:container,
-  }
-
-  var counters = {
-    group:0,
-    item:0,
-  }
-
-  var options = {
-      textAND:'AND',
-      textOR:'OR',
-      textHint:'',
-      classGroup:'',
-      classItem:'',
-      classOperator:'',
-      classHelper:'helper',
-      opacity:0.8,
-      onEdit:null,
-      onDelete:null,
-      onRequestSuccess:null,
-      onRequestError:null,
-      onGetPageSuccess:null,
-      onGetPageError:null,
-      imgEditUrl:'',
-      imgDeleteUrl:'',
-      ajaxUrl:'',
-    };
-
-  var extraData = new Array();
+          group:'iCbGroup',
+          item:'iCbItem',
+          container:container,
+        },
+      counters = {
+          group:0,
+          item:0,
+        },
+      options = {
+          textAND:'AND',
+          textOR:'OR',
+          textHint:'',
+          classGroup:'',
+          classItem:'',
+          classOperator:'',
+          classHelper:'helper',
+          opacity:0.8,
+          onEdit:null,
+          onDelete:null,
+          onRequestSuccess:null,
+          onRequestError:null,
+          onGetPageSuccess:null,
+          onGetPageError:null,
+          imgEditUrl:'',
+          imgDeleteUrl:'',
+          ajaxUrl:'',
+        },
+      extraData = new Array();
 
   if(arguments.length==2)
   {
@@ -212,7 +209,7 @@ function criteriaBuilder(container)
         }
         break;
     }
-  }
+  };
 
   /**
    * wrap an item in a new group
@@ -242,7 +239,7 @@ function criteriaBuilder(container)
     $('#'+itemsId.group+counters.group+'OpOR').bind('click', itemsId.group+counters.group, onSwitchOperator);
 
     applyNested();
-  }
+  };
 
   /**
    * remove a group
@@ -252,7 +249,7 @@ function criteriaBuilder(container)
   var removeGroup = function (groupId)
   {
     $('#'+groupId).remove();
-  }
+  };
 
   /**
    * add a new item in the criteria builder area
@@ -291,7 +288,7 @@ function criteriaBuilder(container)
     }
 
     extraData[counters.item]=data;
-  }
+  };
 
   /**
    * remove an item from the criteria builder area and do a check to determine
@@ -308,7 +305,7 @@ function criteriaBuilder(container)
       extraData[eval(re.exec(itemId)[0])]=null;
       manage();
     }
-  }
+  };
 
   /**
    * modify the content of an item
@@ -326,7 +323,7 @@ function criteriaBuilder(container)
       re=/[0-9]*$/;
       extraData[eval(re.exec(itemId)[0])]=data;
     }
-  }
+  };
 
   /**
    * clear all the criteria
@@ -338,7 +335,7 @@ function criteriaBuilder(container)
     counters.item=0;
     counters.group=0;
     extraData=new Array();
-  }
+  };
 
   /**
    * used by the getItems to serialize extraData objects
@@ -369,7 +366,7 @@ function criteriaBuilder(container)
       returned+='&'+prefix+'='+value;
     }
     return(returned);
-  }
+  };
 
 
   /**
@@ -409,7 +406,7 @@ function criteriaBuilder(container)
     );
 
     return(serialized);
-  }
+  };
 
 
   /**
@@ -422,7 +419,7 @@ function criteriaBuilder(container)
     extraDataNumber=re.exec(itemId)[0];
 
     return(extraData[extraDataNumber]);
-  }
+  };
 
 
   /**
@@ -432,7 +429,7 @@ function criteriaBuilder(container)
   var setOptions = function(optionsToSet)
   {
     options = jQuery.extend(options, optionsToSet);
-  }
+  };
 
   /**
    * display/hide operator title for a group
@@ -464,7 +461,7 @@ function criteriaBuilder(container)
         $('#'+groupId+'OpOR').css('display', 'none');
       }
     }
-  }
+  };
 
   /**
    * manage the criteria builder groups&items
@@ -504,7 +501,7 @@ function criteriaBuilder(container)
         }
       }
     );
-  }
+  };
 
   /**
    * this function make the groups&items ready to be sorted & grouped
@@ -530,7 +527,7 @@ function criteriaBuilder(container)
         },
       }
     );
-  }
+  };
 
   /**
    * switch the operator for a group
@@ -553,7 +550,7 @@ function criteriaBuilder(container)
       $('#'+groupId+'OpAND').css('display', 'block');
       $('#'+groupId+'OpOR').css('display', 'none');
     }
-  }
+  };
 
   /**
    *
@@ -579,7 +576,7 @@ function criteriaBuilder(container)
        }
      );
 
-  }
+  };
 
   /**
    *
@@ -605,7 +602,7 @@ function criteriaBuilder(container)
        }
      );
 
-  }
+  };
 
   applyNested();
 };

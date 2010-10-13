@@ -55,41 +55,39 @@
 function pagesNavigator(container)
 {
   var itemsId = {
-    first:'iNavFirst',
-    last:'iNavLast',
-    previous:'iNavPrevious',
-    next:'iNavNext',
-    pageNumber:'iNavPage',
-    morePrevious:'iNavPrevMore',
-    moreNext:'iNavNextMore',
-    container:container,
-  };
-
-  var pages = {
-    num:0,
-    current:1,
-  }
-
-  var options = {
-    numberItem:0,
-    itemPerPage:25,
-    defaultPage:0,
-    displayNumPage:7,
-    displayFirst:true,
-    displayLast:true,
-    displayPrevious:true,
-    displayNext:true,
-    hideMode:'1,<', // "1": hide nav if only 1 page to display, "<": hide nav First, Previous, Next & Last if num of page < displayNumPage
-    textFirst:'&lt;&lt;',
-    textLast:'&gt;&gt;',
-    textPrevious:'&lt;',
-    textNext:'&gt;',
-    textMore:'...',
-    onPageChange:null,
-    classActive:'',
-    classInactive:'',
-    classDisabled:'',
-  };
+          first:'iNavFirst',
+          last:'iNavLast',
+          previous:'iNavPrevious',
+          next:'iNavNext',
+          pageNumber:'iNavPage',
+          morePrevious:'iNavPrevMore',
+          moreNext:'iNavNextMore',
+          container:container,
+        },
+      pages = {
+          num:0,
+          current:1,
+        },
+      options = {
+        numberItem:0,
+        itemPerPage:25,
+        defaultPage:0,
+        displayNumPage:7,
+        displayFirst:true,
+        displayLast:true,
+        displayPrevious:true,
+        displayNext:true,
+        hideMode:'1,<', // "1": hide nav if only 1 page to display, "<": hide nav First, Previous, Next & Last if num of page < displayNumPage
+        textFirst:'&lt;&lt;',
+        textLast:'&gt;&gt;',
+        textPrevious:'&lt;',
+        textNext:'&gt;',
+        textMore:'...',
+        onPageChange:null,
+        classActive:'',
+        classInactive:'',
+        classDisabled:'',
+      };
 
 
   /**
@@ -109,7 +107,7 @@ function pagesNavigator(container)
         }
         break;
     }
-  }
+  };
 
   /**
    * calculate the number of page
@@ -121,7 +119,7 @@ function pagesNavigator(container)
   var calcNumPages=function(numItems, numPerPage)
   {
     return(Math.ceil(numItems/numPerPage));
-  }
+  };
 
   /**
    *
@@ -142,7 +140,7 @@ function pagesNavigator(container)
       if(options.defaultPage>0 && options.defaultPage<=pages.num) pages.current=options.defaultPage;
       build();
     }
-  }
+  };
 
   /**
    * build the page navigator and affect it in the container
@@ -194,7 +192,7 @@ function pagesNavigator(container)
     displayNav();
 
     $('#'+itemsId.container).css('visibility', 'visible');
-  }
+  };
 
 
   var displayNav = function()
@@ -205,7 +203,8 @@ function pagesNavigator(container)
     {
       prev=pages.current-1;
     }
-    next=options.displayNumPage-1-prev
+    next=options.displayNumPage-1-prev;
+
     if(pages.current+next>=pages.num)
     {
       prev+=(pages.current+next-pages.num);
@@ -282,7 +281,7 @@ function pagesNavigator(container)
       }
     );
 
-  }
+  };
 
 
   /**
@@ -324,7 +323,7 @@ function pagesNavigator(container)
 
     displayNav();
     if(options.onPageChange!=null && jQuery.isFunction(options.onPageChange)) options.onPageChange(pages.current);
-  }
+  };
 
   if(arguments.length==2)
   {

@@ -127,11 +127,7 @@
               // if options given, merge it
               if(opt) $.extend(options, opt);
 
-              if(!data)
-              {
-                $this.data('options', options);
-                options.initialized=false;
-              }
+              $this.data('options', options);
 
               if(!properties)
               {
@@ -238,22 +234,20 @@
           if(list)
           {
             // set images list values
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setImages($this, list);
-                return($this);
+                privateMethods.setImages($(this), list);
               }
             );
           }
           else
           {
             // return images list values
-            var data = this.data('options');
+            var options = this.data('options');
 
-            if(data)
+            if(options)
             {
-              return(data.images);
+              return(options.images);
             }
             else
             {
@@ -266,22 +260,20 @@
           if(value)
           {
             // set numCols values
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setCols($this, value);
-                return($this);
+                privateMethods.setCols($(this), value);
               }
             );
           }
           else
           {
             // return images list values
-            var data = this.data('options');
+            var options = this.data('options');
 
-            if(data)
+            if(options)
             {
-              return(data.numCols);
+              return(options.numCols);
             }
             else
             {
@@ -294,22 +286,20 @@
           if(value)
           {
             // set numRows values
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setRows($this, value);
-                return($this);
+                privateMethods.setRows($(this), value);
               }
             );
           }
           else
           {
             // return images list values
-            var data = this.data('options');
+            var options = this.data('options');
 
-            if(data)
+            if(options)
             {
-              return(data.numRows);
+              return(options.numRows);
             }
             else
             {
@@ -322,22 +312,20 @@
           if(value)
           {
             // set cell width values
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setCellWidth($this, value);
-                return($this);
+                privateMethods.setCellWidth($(this), value);
               }
             );
           }
           else
           {
             // return images list values
-            var data = this.data('options');
+            var options = this.data('options');
 
-            if(data)
+            if(options)
             {
-              return(data.cellWidth);
+              return(options.cellWidth);
             }
             else
             {
@@ -350,22 +338,20 @@
           if(value)
           {
             // set cell width values
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setCellHeight($this, value);
-                return($this);
+                privateMethods.setCellHeight($(this), value);
               }
             );
           }
           else
           {
             // return images list values
-            var data = this.data('options');
+            var options = this.data('options');
 
-            if(data)
+            if(options)
             {
-              return(data.cellHeight);
+              return(options.cellHeight);
             }
             else
             {
@@ -378,23 +364,21 @@
           if(value)
           {
             // set selected value
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setValue($this, value);
-                return($this);
+                privateMethods.setValue($(this), value);
               }
             );
           }
           else
           {
             // return the selected value
-            var data=this.data('options'),
+            var options=this.data('options'),
                 properties=this.data('properties');
 
-            if(data && properties && properties.index>-1)
+            if(options && properties && properties.index>-1 && properties.index<options.images.length)
             {
-              return(data.images[properties.index]);
+              return(options.images[properties.index]);
             }
             else
             {
@@ -407,22 +391,20 @@
           if(value && $.isFunction(value))
           {
             // set selected value
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setEventPopup($this, value);
-                return($this);
+                privateMethods.setEventPopup($(this), value);
               }
             );
           }
           else
           {
             // return the selected value
-            var data=this.data('options');
+            var options=this.data('options');
 
-            if(data)
+            if(options)
             {
-              return(data.popup);
+              return(options.popup);
             }
             else
             {
@@ -435,31 +417,29 @@
           if(value && $.isFunction(value))
           {
             // set selected value
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setEventChange($this, value);
-                return($this);
+                privateMethods.setEventChange($(this), value);
               }
             );
           }
           else
           {
             // return the selected value
-            var data=this.data('options');
+            var options=this.data('options');
 
-            if(data)
+            if(options)
             {
-              return(data.change);
+              return(options.change);
             }
             else
             {
               return(null);
             }
           }
-        }, // popup
+        } // popup
 
-    } // methods
+    }; // methods
 
 
     /*
@@ -469,11 +449,11 @@
     {
       updateListArea : function (object)
         {
-          var data=object.data('options'),
+          var options=object.data('options'),
               objects=object.data('objects'),
               icon=objects.list.children().first(),
-              width=icon.outerWidth()*data.numCols,
-              height=icon.outerHeight()*data.numRows;
+              width=icon.outerWidth()*options.numCols,
+              height=icon.outerHeight()*options.numRows;
 
           objects.listContainer.css(
             {
@@ -491,14 +471,14 @@
         },
       setImages : function (object, value)
         {
-          var data=object.data('options'),
+          var options=object.data('options'),
               objects=object.data('objects'),
               properties=object.data('properties');
-          data.images=value;
+          options.images=value;
 
           objects.list.children().unbind();
           objects.list.html('');
-          for(var i=0;i<data.images.length;i++)
+          for(var i=0;i<options.images.length;i++)
           {
             liClass=' ui-icon-selector-icon ';
             if(i==properties.index)
@@ -506,7 +486,7 @@
               liClass+=' ui-icon-selector-selected-icon ';
             }
             objects.list.append(
-              $('<li indexValue="'+i+'" class="'+liClass+'" style="display:inline-block;width:'+data.cellWidth+'px;height:'+data.cellHeight+'px;background-image:url('+data.images[i]+');"></li>')
+              $('<li indexValue="'+i+'" class="'+liClass+'" style="display:inline-block;width:'+options.cellWidth+'px;height:'+options.cellHeight+'px;background-image:url('+options.images[i]+');"></li>')
                 .bind('click',
                   {object:object},
                   function (event)
@@ -518,68 +498,68 @@
             );
           }
 
-          return(data.images);
+          return(options.images);
         },
       setNumCols : function (object, value)
         {
-          var data=object.data('options'),
+          var options=object.data('options'),
               properties=object.data('properties');
-          if((!properties.initialized || data.numCols!=value) && value>0)
+          if((!properties.initialized || options.numCols!=value) && value>0)
           {
-            data.numCols=value;
+            options.numCols=value;
           }
-          return(data.numCols);
+          return(options.numCols);
         },
       setNumRows : function (object, value)
         {
-          var data=object.data('options'),
+          var options=object.data('options'),
               properties=object.data('properties');
-          if((!properties.initialized || data.numRows!=value) && value>0)
+          if((!properties.initialized || options.numRows!=value) && value>0)
           {
-            data.numRows=value;
+            options.numRows=value;
           }
-          return(data.numRows);
+          return(options.numRows);
         },
       setCellWidth : function (object, value)
         {
-          var data=object.data('options'),
+          var options=object.data('options'),
               properties=object.data('properties'),
               objects=object.data('objects');
-          if((!properties.initialized || data.cellWidth!=value) && value>=0)
+          if((!properties.initialized || options.cellWidth!=value) && value>=0)
           {
-            data.cellWidth=value;
+            options.cellWidth=value;
             objects.container.css('width', value+'px');
           }
-          return(data.cellWidth);
+          return(options.cellWidth);
         },
       setCellHeight : function (object, value)
         {
-          var data=object.data('options'),
+          var options=object.data('options'),
               properties=object.data('properties'),
               objects=object.data('objects');
-          if((!properties.initialized || data.cellHeight!=value) && value>=0)
+          if((!properties.initialized || options.cellHeight!=value) && value>=0)
           {
-            data.cellHeight=value;
+            options.cellHeight=value;
             objects.container.css('height', value+'px');
           }
-          return(data.cellHeight);
+          return(options.cellHeight);
         },
       setValue : function (object, value)
         {
-          var data=object.data('options'),
+          var options=object.data('options'),
               properties=object.data('properties'),
               index=-1;
 
           switch(value)
           {
             case ':first':
-              if(data.images.length>0) index=0;
+              if(options.images.length>0) index=0;
               break;
             case ':last':
-              index=data.images.length-1;
+              index=options.images.length-1;
               break;
             default:
-              index=$.inArray(value, data.images);
+              index=$.inArray(value, options.images);
               break;
           }
 
@@ -587,26 +567,26 @@
           {
             privateMethods.setValueByIndex(object, index, false);
           }
-          return(data.images[properties.index]);
+          return(options.images[properties.index]);
         },
       setValueByIndex : function (object, value, trigger)
         {
-          var data=object.data('options'),
+          var options=object.data('options'),
               properties=object.data('properties'),
               objects=object.data('objects');
-          if((!properties.initialized || properties.index!=value) && value>-1 && value<data.images.length)
+          if((!properties.initialized || properties.index!=value) && value>-1 && value<options.images.length)
           {
             objects.list.children('.ui-icon-selector-selected-icon').removeClass('ui-icon-selector-selected-icon');
             objects.list.children('[indexValue="'+value+'"]').addClass('ui-icon-selector-selected-icon');
             properties.index=value;
-            objects.container.css('background-image', 'url('+data.images[properties.index]+')');
-            if(trigger && data.change) object.trigger('iconSelectorChange', [properties.index]);
+            objects.container.css('background-image', 'url('+options.images[properties.index]+')');
+            if(trigger && options.change) object.trigger('iconSelectorChange', [properties.index]);
           }
-          return(data.images[properties.index]);
+          return(options.images[properties.index]);
         },
       displaySelector : function (object, value)
         {
-          var data=object.data('options'),
+          var options=object.data('options'),
               properties=object.data('properties'),
               objects=object.data('objects');
           if(properties.selectorVisible!=value)
@@ -624,27 +604,27 @@
             {
               objects.listContainer.css('display', 'none');
             }
-            if(data.popup) object.trigger('iconSelectorPopup', [properties.selectorVisible]);
+            if(options.popup) object.trigger('iconSelectorPopup', [properties.selectorVisible]);
           }
           return(properties.selectorVisible);
         },
       setEventPopup : function (object, value)
         {
-          var data=object.data('options');
-          data.popup=value;
+          var options=object.data('options');
+          options.popup=value;
           object.unbind('iconSelectorPopup');
-          if(value) object.bind('iconSelectorPopup', data.popup);
-          return(data.popup);
+          if(value) object.bind('iconSelectorPopup', options.popup);
+          return(options.popup);
         },
       setEventChange : function (object, value)
         {
-          var data=object.data('options');
-          data.change=value;
+          var options=object.data('options');
+          options.change=value;
           object.unbind('iconSelectorChange');
-          if(value) object.bind('iconSelectorChange', data.change);
-          return(data.change);
+          if(value) object.bind('iconSelectorChange', options.change);
+          return(options.change);
         }
-    }
+    };
 
 
     $.fn.iconSelector = function(method)

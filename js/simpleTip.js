@@ -80,11 +80,11 @@ function tipItem(item, index, options)
 
 function simpleTip()
 {
-  var items = new Array();
-  var itemIndexInc = 0;
-  var options={
-    name:'',
-  }
+  var items = new Array(),
+      itemIndexInc = 0,
+      options={
+          name:'',
+        };
 
   if(arguments.length>=1)
   {
@@ -133,7 +133,7 @@ function simpleTip()
         }
         break;
     }
-  }
+  };
 
   var add = function (item, options)
   {
@@ -168,7 +168,7 @@ function simpleTip()
       itemIndexInc++;
     }
 
-  }
+  };
 
 
   var remove = function (item)
@@ -190,7 +190,7 @@ function simpleTip()
       items[index].item=null;
       items.splice(index,1);
     }
-  }
+  };
 
 
   var clear = function ()
@@ -215,7 +215,7 @@ function simpleTip()
       items.shift();
     }
     itemIndexInc=0;
-  }
+  };
 
 
   var getIndex = function(item)
@@ -227,7 +227,7 @@ function simpleTip()
       if(items[i].index==searched) return(i);
     }
     return(-1);
-  }
+  };
 
   /**
    * prepare the tooltip
@@ -254,7 +254,7 @@ function simpleTip()
           top:  '-1500px',
           display: 'block',
         }
-      )
+      );
 
     switch(items[itemIndex].options.targetPos)
     {
@@ -414,17 +414,17 @@ function simpleTip()
       .removeClass()
       .addClass(items[itemIndex].options.classes);
 
-  }
+  };
 
   var show = function ()
   {
     $('#iSimpleTip'+options.name).css('display', 'block');
-  }
+  };
 
   var hide = function ()
   {
     $('#iSimpleTip'+options.name).css('display', 'none');
-  }
+  };
 
 
   var init = function ()
@@ -434,7 +434,7 @@ function simpleTip()
       text="<div id='iSimpleTip"+options.name+"' style='z-index:15000;display:none;position:absolute;left:0px;top:0px;'><div id='iSimpleTipShadow"+options.name+"' style='position:absolute;width:100%;height:100%;background:#000000;opacity:0.4;filter:alpha(opacity:40);display:block;z-index:-1;margin-left:2px;margin-top:2px;'></div><div id='iSimpleTipArrow"+options.name+"' style='position:absolute;'></div><div id='iSimpleTipContent"+options.name+"'></div></div>";
       $('body').append(text);
     }
-  }
+  };
 
 
   init();

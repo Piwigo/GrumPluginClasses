@@ -2,7 +2,7 @@
 {known_script id="jquery.ui.dialog" src=$ROOT_URL|@cat:"themes/default/js/ui/packed/ui.dialog.packed.js"}
 {known_script id="jquery.tipTip" src=$ROOT_URL|@cat:"themes/default/js/plugins/jquery.tipTip.minified.js"}
 
-{known_script id="gpc.pagesNavigator" src=$ROOT_URL|@cat:"plugins/GrumPluginClasses/js/pagesNavigator.js"}
+{known_script id="gpc.pagesNavigator" src=$ROOT_URL|@cat:"plugins/GrumPluginClasses/js/pagesNavigator.packed.js"}
 
 
 {literal}
