@@ -1,7 +1,7 @@
 /**
  * -----------------------------------------------------------------------------
  * file: ui.categorySelector.js
- * file version: 1.0.0
+ * file version: 1.0.1
  * date: 2010-10-10
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
@@ -20,11 +20,12 @@
  * :: HISTORY ::
  *
  * | release | date       |
- * | 1.0.0   | 2010/10/10 | first release
+ * | 1.0.0   | 2010/10/10 | * first release
  * |         |            |
+ * | 1.0.1   | 2010/10/14 | * fix bug on 'value' functions ':none', ':all' and
+ * |         |            |   ':invert'
  * |         |            |
- * |         |            |
- * |         |            |
+ * |         |            | * add 'name' property
  * |         |            |
  * |         |            |
  *
@@ -496,6 +497,27 @@
             {
               return(0);
             }
+          }
+        }, // userMode
+
+      name: function ()
+        {
+          var options=this.data('options'),
+              properties=this.data('properties'),
+              objects=this.data('objects');
+
+          if(!options.multiple)
+          {
+            return(properties.categories[properties.index].name);
+          }
+          else
+          {
+            var listNames=[];
+            for(var i=0;i<properties.index.length;i++)
+            {
+              listNames.push(properties.categories[properties.index[i]].name);
+            }
+            return(listNames);
           }
         }, // userMode
 
@@ -1046,7 +1068,7 @@
               break;
             case ':invert':
               if(!options.multiple) return(false);
-
+              properties.index=[];
               objects.list.find('.ui-category-selector-item').each(
                 function ()
                 {
@@ -1078,6 +1100,8 @@
                     else
                     {
                       $this.addClass('ui-category-selector-selected-item');
+                      tmp=privateMethods.findIndexByValue(object, $this.attr('catId'));
+                      if(tmp>-1) properties.index.push(tmp);
                     }
                   }
                 }
@@ -1087,6 +1111,8 @@
               break;
             case ':none':
               if(!options.multiple) return(false);
+
+              properties.index=[];
               objects.list.find('.ui-category-selector-selected-item').each(
                 function ()
                 {
@@ -1117,6 +1143,7 @@
               break;
             case ':all':
               if(!options.multiple) return(false);
+              properties.index=[];
               objects.list.find('.ui-category-selector-item').each(
                 function ()
                 {
@@ -1138,8 +1165,13 @@
                         break;
                     }
                   }
+                  if(apply)
+                  {
+                    tmp=privateMethods.findIndexByValue(object, $this.attr('catId'));
+                    if(tmp>-1) properties.index.push(tmp);
 
-                  if(apply) $this.addClass('ui-category-selector-selected-item');
+                    $this.addClass('ui-category-selector-selected-item');
+                  }
                 }
               );
               privateMethods.setValue(object, [], false);

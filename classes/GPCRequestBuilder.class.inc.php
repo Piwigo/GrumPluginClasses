@@ -720,7 +720,6 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
 
     $sql="INSERT INTO ".self::$tables['result_cache']." (SELECT DISTINCT $requestNumber, ".$build['SELECT']." $sql)";
 
-//echo $sql;
 
     $returned="0;0";
 
@@ -1183,7 +1182,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
 
           if($val['mode']=='item')
           {
-            $returnedS.="(SELECT ".call_user_func(Array('RBCallBack'.$val['plugin'], 'getImageId'))." AS imageId
+            $returnedS.="(SELECT DISTINCT ".call_user_func(Array('RBCallBack'.$val['plugin'], 'getImageId'))." AS imageId
                           FROM ".call_user_func(Array('RBCallBack'.$val['plugin'], 'getFrom'))."
                           WHERE ".$val['value'].") t".self::$tGlobalId." ";
           }
@@ -1206,7 +1205,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
 
           if($val['mode']=='item')
           {
-            $returnedS.="SELECT '$requestNumber', t".self::$tGlobalId.".imageId
+            $returnedS.="SELECT DISTINCT '$requestNumber', t".self::$tGlobalId.".imageId
                           FROM (SELECT ".call_user_func(Array('RBCallBack'.$val['plugin'], 'getImageId'))." AS imageId
                                 FROM ".call_user_func(Array('RBCallBack'.$val['plugin'], 'getFrom'))."
                                 WHERE ".$val['value'].") t".self::$tGlobalId." ";
