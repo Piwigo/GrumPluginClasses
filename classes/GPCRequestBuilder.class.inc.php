@@ -1,8 +1,8 @@
 <?php
 /* -----------------------------------------------------------------------------
   class name: GCPRequestBuilder
-  class version  : 1.1.0
-  plugin version : 3.2.0
+  class version  : 1.1.1
+  plugin version : 3.3.2
   date           : 2010-09-08
 
   ------------------------------------------------------------------------------
@@ -67,8 +67,8 @@
 |         |            |
 | 1.1.0   | 2010/09/08 | * add functionnalities to manage complex requests
 |         |            |
-|         |            |
-|         |            |
+| 1.1.1   | 2010/10/14 | * fix bug on the buildGroupRequest function
+|         |            |   . adding 'DISTINCT' keyword to the SQL requests
 |         |            |
 |         |            |
 |         |            |
@@ -364,6 +364,7 @@ class GPCRequestBuilder {
   `execution_time` float unsigned NOT NULL default '0',
   `connected_plugin` char(255) NOT NULL,
   `filter` text NOT NULL,
+  `parameters` text NOT NULL,
   PRIMARY KEY  (`id`)
 )
 CHARACTER SET utf8 COLLATE utf8_general_ci",
@@ -395,12 +396,12 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
    */
   static public function updateTables($pluginPreviousRelease)
   {
-    $tablesCreate=array();
-    $tablesUpdate=array();
-
     switch($pluginPreviousRelease)
     {
       case '03.01.00':
+        $tablesCreate=array();
+        $tablesUpdate=array();
+
         $tablesCreate[]=
 "CREATE TABLE `".self::$tables['temp']."` (
   `requestId` char(30) NOT NULL,
@@ -411,13 +412,28 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
 
         $tablesUpdate[self::$tables['request']]['filter']=
 "ADD COLUMN  `filter` text NOT NULL default '' ";
-        break;
+
+
+        $tablef=new GPCTables(array(self::$tables['temp']));
+
+        $tablef->create($tablesCreate);
+        $tablef->updateTablesFields($tablesUpdate);
+        // no break ! need to be updated like the next release
+        // break;
+      case '03.01.01':
+      case '03.02.00':
+      case '03.02.01':
+      case '03.03.00':
+      case '03.03.01':
+        $tablesUpdate=array();
+
+        $tablesUpdate[self::$tables['request']]['parameters']=
+"ADD COLUMN `parameters` TEXT NOT NULL AFTER `filter`";
+
+        $tablef->updateTablesFields($tablesUpdate);
+        // no break ! need to be updated like the next release
+        // break;
     }
-
-    $tablef=new GPCTables(array(self::$tables['temp']));
-
-    if(count($tablesCreate)>0) $tablef->create($tablesCreate);
-    if(count($tablesUpdate)>0) $tablef->updateTablesFields($tablesUpdate);
 
     return(true);
   }
@@ -727,7 +743,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     if($result)
     {
       $numberItems=pwg_db_changes($result);
-      self::updateRequest($requestNumber, $numberItems, 0, implode(',', $pluginList), $build['FILTER']);
+      self::updateRequest($requestNumber, $numberItems, 0, implode(',', $pluginList), $build['FILTER'], $_REQUEST['extraData']);
 
       $returned="$requestNumber;".$numberItems;
     }
@@ -795,6 +811,13 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
       )
     );
 
+
+    $extraData=array();
+    foreach($request['parameters'] as $data)
+    {
+      $extraData[$data['owner']]=$data['param'];
+    }
+
     /* for each needed plugin :
      *  - include the file
      *  - call the static public function getFrom, getJoin, getSelect
@@ -807,14 +830,14 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
         {
           include_once($registeredPlugin[$val]['fileName']);
 
-          $tmp=explode(',', call_user_func(Array('RBCallBack'.$val, 'getSelect')));
+          $tmp=explode(',', call_user_func(Array('RBCallBack'.$val, 'getSelect'), $extraData[$val]));
           foreach($tmp as $key2=>$val2)
           {
             $tmp[$key2]=self::groupConcatAlias($val2, '#sep#');
           }
           $tmpBuild['SELECT'][$val]=implode(',', $tmp);
-          $tmpBuild['FROM'][$val]=call_user_func(Array('RBCallBack'.$val, 'getFrom'));
-          $tmpBuild['JOIN'][$val]=call_user_func(Array('RBCallBack'.$val, 'getJoin'));
+          $tmpBuild['FROM'][$val]=call_user_func(Array('RBCallBack'.$val, 'getFrom'), $extraData[$val]);
+          $tmpBuild['JOIN'][$val]=call_user_func(Array('RBCallBack'.$val, 'getJoin'), $extraData[$val]);
         }
       }
     }
@@ -1043,7 +1066,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
    */
   static private function getNewRequest($userId)
   {
-    $sql="INSERT INTO ".self::$tables['request']." VALUES('', '$userId', '".date('Y-m-d H:i:s')."', 0, 0, '', '')";
+    $sql="INSERT INTO ".self::$tables['request']." VALUES('', '$userId', '".date('Y-m-d H:i:s')."', 0, 0, '', '', '')";
     $result=pwg_query($sql);
     if($result)
     {
@@ -1059,15 +1082,17 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
    * @param Integer $numItems : number of items found in the request
    * @param Float $executionTime : time in second to execute the request
    * @param String $pluginList : list of used plugins
+   * @param String $parameters : parameters given for the request
    * @return Boolean : true if request was updated, otherwise false
    */
-  static private function updateRequest($requestId, $numItems, $executionTime, $pluginList, $additionalFilter)
+  static private function updateRequest($requestId, $numItems, $executionTime, $pluginList, $additionalFilter, $parameters)
   {
     $sql="UPDATE ".self::$tables['request']."
             SET num_items = $numItems,
                 execution_time = $executionTime,
                 connected_plugin = '$pluginList',
-                filter = '".mysql_escape_string($additionalFilter)."'
+                filter = '".mysql_escape_string($additionalFilter)."',
+                parameters = '".serialize($parameters)."'
             WHERE id = $requestId";
     $result=pwg_query($sql);
     if($result)
@@ -1086,7 +1111,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
   static private function getRequest($requestId)
   {
     $returned=false;
-    $sql="SELECT user_id, date, num_items, execution_time, connected_plugin, filter
+    $sql="SELECT user_id, date, num_items, execution_time, connected_plugin, filter, parameters
           FROM ".self::$tables['request']."
           WHERE id = $requestId";
     $result=pwg_query($sql);
@@ -1094,6 +1119,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     {
       while($row=pwg_db_fetch_assoc($result))
       {
+        if($row['parameters']!='') $row['parameters']=unserialize($row['parameters']);
         $returned=$row;
       }
     }
