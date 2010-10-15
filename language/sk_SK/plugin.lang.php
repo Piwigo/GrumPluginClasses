@@ -10,6 +10,8 @@ $lang['Installed'] = 'Inštalované';
 $lang['Infos'] = 'Infos';
 $lang['Some plugins are dependent on Grum Plugin Classes: before uninstall, you must first uninstall the plugins dependent'] = 'Niektoré doplnky sú závislé od Grum doplnku: pred odinštalovaním musíte najprv odinštalovať závislé doplnky';
 
-
+$lang['Public'] = 'Verejné';
+$lang['Private'] = 'Súkromné';
+$lang['All the gallery'] = 'Celá galéria';
 
 ?>
