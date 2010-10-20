@@ -73,8 +73,8 @@
       // check if asked function is valid
       if(!(
            $_REQUEST['ajaxfct']=='admin.rbuilder.fillCaddie' or
-           $_REQUEST['ajaxfct']=='admin.rbuilder.searchExecute' or
-           $_REQUEST['ajaxfct']=='admin.rbuilder.searchGetPage' or
+           $_REQUEST['ajaxfct']=='public.rbuilder.searchExecute' or
+           $_REQUEST['ajaxfct']=='public.rbuilder.searchGetPage' or
            $_REQUEST['ajaxfct']=='admin.categorySelector.getList' or
            $_REQUEST['ajaxfct']=='public.categorySelector.getList'
           )
@@ -98,17 +98,17 @@
         }
 
         /*
-         * check admin.rbuilder.searchExecute values
+         * check public.rbuilder.searchExecute values
          */
-        if($_REQUEST['ajaxfct']=="admin.rbuilder.searchExecute")
+        if($_REQUEST['ajaxfct']=="public.rbuilder.searchExecute")
         {
           if(!isset($_REQUEST['requestName'])) $_REQUEST['ajaxfct']="";
         }
 
         /*
-         * check admin.rbuilder.searchGetPage values
+         * check public.rbuilder.searchGetPage values
          */
-        if($_REQUEST['ajaxfct']=="admin.rbuilder.searchGetPage")
+        if($_REQUEST['ajaxfct']=="public.rbuilder.searchGetPage")
         {
            if(!isset($_REQUEST['requestNumber'])) $_REQUEST['ajaxfct']="";
 
@@ -164,11 +164,11 @@
         case 'admin.rbuilder.fillCaddie':
           $result=$this->ajax_gpc_admin_rbuilderFillCaddie($_REQUEST['fillMode'], $_REQUEST['requestNumber']);
           break;
-        case 'admin.rbuilder.searchExecute':
-          $result=$this->ajax_gpc_admin_rbuilderSearchExecute();
+        case 'public.rbuilder.searchExecute':
+          $result=$this->ajax_gpc_public_rbuilderSearchExecute();
           break;
-        case 'admin.rbuilder.searchGetPage':
-          $result=$this->ajax_gpc_admin_rbuilderSearchGetPage();
+        case 'public.rbuilder.searchGetPage':
+          $result=$this->ajax_gpc_public_rbuilderSearchGetPage();
           break;
         case 'admin.categorySelector.getList':
           $result=$this->ajax_gpc_admin_CategorySelectorGetList($_REQUEST['filter'], $_REQUEST['galleryRoot'], $_REQUEST['tree']);
@@ -297,7 +297,7 @@
      *
      * @return String :
      */
-    private function ajax_gpc_admin_rbuilderSearchExecute()
+    private function ajax_gpc_public_rbuilderSearchExecute()
     {
       global $prefixeTable;
       include_once(GPC_PATH."classes/GPCRequestBuilder.class.inc.php");
@@ -309,7 +309,7 @@
      *
      * @return String :
      */
-    private function ajax_gpc_admin_rbuilderSearchGetPage()
+    private function ajax_gpc_public_rbuilderSearchGetPage()
     {
       global $prefixeTable;
       include_once(GPC_PATH."classes/GPCRequestBuilder.class.inc.php");

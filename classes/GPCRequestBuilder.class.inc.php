@@ -508,12 +508,13 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
    */
   static public function executeRequest($ajaxfct)
   {
+    $result='';
     switch($ajaxfct)
     {
-      case 'admin.rbuilder.searchExecute':
+      case 'public.rbuilder.searchExecute':
         $result=self::doCache();
         break;
-      case 'admin.rbuilder.searchGetPage':
+      case 'public.rbuilder.searchGetPage':
         $result=self::getPage($_REQUEST['requestNumber'], $_REQUEST['page'], $_REQUEST['numPerPage']);
         break;
     }

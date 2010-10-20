@@ -558,7 +558,7 @@ function criteriaBuilder(container)
    */
   var sendRequest = function()
   {
-    datas=encodeURI('ajaxfct=admin.rbuilder.searchExecute&requestName='+itemsId.container+'&'+getItems());
+    datas=encodeURI('ajaxfct=public.rbuilder.searchExecute&requestName='+itemsId.container+'&'+getItems());
     $.ajax(
       {
         type: "POST",
@@ -589,7 +589,7 @@ function criteriaBuilder(container)
         type: "POST",
         url: options.ajaxUrl,
         async: true,
-        data: {ajaxfct:'admin.rbuilder.searchGetPage', page:pageNumber, requestNumber:requestNumber, numPerPage:numberPerPage},
+        data: {ajaxfct:'public.rbuilder.searchGetPage', page:pageNumber, requestNumber:requestNumber, numPerPage:numberPerPage},
         success: function(msg)
           {
             if(options.onGetPageSuccess!=null && jQuery.isFunction(options.onGetPageSuccess)) options.onGetPageSuccess(msg);

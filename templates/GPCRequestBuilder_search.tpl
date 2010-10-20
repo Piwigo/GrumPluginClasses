@@ -336,6 +336,8 @@ var cb=null;
       <div id='iPagesNavigator' style='float:right;'></div>
       <div style='text-align:left;padding:4px;'>
         {'gpc_rb_number_of_item_found'|@translate}&nbsp;:&nbsp;<span id='iResultQueryNfo'></span>
+
+        {if is_admin()}
         <div id='iMenuCaddie' style='display:inline-block;'>
           <div id='iMenuCaddieBar'>
             <div id='iMenuCaddieText' class='gcLink gcBgInput'>{'gpc_manage_caddie'|@translate}&dArr;
@@ -347,8 +349,9 @@ var cb=null;
               </ul>
             </div>
           </div>
+        </div>
+        {/if}
 
-        </span>
       </div>
     </div>
 
