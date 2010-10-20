@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.3.1
+Version: 3.3.2
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -74,6 +74,14 @@ Author URI: http://photos.grum.fr/
 |         |            |   . simpleTip.packed.js
 |         |            |
 |         |            | * Adding GPCCategorySelector class
+|         |            |
+| 3.3.1   |            | * nothing changed, the 3.3.1 package was built to
+|         |            |   replace a wrong fil
+|         |            |
+| 3.3.2   | 2010/10/20 | * Fix mantis bug:1945
+|         |            |   . categorySelector : category list is empty
+|         |            |
+|         |            |
 |         |            |
 |         |            | ===== Don't forget to update the plugin version ! =====
 |         |            |

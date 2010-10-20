@@ -88,4 +88,8 @@ padding-top:6px; border-bottom:5px solid;
   margin:-6px 0;
   padding:0 40px 6px;
 }
-
+.error, input.error {
+  background:#FFAAAA;
+  border:1px solid #800000;
+  color:#800000;
+}

@@ -1,7 +1,7 @@
 /**
  * -----------------------------------------------------------------------------
  * file: criteriaBuilder.js
- * file version: 1.0.0
+ * file version: 1.1.0
  * date: 2010-05-01
  *
  * JS file provided by the piwigo's plugin "GrumPluginClasses"
@@ -53,9 +53,9 @@
  * :: HISTORY ::
  *
  * | release | date       |
- * | 1.0.0   | 2010/04/27 | start to coding
+ * | 1.0.0   | 2010/04/27 | * start to coding
  * |         |            |
- * |         |            |
+ * | 1.1.0   | 2010/10/20 | * change ajax methods
  * |         |            |
  * |         |            |
  * |         |            |
@@ -558,11 +558,11 @@ function criteriaBuilder(container)
    */
   var sendRequest = function()
   {
-    datas=encodeURI('requestName='+itemsId.container+'&'+getItems());
+    datas=encodeURI('ajaxfct=admin.rbuilder.searchExecute&requestName='+itemsId.container+'&'+getItems());
     $.ajax(
       {
         type: "POST",
-        url: options.ajaxUrl+'execute',
+        url: options.ajaxUrl,
         async: true,
         data: datas,
         success: function(msg)
@@ -584,13 +584,12 @@ function criteriaBuilder(container)
    */
   var getPage = function(requestNumber, pageNumber, numberPerPage)
   {
-    datas=encodeURI('requestName='+itemsId.container+'&'+getItems());
     $.ajax(
       {
         type: "POST",
-        url: options.ajaxUrl+'getPage',
+        url: options.ajaxUrl,
         async: true,
-        data: {page:pageNumber, requestNumber:requestNumber, numPerPage:numberPerPage},
+        data: {ajaxfct:'admin.rbuilder.searchGetPage', page:pageNumber, requestNumber:requestNumber, numPerPage:numberPerPage},
         success: function(msg)
           {
             if(options.onGetPageSuccess!=null && jQuery.isFunction(options.onGetPageSuccess)) options.onGetPageSuccess(msg);

@@ -124,7 +124,7 @@ class CommonPlugin
   /* constructor allows to initialize $prefixeTable value */
   public function __construct($prefixeTable, $filelocation)
   {
-    $this->debug_file="debug.txt";
+    $this->debug_file=GPCCore::getPiwigoSystemPath()."/_data/debug.txt";
 
     $this->fileLocation=$filelocation;
     $this->prefixeTable=$prefixeTable;

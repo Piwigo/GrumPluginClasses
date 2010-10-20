@@ -2,9 +2,9 @@
 
 /* -----------------------------------------------------------------------------
   class name     : GPCCore
-  class version  : 1.3.0
-  plugin version : 3.3.0
-  date           : 2010-07-28
+  class version  : 1.3.1
+  plugin version : 3.3.2
+  date           : 2010-10-20
   ------------------------------------------------------------------------------
   author: grum at piwigo.org
   << May the Little SpaceFrog be with you >>
@@ -21,6 +21,14 @@
 |         |            |
 | 1.3.0   | 2010/10/13 | * add the addHeaderCSS, addHeaderJS functions
 |         |            |
+| 1.3.1   | 2010/10/20 | * applyHeaderItems functions implemented with an
+|         |            |   higher priority on the 'loc_begin_page_header' event
+|         |            |
+|         |            | * implement the getUserLanguageDesc() function, using
+|         |            |   extended description function if present
+|         |            |
+|         |            | * implement the getPiwigoSystemPath function
+|         |            |
 |         |            |
 
   ------------------------------------------------------------------------------
@@ -36,17 +44,27 @@
     - static function BBtoHTML
     - static function addHeaderCSS
     - static function addHeaderJS
+    - static function getUserLanguageDesc
+    - static function getPiwigoSystemPath
+    - static function formatOctet
    ---------------------------------------------------------------------- */
 
 
 
 class GPCCore
 {
+  static private $piwigoSystemPath;
+
   static public $pluginName = "GPCCore";
   static protected $headerItems = array(
     'css' => array(),
     'js'  => array()
   );
+
+  static public function init()
+  {
+    self::$piwigoSystemPath=dirname(dirname(dirname(dirname(__FILE__))));
+  }
 
   /* ---------------------------------------------------------------------------
    * grum plugin classes informations functions
@@ -327,9 +345,11 @@ class GPCCore
   {
     global $template;
 
+    if(!isset($template->known_scripts)) $template->known_scripts=array();
+
     if(!array_key_exists($id,  $template->known_scripts) and !array_key_exists($file, self::$headerItems['js']))
     {
-     $template->known_scripts[$id]=$url;
+     $template->known_scripts[$id]=$file;
      self::$headerItems['js'][$id]=$file;
     }
   }
@@ -344,18 +364,121 @@ class GPCCore
 
     foreach(self::$headerItems['css'] as $file)
     {
-      $template->block_html_head(null, '<link rel="stylesheet" type="text/css" href="'.$file.'"/>', $template->smarty, $false);
+      $template->append('head_elements', '<link rel="stylesheet" type="text/css" href="'.$file.'"/>');
     }
 
     foreach(self::$headerItems['js'] as $file)
     {
-      $template->block_html_head(null, '<script type="text/javascript" src="'.$file.'"></script>', $template->smarty, $false);
+      $template->append('head_elements', '<script type="text/javascript" src="'.$file.'"></script>');
     }
   }
 
+  /**
+   * use the extended description get_user_language_desc() function if exist
+   * otherwise returns the value
+   *
+   * @param String $value : value to translate
+   * @return String : translated value
+   */
+  static public function getUserLanguageDesc($value)
+  {
+    if(function_exists('get_user_language_desc'))
+    {
+      return(get_user_language_desc($value));
+    }
+    else
+    {
+      return($value);
+    }
+  }
+
+  /**
+   * returns the piwigo system path
+   * @return String
+   */
+  static public function getPiwigoSystemPath()
+  {
+    return(self::$piwigoSystemPath);
+  }
+
+
+ /**
+  * formats a file size into a human readable size
+  *
+  * @param String $format : "A"  : auto
+  *                         "Ai" : auto (io)
+  *                         "O"  : o
+  *                         "K"  : Ko
+  *                         "M"  : Mo
+  *                         "G"  : Go
+  *                         "Ki" : Kio
+  *                         "Mi" : Mio
+  *                         "Gi" : Gio
+  * @param String $thsep : thousand separator
+  * @param Integer $prec : number of decimals
+  * @param Bool $visible : display or not the unit
+  * @return String : a formatted file size
+  */
+ static public function formatOctet($octets, $format="Ai", $thsep="", $prec=2, $visible=true)
+ {
+  if($format=="Ai")
+  {
+   if($octets<1024)
+   { $format="O"; }
+   elseif($octets<1024000)
+   { $format="Ki"; }
+   elseif($octets<1024000000)
+   { $format="Mi"; }
+   else
+   { $format="Gi"; }
+  }
+  elseif($format=="A")
+  {
+   if($octets<1000)
+   { $format="O"; }
+   elseif($octets<1000000)
+   { $format="Ki"; }
+   elseif($octets<1000000000)
+   { $format="Mi"; }
+   else
+   { $format="Gi"; }
+  }
+
+  switch($format)
+  {
+   case "O":
+    $unit="o"; $div=1;
+    break;
+   case "K":
+    $unit="Ko"; $div=1000;
+    break;
+   case "M":
+    $unit="Mo"; $div=1000000;
+    break;
+   case "G":
+    $unit="Go"; $div=1000000000;
+    break;
+   case "Ki":
+    $unit="Kio"; $div=1024;
+    break;
+   case "Mi":
+    $unit="Mio"; $div=1024000;
+    break;
+   case "Gi":
+    $unit="Gio"; $div=1024000000;
+    break;
+  }
+
+  $returned=number_format($octets/$div, $prec, '.', $thsep);
+  if($visible) $returned.=' '.$unit;
+  return($returned);
+ } //function formatOctet
+
+
 } //class
 
-add_event_handler('loc_end_page_header', array('GPCCore', 'applyHeaderItems'));
+add_event_handler('loc_begin_page_header', array('GPCCore', 'applyHeaderItems'), 10);
 
+GPCCore::init();
 
 ?>

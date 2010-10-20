@@ -2,9 +2,9 @@
 /**
  * -----------------------------------------------------------------------------
  * class name     : GPCCategorySelector
- * class version  : 1.0.0
- * plugin version : 3.3.0
- * date           : 2010-10-09
+ * class version  : 1.0.1
+ * plugin version : 3.3.3
+ * date           : 2010-10-20
  * -----------------------------------------------------------------------------
  * author: grum at piwigo.org
  * << May the Little SpaceFrog be with you >>
@@ -13,9 +13,9 @@
  * :: HISTORY
  *
 | release | date       |
-| 1.0.0   | 2010/04/18 | * create class
+| 1.0.0   | 2010/10/09 | * create class
 |         |            |
-|         |            |
+| 1.0.1   | 2010/10/20 | * fix bug on the private select methods
 |         |            |
 |         |            |
 |         |            |
@@ -241,17 +241,7 @@ class GPCCategorySelector
     }
 
     $sql="SELECT DISTINCT pct.id, pct.name, pct.global_rank AS rank, pct.status
-          FROM (".CATEGORIES_TABLE." pct ";
-
-    if($this->options['userMode']==self::USER_MODE_PUBLIC)
-    {
-      $sql.=" JOIN ".USER_CACHE_CATEGORIES_TABLE." pucc
-                ON (pucc.cat_id = pct.id) AND pucc.user_id='".$user['id']."') ";
-    }
-    else
-    {
-      $sql.=") ";
-    }
+          FROM ".CATEGORIES_TABLE." pct ";
 
     switch($this->options['filter'])
     {
@@ -259,12 +249,23 @@ class GPCCategorySelector
         $sql.=" WHERE pct.status = 'public' ";
         break;
       case self::FILTER_ACCESSIBLE :
-        $sql.=" JOIN (
-                  SELECT DISTINCT pgat.cat_id AS catId FROM ".GROUP_ACCESS_TABLE." pgat
-                  UNION DISTINCT
-                  SELECT DISTINCT puat.cat_id AS catId FROM ".USER_ACCESS_TABLE." puat
-                     ) pat
-                ON (pat.catId = pct.id AND pct.status = 'private') OR (pct.status = 'public') ";
+        if(!is_admin())
+        {
+          $sql.=" JOIN ".USER_CACHE_CATEGORIES_TABLE." pucc
+                  ON (pucc.cat_id = pct.id) AND pucc.user_id='".$user['id']."' ";
+        }
+        else
+        {
+          $sql.=" JOIN (
+                    SELECT DISTINCT pgat.cat_id AS catId FROM ".GROUP_ACCESS_TABLE." pgat
+                    UNION DISTINCT
+                    SELECT DISTINCT puat.cat_id AS catId FROM ".USER_ACCESS_TABLE." puat
+                    UNION DISTINCT
+                    SELECT DISTINCT pct2.id AS catId FROM ".CATEGORIES_TABLE." pct2 WHERE pct2.status='public'
+                       ) pat
+                  ON pat.catId = pct.id ";
+        }
+
         break;
     }
     $sql.="ORDER BY global_rank;";

@@ -70,6 +70,9 @@
 | 1.1.1   | 2010/10/14 | * fix bug on the buildGroupRequest function
 |         |            |   . adding 'DISTINCT' keyword to the SQL requests
 |         |            |
+|         |            | * ajax management moved into the gpc_ajax.php file
+|         |            |
+|         |            | * fix bug on user level access to picture
 |         |            |
 |         |            |
 |         |            |
@@ -78,7 +81,6 @@
 
   --------------------------------------------------------------------------- */
 
-include_once('GPCAjax.class.inc.php');
 include_once('GPCTables.class.inc.php');
 
 /**
@@ -396,6 +398,8 @@ CHARACTER SET utf8 COLLATE utf8_general_ci",
    */
   static public function updateTables($pluginPreviousRelease)
   {
+    $tablef=new GPCTables(array(self::$tables['temp']));
+
     switch($pluginPreviousRelease)
     {
       case '03.01.00':
@@ -414,7 +418,6 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
 "ADD COLUMN  `filter` text NOT NULL default '' ";
 
 
-        $tablef=new GPCTables(array(self::$tables['temp']));
 
         $tablef->create($tablesCreate);
         $tablef->updateTablesFields($tablesUpdate);
@@ -458,14 +461,14 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
    */
   static public function loadJSandCSS()
   {
-    add_event_handler('loc_end_page_header', array('GPCRequestBuilder', 'insertJSandCSSFiles'));
+    add_event_handler('loc_begin_page_header', array('GPCRequestBuilder', 'insertJSandCSSFiles'), 9);
   }
 
 
   /**
    * insert JS a CSS file in header
    *
-   * the function is declared public because it used by the 'loc_end_page_header'
+   * the function is declared public because it used by the 'loc_begin_page_header'
    * event callback
    *
    * DO NOT USE IT DIRECTLY
@@ -475,13 +478,16 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
   {
     global $template;
 
+
     $baseName=basename(dirname(dirname(__FILE__))).'/css/';
     $template->append('head_elements', '<link href="plugins/'.$baseName.'rbuilder.css" type="text/css" rel="stylesheet"/>');
 
     $baseName=basename(dirname(dirname(__FILE__))).'/js/';
-    $template->append('head_elements', '<script type="text/javascript" src="plugins/'.$baseName.'external/interface/interface.js"></script>');
-    $template->append('head_elements', '<script type="text/javascript" src="plugins/'.$baseName.'external/inestedsortable.pack.js"></script>');
-    $template->append('head_elements', '<script type="text/javascript" src="plugins/'.$baseName.'criteriaBuilder.packed.js"></script>');
+    GPCCore::addHeaderJS('jquery', 'themes/default/js/jquery.packed.js');
+    GPCCore::addHeaderJS('gpc.interface', 'plugins/'.$baseName.'external/interface/interface.js');
+    GPCCore::addHeaderJS('gpc.inestedsortable', 'plugins/'.$baseName.'external/inestedsortable.pack.js');
+    GPCCore::addHeaderJS('gpc.criteriaBuilder', 'plugins/'.$baseName.'criteriaBuilder.js');
+
     $template->append('head_elements',
 "<script type=\"text/javascript\">
   requestBuilderOptions = {
@@ -489,7 +495,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
       textOR:'".l10n('gpc_rb_textOR')."',
       imgEditUrl:'',
       imgDeleteUrl:'',
-      ajaxUrl:'admin.php?page=plugin&section=".basename(GPC_DIR)."/admin/plugin_admin.php&searchRequest=',
+      ajaxUrl:'plugins/GrumPluginClasses/gpc_ajax.php',
   }
 </script>");
   }
@@ -500,25 +506,18 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
    *
    * @return String : a ready to use HTML code
    */
-  static public function executeRequest()
+  static public function executeRequest($ajaxfct)
   {
-    if(self::checkAjaxRequest())
+    switch($ajaxfct)
     {
-      switch($_REQUEST['searchRequest'])
-      {
-        case 'execute':
-          $result=self::doCache();
-          break;
-        case 'getPage':
-          $result=self::getPage($_REQUEST['requestNumber'], $_REQUEST['page'], $_REQUEST['numPerPage']);
-          break;
-      }
-      GPCAjax::returnResult($result);
+      case 'admin.rbuilder.searchExecute':
+        $result=self::doCache();
+        break;
+      case 'admin.rbuilder.searchGetPage':
+        $result=self::getPage($_REQUEST['requestNumber'], $_REQUEST['page'], $_REQUEST['numPerPage']);
+        break;
     }
-    else
-    {
-      GPCAjax::returnResult(l10n('gpc_rb_invalid_request'));
-    }
+    return($result);
   }
 
 
@@ -565,7 +564,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     }
 
     $sql="INSERT INTO ".self::$tables['temp']." ".self::buildGroupRequest($_REQUEST[$_REQUEST['requestName']], $tmpWHERE, $_REQUEST['operator'], ' AND ', $requestNumber);
-//echo $sql;
+
     $result=pwg_query($sql);
 
     return($requestNumber);
@@ -601,7 +600,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     $build=Array(
       'SELECT' => 'pit.id',
       'FROM' => '',
-      'WHERE' => '',
+      'WHERE' => 'pit.level <= '.$user['level'],
       'GROUPBY' => '',
       'FILTER' => '',
     );
@@ -1297,48 +1296,6 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     *
     */
   }
-
-
-  /**
-   * check if this is a valid ajax request
-   *
-   * @return Boolean : true if this is a valide ajax request
-   */
-  static protected function checkAjaxRequest()
-  {
-    if(isset($_REQUEST['searchRequest']))
-    {
-      if($_REQUEST['searchRequest']=='execute')
-      {
-        if(!isset($_REQUEST['requestName'])) return(false);
-
-        return(true);
-      }
-
-      if($_REQUEST['searchRequest']=='getPage')
-      {
-        if(!isset($_REQUEST['requestNumber'])) return(false);
-
-        if(!isset($_REQUEST['page']))
-        {
-          $_REQUEST['page']=0;
-        }
-        if($_REQUEST['page']<0) $_REQUEST['page']=0;
-
-        if(!isset($_REQUEST['numPerPage']))
-        {
-          $_REQUEST['numPerPage']=25;
-        }
-
-        if($_REQUEST['numPerPage']>100) $_REQUEST['numPerPage']=100;
-
-        return(true);
-      }
-
-    }
-    return(false);
-  }
-
 
 
   /**

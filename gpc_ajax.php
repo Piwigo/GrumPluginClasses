@@ -73,6 +73,8 @@
       // check if asked function is valid
       if(!(
            $_REQUEST['ajaxfct']=='admin.rbuilder.fillCaddie' or
+           $_REQUEST['ajaxfct']=='admin.rbuilder.searchExecute' or
+           $_REQUEST['ajaxfct']=='admin.rbuilder.searchGetPage' or
            $_REQUEST['ajaxfct']=='admin.categorySelector.getList' or
            $_REQUEST['ajaxfct']=='public.categorySelector.getList'
           )
@@ -94,6 +96,31 @@
 
           if(!isset($_REQUEST['requestNumber'])) $_REQUEST['ajaxfct']="";
         }
+
+        /*
+         * check admin.rbuilder.searchExecute values
+         */
+        if($_REQUEST['ajaxfct']=="admin.rbuilder.searchExecute")
+        {
+          if(!isset($_REQUEST['requestName'])) $_REQUEST['ajaxfct']="";
+        }
+
+        /*
+         * check admin.rbuilder.searchGetPage values
+         */
+        if($_REQUEST['ajaxfct']=="admin.rbuilder.searchGetPage")
+        {
+           if(!isset($_REQUEST['requestNumber'])) $_REQUEST['ajaxfct']="";
+
+          if(!isset($_REQUEST['page'])) $_REQUEST['page']=0;
+
+          if($_REQUEST['page']<0) $_REQUEST['page']=0;
+
+          if(!isset($_REQUEST['numPerPage'])) $_REQUEST['numPerPage']=25;
+
+          if($_REQUEST['numPerPage']>100) $_REQUEST['numPerPage']=100;
+        }
+
 
         /*
          * check admin.categorySelector.getList values
@@ -136,6 +163,12 @@
       {
         case 'admin.rbuilder.fillCaddie':
           $result=$this->ajax_gpc_admin_rbuilderFillCaddie($_REQUEST['fillMode'], $_REQUEST['requestNumber']);
+          break;
+        case 'admin.rbuilder.searchExecute':
+          $result=$this->ajax_gpc_admin_rbuilderSearchExecute();
+          break;
+        case 'admin.rbuilder.searchGetPage':
+          $result=$this->ajax_gpc_admin_rbuilderSearchGetPage();
           break;
         case 'admin.categorySelector.getList':
           $result=$this->ajax_gpc_admin_CategorySelectorGetList($_REQUEST['filter'], $_REQUEST['galleryRoot'], $_REQUEST['tree']);
@@ -259,6 +292,30 @@
       return(json_encode($returned));
     } //ajax_gpc_public_CategorySelectorGetList
 
+
+    /**
+     *
+     * @return String :
+     */
+    private function ajax_gpc_admin_rbuilderSearchExecute()
+    {
+      global $prefixeTable;
+      include_once(GPC_PATH."classes/GPCRequestBuilder.class.inc.php");
+      GPCRequestBuilder::init($prefixeTable, 'gpc');
+      return(GPCRequestBuilder::executeRequest($_REQUEST['ajaxfct']));
+    }
+
+    /**
+     *
+     * @return String :
+     */
+    private function ajax_gpc_admin_rbuilderSearchGetPage()
+    {
+      global $prefixeTable;
+      include_once(GPC_PATH."classes/GPCRequestBuilder.class.inc.php");
+      GPCRequestBuilder::init($prefixeTable, 'gpc');
+      return(GPCRequestBuilder::executeRequest($_REQUEST['ajaxfct']));
+    }
 
 
   } //class
