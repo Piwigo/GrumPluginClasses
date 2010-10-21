@@ -192,10 +192,13 @@ class GPCSearchCallback {
    * the filter can be empty, can be equal to the where clause, or can be equal
    * to a sub part of the where clause
    *
+   * in most case, return "" is the best solution
+   *
    */
   static public function getFilter($param="")
   {
-    return(self::getWhere($param));
+    //return(self::getWhere($param));
+    return("");
   }
 
   /**
@@ -665,7 +668,9 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     {
       foreach($val as $itemNumber => $param)
       {
-        $tmpBuild['FILTER'][$key][]='('.call_user_func(Array('RBCallBack'.$key, 'getFilter'), $param).')';
+        $tmpFilter=call_user_func(Array('RBCallBack'.$key, 'getFilter'), $param);
+
+        if(trim($tmpFilter)!="") $tmpBuild['FILTER'][$key][]='('.$tmpFilter.')';
       }
     }
 
@@ -1343,7 +1348,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
 
     $datas=Array(
       'dialogBox' => $dialogBox,
-      'themeName' => $template->get_themeconf('name'),
+      'themeName' => defined('IN_ADMIN')?$template->get_themeconf('name'):'',
     );
 
     $template->assign('datas', $datas);

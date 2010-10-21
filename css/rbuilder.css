@@ -128,6 +128,7 @@ div#iMenuCaddieBar div#iMenuCaddieItems {
   max-height:30px;
   position:absolute;
   padding:0px;
+  z-index:500;
 }
 
 div#iMenuCaddieBar ul {

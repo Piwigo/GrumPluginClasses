@@ -11,21 +11,20 @@ var cb=null;
 
   interfaceManager = function(optionsToSet)
   {
-    var pn=null;
-    var requestNumber=0;
-
-    options =
-      {
-        requestCriterionsVisible:'',
-        requestCriterionsHidden:'',
-        requestResult:'',
-        requestResultContent:'',
-        requestResultNfo:'',
-        requestResultPagesNavigator:'',
-        requestResultRequestNumber:0,
-        onPageChange:null,
-        numberPerPage:30,
-      };
+    var pn=null,
+        requestNumber=0,
+        options =
+          {
+            requestCriterionsVisible:'',
+            requestCriterionsHidden:'',
+            requestResult:'',
+            requestResultContent:'',
+            requestResultNfo:'',
+            requestResultPagesNavigator:'',
+            requestResultRequestNumber:0,
+            onPageChange:null,
+            numberPerPage:30,
+          };
 
     /**
      *
@@ -261,8 +260,19 @@ var cb=null;
       }
     );
 
-    requestBuilderOptions.imgEditUrl='{/literal}{$ROOT_URL}{$themeconf.admin_icon_dir}{literal}/edit_s.png';
-    requestBuilderOptions.imgDeleteUrl='{/literal}{$ROOT_URL}{$themeconf.admin_icon_dir}{literal}/delete.png';
+    {/literal}
+
+
+
+    {if defined('IN_ADMIN')}
+      requestBuilderOptions.imgEditUrl='{$ROOT_URL}{$themeconf.admin_icon_dir}/edit_s.png';
+      requestBuilderOptions.imgDeleteUrl='{$ROOT_URL}{$themeconf.admin_icon_dir}/delete.png';
+    {else}
+      requestBuilderOptions.imgEditUrl='{$ROOT_URL}{$themeconf.icon_dir}/edit.png';
+      requestBuilderOptions.imgDeleteUrl='{$ROOT_URL}{$themeconf.icon_dir}/delete.png';
+    {/if}
+    {literal}
+
     requestBuilderOptions.classGroup='gcBorderInput gcTextInput';
     requestBuilderOptions.classItem='gcBgInput gcTextInput';
     requestBuilderOptions.classOperator='cbOperator cbOperatorBg{/literal}{$datas.themeName}{literal} gcLinkHover';
@@ -284,16 +294,16 @@ var cb=null;
       }
     );
   }
-
-
-
 </script>
 {/literal}
 
 {foreach from=$datas.dialogBox item=dialogBox}
   {$dialogBox.content}
 {/foreach}
+
+{if is_admin()}
 <div id='iRBCaddieNfo'></div>
+{/if}
 
 <form>
   <fieldset>
@@ -327,35 +337,35 @@ var cb=null;
   <input type="button" class='cRequestCriterions' style="margin-left:1em;" onclick="cb.doAction('send');" value="{'gpc_rb_search'|@translate}">
 </form>
 
-  <fieldset id='iResultQuery' style='display:none;' class='cResultQuery'>
-    <legend>{'gpc_rb_result_query'|@translate}</legend>
 
-    <div id='iResultQueryContent' style='width:100%;min-height:250px;max-height:450px;overflow:auto;margin-bottom:8px;'></div>
+<fieldset id='iResultQuery' style='display:none;' class='cResultQuery'>
+  <legend>{'gpc_rb_result_query'|@translate}</legend>
 
-    <div class='gcBgInput gcTextInput'>
-      <div id='iPagesNavigator' style='float:right;'></div>
-      <div style='text-align:left;padding:4px;'>
-        {'gpc_rb_number_of_item_found'|@translate}&nbsp;:&nbsp;<span id='iResultQueryNfo'></span>
+  <div id='iResultQueryContent' style='width:100%;min-height:250px;max-height:450px;overflow:auto;margin-bottom:8px;'></div>
 
-        {if is_admin()}
-        <div id='iMenuCaddie' style='display:inline-block;'>
-          <div id='iMenuCaddieBar'>
-            <div id='iMenuCaddieText' class='gcLink gcBgInput'>{'gpc_manage_caddie'|@translate}&dArr;
-            <div id='iMenuCaddieImg' style='display:none;width:16px;height:16px;background:url(./plugins/GrumPluginClasses/icons/processing.gif) no-repeat 0 0 transparent;'>&nbsp;</div>
-            <div id='iMenuCaddieItems'>
-              <ul class='gcBgInput'>
-                <li class='gcBgInput'><a onclick="im.doAction('fillCaddie', 'add');">{'gpc_add_caddie'|@translate}</a></li>
-                <li class='gcBgInput'><a onclick="im.doAction('fillCaddie', 'replace');">{'gpc_replace_caddie'|@translate}</a></li>
-              </ul>
-            </div>
+  <div class='gcBgInput gcTextInput'>
+    <div id='iPagesNavigator' style='float:right;'></div>
+    <div style='text-align:left;padding:4px;'>
+      {'gpc_rb_number_of_item_found'|@translate}&nbsp;:&nbsp;<span id='iResultQueryNfo'></span>
+
+      {if is_admin()}
+      <div id='iMenuCaddie' style='display:inline-block;'>
+        <div id='iMenuCaddieBar'>
+          <div id='iMenuCaddieText' class='gcLink gcBgInput'>{'gpc_manage_caddie'|@translate}&dArr;
+          <div id='iMenuCaddieImg' style='display:none;width:16px;height:16px;background:url(./plugins/GrumPluginClasses/icons/processing.gif) no-repeat 0 0 transparent;'>&nbsp;</div>
+          <div id='iMenuCaddieItems'>
+            <ul class='gcBgInput'>
+              <li class='gcBgInput'><a onclick="im.doAction('fillCaddie', 'add');">{'gpc_add_caddie'|@translate}</a></li>
+              <li class='gcBgInput'><a onclick="im.doAction('fillCaddie', 'replace');">{'gpc_replace_caddie'|@translate}</a></li>
+            </ul>
           </div>
         </div>
-        {/if}
-
       </div>
-    </div>
+      {/if}
 
-  </fieldset>
+    </div>
+  </div>
+</fieldset>
 
 
 <script type="text/javascript">
