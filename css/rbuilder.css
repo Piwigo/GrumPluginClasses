@@ -76,6 +76,9 @@ div.cbOperatorBgclear {
   height:15px;
 }
 
+input.cRequestCriterions {
+  margin-left:1em;
+}
 
 div#iMenuCriterions div#iMenuCItems {
   display:none;
@@ -83,7 +86,7 @@ div#iMenuCriterions div#iMenuCItems {
   max-height:30px;
   position:absolute;
   padding:0px;
-  margin:36px 2px 2px;
+  margin-top:-1px;
 }
 
 
@@ -112,6 +115,15 @@ div#iMenuCriterions div#iMenuCTitle
 {
   margin-bottom:3px;
   cursor:default;
+  padding-left:0;
+  padding-right:0;
+}
+div#iMenuCriterions div#iMenuCTitle div#iMenuCText {
+  padding-bottom:12px;
+  padding-left:8px;
+  padding-right:8px;
+  position:relative;
+  z-index:950;
 }
 
 div#iMenuCaddieBar {

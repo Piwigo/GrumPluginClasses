@@ -75,12 +75,14 @@ Author URI: http://photos.grum.fr/
 |         |            |
 |         |            | * Adding GPCCategorySelector class
 |         |            |
-| 3.3.1   |            | * nothing changed, the 3.3.1 package was built to
-|         |            |   replace a wrong fil
+| 3.3.1   | ---- -- -- | * nothing changed, the 3.3.1 package was built to
+|         |            |   replace a wrong file
 |         |            |
 | 3.3.2   | 2010/10/20 | * Fix mantis bug:1945
 |         |            |   . categorySelector : category list is empty
 |         |            |
+|         |            | * Fix many bugs on request builder and improve the css
+|         |            |   and templates
 |         |            |
 |         |            |
 |         |            | ===== Don't forget to update the plugin version ! =====

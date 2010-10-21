@@ -109,7 +109,7 @@ var cb=null;
           $('.'+options.requestResult).css('display', 'none');
           break;
         case 'resultQuery':
-          $('#iResultQueryContent').html("<br><img src='./plugins/GrumPluginClasses/icons/processing.gif'>");
+          $('#iResultQueryContent').html("<br><img class='waitingResult' src='./plugins/GrumPluginClasses/icons/processing.gif'>");
           $('.'+options.requestCriterionsVisible).css('display', 'none');
           $('.'+options.requestCriterionsHidden).css('display', 'block');
           $('.'+options.requestResult).css('display', 'block');
@@ -288,7 +288,7 @@ var cb=null;
         onPageChange:
           function (requestNumber, page, numberPerPage)
           {
-            $('#iResultQueryContent').html("<br><img src='./plugins/GrumPluginClasses/icons/processing.gif'>");
+            $('#iResultQueryContent').html("<br><img class='waitingResult' src='./plugins/GrumPluginClasses/icons/processing.gif'>");
             cb.doAction('getPage', requestNumber, page, numberPerPage);
           }
       }
@@ -316,13 +316,15 @@ var cb=null;
       </div>
 
       <div id='iMenuCriterions' >
-        <div id='iMenuCTitle' class='gcLink gcBgInput cbButtons'>{'gpc_rb_add_criterions'|@translate}&nbsp;&dArr;</div>
-        <div id='iMenuCItems'>
-          <ul class='gcBgInput'>
-            {foreach from=$datas.dialogBox item=dialogBox}
-              <li class='gcBgInput'><a onclick="{$dialogBox.handle}.show({literal}{cBuilder:cb}{/literal});">{$dialogBox.label}</a></li>
-            {/foreach}
-          </ul>
+        <div id='iMenuCTitle' class='gcLink gcBgInput cbButtons'>
+          <div id='iMenuCText'>{'gpc_rb_add_criterions'|@translate}&nbsp;&dArr;</div>
+          <div id='iMenuCItems'>
+            <ul class='gcBgInput'>
+              {foreach from=$datas.dialogBox item=dialogBox}
+                <li class='gcBgInput'><a onclick="{$dialogBox.handle}.show({literal}{cBuilder:cb}{/literal});">{$dialogBox.label}</a></li>
+              {/foreach}
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -334,7 +336,7 @@ var cb=null;
 
   </fieldset>
 
-  <input type="button" class='cRequestCriterions' style="margin-left:1em;" onclick="cb.doAction('send');" value="{'gpc_rb_search'|@translate}">
+  <input type="button" class='cRequestCriterions' onclick="cb.doAction('send');" value="{'gpc_rb_search'|@translate}">
 </form>
 
 

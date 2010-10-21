@@ -2,7 +2,7 @@
  * -----------------------------------------------------------------------------
  * file: criteriaBuilder.js
  * file version: 1.1.0
- * date: 2010-05-01
+ * date: 2010-10-21
  *
  * JS file provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -55,7 +55,11 @@
  * | release | date       |
  * | 1.0.0   | 2010/04/27 | * start to coding
  * |         |            |
- * | 1.1.0   | 2010/10/20 | * change ajax methods
+ * | 1.1.0   | 2010/10/21 | * change ajax methods
+ * |         |            |
+ * |         |            | * fix bug : if there is no criteria, don't send
+ * |         |            |   request
+ * |         |            |
  * |         |            |
  * |         |            |
  * |         |            |
@@ -79,6 +83,7 @@ function criteriaBuilder(container)
       options = {
           textAND:'AND',
           textOR:'OR',
+          textNoCriteria:'There is no criteria ! At least, one criteria is required to do search...',
           textHint:'',
           classGroup:'',
           classItem:'',
@@ -553,11 +558,17 @@ function criteriaBuilder(container)
   };
 
   /**
-   *
+   * send the request to the server
    *
    */
   var sendRequest = function()
   {
+    if(extraData.length==0)
+    {
+      alert(options.textNoCriteria);
+      return(false);
+    }
+
     datas=encodeURI('ajaxfct=public.rbuilder.searchExecute&requestName='+itemsId.container+'&'+getItems());
     $.ajax(
       {
@@ -579,7 +590,7 @@ function criteriaBuilder(container)
   };
 
   /**
-   *
+   * get a result page from the server
    *
    */
   var getPage = function(requestNumber, pageNumber, numberPerPage)

@@ -16,5 +16,8 @@ $lang['gpc_replace_caddie'] = 'Search result replace the caddie';
 $lang['gpc_the_caddie_is_updated'] = 'Caddie was updated';
 $lang['gpc_something_is_wrong_on_the_server_side'] = 'An error has occured on the server-side';
 
+// GPC 3.3.2
+$lang['There is no criteria ! At least, one criteria is required to do search...']="There is no criteria ! At least, one criteria is required to do search...";
+
 
 ?>

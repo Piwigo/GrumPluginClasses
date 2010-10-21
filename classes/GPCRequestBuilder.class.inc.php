@@ -262,6 +262,8 @@ class GPCSearchCallback {
 }
 
 
+load_language('rbuilder.lang', GPC_PATH);
+
 
 class GPCRequestBuilder {
 
@@ -489,13 +491,14 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     GPCCore::addHeaderJS('jquery', 'themes/default/js/jquery.packed.js');
     GPCCore::addHeaderJS('gpc.interface', 'plugins/'.$baseName.'external/interface/interface.js');
     GPCCore::addHeaderJS('gpc.inestedsortable', 'plugins/'.$baseName.'external/inestedsortable.pack.js');
-    GPCCore::addHeaderJS('gpc.criteriaBuilder', 'plugins/'.$baseName.'criteriaBuilder.js');
+    GPCCore::addHeaderJS('gpc.criteriaBuilder', 'plugins/'.$baseName.'criteriaBuilder.packed.js');
 
     $template->append('head_elements',
 "<script type=\"text/javascript\">
   requestBuilderOptions = {
       textAND:'".l10n('gpc_rb_textAND')."',
       textOR:'".l10n('gpc_rb_textOR')."',
+      textNoCriteria:\"".l10n('There is no criteria ! At least, one criteria is required to do search...')."\",
       imgEditUrl:'',
       imgDeleteUrl:'',
       ajaxUrl:'plugins/GrumPluginClasses/gpc_ajax.php',
@@ -908,7 +911,6 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
         $datas['imageCategoriesPLink']=explode('#sep#', $row['imageCategoriesPLink']);
         $datas['imageCategoriesDir']=explode(',', $row['imageCategoriesDir']);
 
-
         $datas['imageCategories']=Array();
         for($i=0;$i<count($datas['imageCategoriesId']);$i++)
         {
@@ -917,14 +919,17 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
             'name' => $datas['imageCategoriesNames'][$i],
             'dirType' => $datas['imageCategoriesDir'][$i],
             'pLinks' => $datas['imageCategoriesPLink'][$i],
-            'link'=> make_index_url(
-                              array(
-                                'category' => array(
-                                  'id' => $datas['imageCategoriesId'][$i],
-                                  'name' => $datas['imageCategoriesNames'][$i],
-                                  'permalink' => $datas['imageCategoriesPLink'][$i])
-                              )
+            'link'=> make_picture_url(
+                        array(
+                          'image_id' => $datas['imageId'],
+                          'category' => array
+                            (
+                              'id' => $datas['imageCategoriesId'][$i],
+                              'name' => $datas['imageCategoriesNames'][$i],
+                              'permalink' => $datas['imageCategoriesPLink'][$i]
                             )
+                        )
+                      )
           );
         }
 
@@ -1317,7 +1322,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
   {
     global $template, $lang;
 
-    load_language('rbuilder.lang', GPC_PATH);
+    //load_language('rbuilder.lang', GPC_PATH);
 
     if(is_string($filter)) $filter=array($filter);
     $filter=array_flip($filter);

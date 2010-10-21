@@ -39,6 +39,9 @@
   include_once(PHPWG_PLUGINS_PATH.'GrumPluginClasses/classes/CommonPlugin.class.inc.php');
   include_once(PHPWG_PLUGINS_PATH.'GrumPluginClasses/classes/GPCAjax.class.inc.php');
 
+  global $page;
+  $page['root_path']='./';
+
   load_language('plugin.lang', GPC_PATH);
 
   class GPC_Ajax extends CommonPlugin

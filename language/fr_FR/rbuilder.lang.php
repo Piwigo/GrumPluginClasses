@@ -16,5 +16,7 @@ $lang['gpc_replace_caddie'] = 'Le résultat viens remplacer le panier';
 $lang['gpc_the_caddie_is_updated'] = 'Le panier a été mis à jour';
 $lang['gpc_something_is_wrong_on_the_server_side'] = 'Une anomalie est survenue lors de la connexion avec le serveur';
 
+// GPC 3.3.2
+$lang['There is no criteria ! At least, one criteria is required to do search...']="Il n'y a aucun critères ! Au minimum, un critère est requis pour pouvoir effectuer une recherche...";
 
 ?>
