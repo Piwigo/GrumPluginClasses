@@ -84,6 +84,11 @@ Author URI: http://photos.grum.fr/
 |         |            | * Fix many bugs on request builder and improve the css
 |         |            |   and templates
 |         |            |
+|         |            | * Add the jQuery plugins
+|         |            |   . ui.tagSelector.js + ui.tagSelector.packed.js
+|         |            |
+|         |            |
+|         |            |
 |         |            |
 |         |            | ===== Don't forget to update the plugin version ! =====
 |         |            |

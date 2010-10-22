@@ -53,11 +53,13 @@ li.ui-category-selector-item div {
 }
 
 li.ui-category-selector-item:hover {
-  background-color:#999999;
+  background-color:#AAAAAA;
+  color:#DDDDDD;
 }
 
 .ui-category-selector-selected-item {
-  background-color:#AAAAAA;
+  background-color:#999999;
+  color:#DDDDDD;
 }
 
 .ui-category-selector-expandable-item {

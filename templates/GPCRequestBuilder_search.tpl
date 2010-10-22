@@ -375,5 +375,7 @@ var cb=null;
   var {$dialogBox.handle}=new {$dialogBox.dialogBoxClass}();
   {/foreach}
 
+  $('.ui-dialog').css('overflow', 'visible');
+
   init();
 </script>

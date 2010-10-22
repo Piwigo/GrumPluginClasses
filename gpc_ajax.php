@@ -19,6 +19,12 @@
  * known functions :
  *  - admin.rbuilder.fillCaddie
  *  - admin.categorySelector.getList
+ *  - public.categorySelector.getList
+ *  - public.rbuilder.searchExecute
+ *  - public.rbuilder.searchGetPage
+ *  - public.tagSelector.get
+ *  - admin.tagSelector.get
+ *
  *
  * -----------------------------------------------------------------------------
  */
@@ -79,7 +85,9 @@
            $_REQUEST['ajaxfct']=='public.rbuilder.searchExecute' or
            $_REQUEST['ajaxfct']=='public.rbuilder.searchGetPage' or
            $_REQUEST['ajaxfct']=='admin.categorySelector.getList' or
-           $_REQUEST['ajaxfct']=='public.categorySelector.getList'
+           $_REQUEST['ajaxfct']=='public.categorySelector.getList' or
+           $_REQUEST['ajaxfct']=='public.tagSelector.get' or
+           $_REQUEST['ajaxfct']=='admin.tagSelector.get'
           )
         ) $_REQUEST['ajaxfct']='';
 
@@ -126,7 +134,28 @@
 
 
         /*
-         * check admin.categorySelector.getList values
+         * check admin.tagSelector.get values
+         */
+        if($_REQUEST['ajaxfct']=="admin.tagSelector.get" or
+           $_REQUEST['ajaxfct']=="public.tagSelector.get")
+        {
+          if(!isset($_REQUEST['letters'])) $_REQUEST['ajaxfct']="";
+          if(!isset($_REQUEST['filter'])) $_REQUEST['filter']="affected";
+
+          if(!($_REQUEST['filter']=="affected" or
+               $_REQUEST['filter']=="all")
+            ) $_REQUEST['filter']="affected";
+
+          if(!isset($_REQUEST['maxTags'])) $_REQUEST['maxTags']=1000;
+          if($_REQUEST['maxTags']<0) $_REQUEST['maxTags']=0;
+
+          if(!isset($_REQUEST['ignoreCase'])) $_REQUEST['ignoreCase']=true;
+
+        }
+
+
+        /*
+         * check public.categorySelector.getList values
          */
         if($_REQUEST['ajaxfct']=="admin.categorySelector.getList" or
            $_REQUEST['ajaxfct']=="public.categorySelector.getList")
@@ -150,7 +179,6 @@
                $_REQUEST['tree']=="n")
             ) $_REQUEST['tree']="n";
         }
-
 
       }
     } //checkRequest()
@@ -178,6 +206,12 @@
           break;
         case 'public.categorySelector.getList':
           $result=$this->ajax_gpc_public_CategorySelectorGetList($_REQUEST['filter'], $_REQUEST['galleryRoot'], $_REQUEST['tree']);
+          break;
+        case 'admin.tagSelector.get':
+          $result=$this->ajax_gpc_both_TagSelectorGet('admin', $_REQUEST['letters'], $_REQUEST['filter'], $_REQUEST['maxTags'], $_REQUEST['ignoreCase']);
+          break;
+        case 'public.tagSelector.get':
+          $result=$this->ajax_gpc_both_TagSelectorGet('public', $_REQUEST['letters'], $_REQUEST['filter'], $_REQUEST['maxTags'], $_REQUEST['ignoreCase']);
           break;
       }
       GPCAjax::returnResult($result);
@@ -321,8 +355,90 @@
     }
 
 
+
+    /**
+     * return the list of all known tags
+     *
+     * @param Striong $mode : 'admin' or 'public'
+     * @param String $letters : filtering on letters
+     * @param String $filter : 'accessible' or 'all'
+     * @param Integer $maxTags : maximum of items returned ; 0 = no limits
+     * @return String : json string
+     */
+    private function ajax_gpc_both_TagSelectorGet($mode, $letters, $filter, $maxTags, $ignoreCase)
+    {
+      global $user;
+
+      $returned=array(
+        'totalNbTags' => 0,
+        'tags' => array(),
+      );
+
+      $binary='';
+      if(!$ignoreCase) $binary=" BINARY ";
+
+
+      $sql="SELECT DISTINCT SQL_CALC_FOUND_ROWS ptt.id, ptt.name
+            FROM ((".TAGS_TABLE." ptt ";
+
+      if($filter=='affected')
+      {
+        $sql.=" JOIN ".IMAGE_TAG_TABLE." pitt
+                ON pitt.tag_id = ptt.id ) ";
+      }
+      else
+      {
+        $sql.=" ) ";
+      }
+
+
+      if($mode=='public' and $filter=='affected')
+      {
+        $sql.=" JOIN ".IMAGE_CATEGORY_TABLE." pict
+                ON pict.image_id = pitt.image_id )
+                JOIN ".USER_CACHE_CATEGORIES_TABLE." pucc
+                ON (pucc.cat_id = pict.category_id AND pucc.user_id='".$user['id']."' )";
+      }
+      else
+      {
+        $sql.=" ) ";
+      }
+
+      $sql.=" WHERE ptt.name LIKE $binary '%$letters%'
+            ORDER BY ptt.name ";
+
+      if($maxTags>0) $sql.=" LIMIT 0, ".$maxTags;
+
+      $result=pwg_query($sql);
+      if($result)
+      {
+        while($row=pwg_db_fetch_assoc($result))
+        {
+          $returned['tags'][]=$row;
+        }
+
+        $sql="SELECT FOUND_ROWS();";
+        $result=pwg_query($sql);
+        if($result)
+        {
+          while($row=pwg_db_fetch_row($result))
+          {
+            $returned['totalNbTags']=$row[0];
+          }
+        }
+      }
+
+      return(json_encode($returned));
+    } //ajax_gpc_both_TagSelectorGet
+
+
   } //class
 
 
   $returned=new GPC_Ajax($prefixeTable, __FILE__);
+
+
+
+
+
 ?>
