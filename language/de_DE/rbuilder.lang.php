@@ -16,4 +16,8 @@ $lang['gpc_replace_caddie'] = 'Das Suchergebnis hat Einträge im Sammelkorb erse
 $lang['gpc_the_caddie_is_updated'] = 'Der Sammelkorb wurde aktualisiert';
 $lang['gpc_something_is_wrong_on_the_server_side'] = 'Auf dem Server ist ein Fehler aufgetreten';
 
+// GPC 3.3.2
+$lang['There is no criteria ! At least, one criteria is required to do search...']="Es gibt kein Kriterium! Es muss mindestens ein Kriterium angegeben werden um die Suche starten zu können...";
+
+
 ?>
