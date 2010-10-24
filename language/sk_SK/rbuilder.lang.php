@@ -16,5 +16,8 @@ $lang['gpc_replace_caddie'] = 'Vyhľadaný výsledok nahradí caddie';
 $lang['gpc_the_caddie_is_updated'] = 'Caddie bolo aktualizované';
 $lang['gpc_something_is_wrong_on_the_server_side'] = 'Vyskytla sa chyba na strane servera';
 
+// GPC 3.3.2
+$lang['There is no criteria ! At least, one criteria is required to do search...']="To nie je kritérium! Najmenej jedno kritérium je potrebné na vyhľadávanie...";
+
 
 ?>
