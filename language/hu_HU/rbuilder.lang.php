@@ -1,21 +1,21 @@
 <?php
 // need to be translated ! thanks :-)
 
-$lang['gpc_rb_search_criterion']='Search criteria';
-$lang['gpc_rb_do_modify_request']='Modify search';
-$lang['gpc_rb_result_query']='Search result';
-$lang['gpc_rb_number_of_item_found']='Number of images found';
-$lang['gpc_rb_add_criterions']='Criteria';
-$lang['gpc_rb_clear_criterions']='Reset criteria';
-$lang['gpc_rb_search']='Search';
-$lang['gpc_rb_textAND']='All criteria must be verified';
-$lang['gpc_rb_textOR']='At least one criterion must be checked';
+$lang['gpc_rb_search_criterion']='Keresési feltételek';
+$lang['gpc_rb_do_modify_request']='Keresés módosítása';
+$lang['gpc_rb_result_query']='Keresés eredménye';
+$lang['gpc_rb_number_of_item_found']='Talált képek darabszáma';
+$lang['gpc_rb_add_criterions']='Feltételek';
+$lang['gpc_rb_clear_criterions']='Feltételek visszaállítása';
+$lang['gpc_rb_search']='Keresés';
+$lang['gpc_rb_textAND']='Az összes feltételt ellenőrizni kell';
+$lang['gpc_rb_textOR']='Legalább egy feltételt ellenőrizni kell';
 
-$lang['gpc_manage_caddie'] = 'Caddie management';
-$lang['gpc_add_caddie'] = 'Search result is added in the caddie';
-$lang['gpc_replace_caddie'] = 'Search result replace the caddie';
-$lang['gpc_the_caddie_is_updated'] = 'Caddie was updated';
-$lang['gpc_something_is_wrong_on_the_server_side'] = 'An error has occured on the server-side';
+$lang['gpc_manage_caddie'] = 'Kosár kezelése';
+$lang['gpc_add_caddie'] = 'Találatok a kosárba';
+$lang['gpc_replace_caddie'] = 'Cserélje a kosár tartalmát a találatokra';
+$lang['gpc_the_caddie_is_updated'] = 'Kosár frissítve';
+$lang['gpc_something_is_wrong_on_the_server_side'] = 'Hiba történt a szerver oldalon';
 
 
 ?>
