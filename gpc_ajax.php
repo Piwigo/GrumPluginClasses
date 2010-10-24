@@ -375,7 +375,12 @@
       );
 
       $binary='';
-      if(!$ignoreCase) $binary=" BINARY ";
+      $where=' LOWER(ptt.name) ';
+      if(!$ignoreCase)
+      {
+        $binary=" BINARY ";
+        $where=" ptt.name ";
+      }
 
 
       $sql="SELECT DISTINCT SQL_CALC_FOUND_ROWS ptt.id, ptt.name
@@ -404,7 +409,7 @@
         $sql.=" ) ";
       }
 
-      $sql.=" WHERE ptt.name LIKE $binary '%$letters%'
+      $sql.=" WHERE $where LIKE $binary '%$letters%'
             ORDER BY ptt.name ";
 
       if($maxTags>0) $sql.=" LIMIT 0, ".$maxTags;

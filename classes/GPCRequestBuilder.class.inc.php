@@ -85,24 +85,30 @@ include_once('GPCTables.class.inc.php');
 
 /**
  *
- * Preparing the cache
- * -------------------
+ * Preparing the temporary table => doCache()
+ * ------------------------------------------
  * To prepare the cache, the request builder use the following functions :
+ *  - getImageId
  *  - getFrom
  *  - getWhere
- *  - getJoin
- *  - getImageId
+ *  - getHaving
  *
- * Retrieving the results
- * ----------------------
+ * Preparing the cache table => doCache()
+ * --------------------------------------
+ * To prepare the cache, the request builder use the following functions :
+ *  => the getFilter function is used to prepare the filter for the getPage()
+ *     function ; not used to build the cache
+ *
+ * Retrieving the results => getPage()
+ * -----------------------------------
  * To retrieve the image informations, the request builder uses the following
  * functions :
  *  - getSelect
  *  - getFrom
  *  - getJoin
- *  - getFilter (in fact, the result of this function is stored while the cache
- *               is builded, but it is used only when retrieving the results for
- *               multirecord tables)
+ *  - getFilter (in fact, the result of this function is stored by the doCache()
+ *               function while the cache is builded, but it is used only when
+ *               retrieving the results for multirecord tables)
  *  - formatData
  *
  *
@@ -119,13 +125,16 @@ include_once('GPCTables.class.inc.php');
  *       when you register the class, you have to set the $multiRecord parameter
  *       to 'y'
  *
- *  gatImageId returns : "tableA.imageId"
- *  getSelect returns  : "tableA.att1, tableA.att2"
- *  getFrom returns    : "tableA"
- *  getWhere returns   : "tableA.localId= xxxx AND tableA.att1 = zzzz"
- *  getJoin returns    : "tableA.imageId = pit.id"
- *  getFilter returns  : "tableA.localId= xxxx"
+ *  gatImageId returns      : "tableA.imageId"
+ *  getSelect returns       : "tableA.att1, tableA.att2"
+ *  getFrom returns         : "tableA"
+ *  getWhere returns        : "tableA.localId= xxxx AND tableA.att1 = zzzz"
+ *  getJoin returns         : "tableA.imageId = pit.id"
+ *  getFilter returns       : "tableA.localId= xxxx"
  *
+ *  Examples :
+ *   - plugin AdvancedMetadata use getFilter
+ *   - plugin AdvancedSearchEngine, module ASETag use getHaving and getWhere
  */
 class GPCSearchCallback {
 
@@ -172,6 +181,20 @@ class GPCSearchCallback {
     return("");
   }
 
+
+  /**
+   * the getHaving function return a ready to user HAVING clause
+   *
+   * " FIND_IN_SET(value0, GROUP_CONCAT(DISTINCT att1 SEPARATOR ',')) AND
+   *   FIND_IN_SET(value0, GROUP_CONCAT(DISTINCT att1 SEPARATOR ',')) "
+   *
+   */
+  static public function getHaving($param="")
+  {
+    return("");
+  }
+
+
   /**
    * the getJoin function must return a ready to use sql statement allowing to
    * join the IMAGES table (key : pit.id) with given conditions
@@ -200,6 +223,7 @@ class GPCSearchCallback {
     //return(self::getWhere($param));
     return("");
   }
+
 
   /**
    * this function is called by the request builder, allowing to display plugin
@@ -486,22 +510,28 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
 
     $baseName=basename(dirname(dirname(__FILE__))).'/css/';
     $template->append('head_elements', '<link href="plugins/'.$baseName.'rbuilder.css" type="text/css" rel="stylesheet"/>');
+    if(defined('IN_ADMIN')) $template->append('head_elements', '<link href="plugins/'.$baseName.'rbuilder_'.$template->get_themeconf('name').'.css" type="text/css" rel="stylesheet"/>');
+
 
     $baseName=basename(dirname(dirname(__FILE__))).'/js/';
     GPCCore::addHeaderJS('jquery', 'themes/default/js/jquery.packed.js');
     GPCCore::addHeaderJS('gpc.interface', 'plugins/'.$baseName.'external/interface/interface.js');
     GPCCore::addHeaderJS('gpc.inestedsortable', 'plugins/'.$baseName.'external/inestedsortable.pack.js');
-    GPCCore::addHeaderJS('gpc.criteriaBuilder', 'plugins/'.$baseName.'criteriaBuilder.packed.js');
+    GPCCore::addHeaderJS('gpc.rbCriteriaBuilder', 'plugins/'.$baseName.'rbCriteriaBuilder.packed.js');
 
     $template->append('head_elements',
 "<script type=\"text/javascript\">
   requestBuilderOptions = {
-      textAND:'".l10n('gpc_rb_textAND')."',
-      textOR:'".l10n('gpc_rb_textOR')."',
-      textNoCriteria:\"".l10n('There is no criteria ! At least, one criteria is required to do search...')."\",
-      imgEditUrl:'',
-      imgDeleteUrl:'',
-      ajaxUrl:'plugins/GrumPluginClasses/gpc_ajax.php',
+    textAND:\"".l10n('gpc_rb_textAND')."\",
+    textOR:\"".l10n('gpc_rb_textOR')."\",
+    textNoCriteria:\"".l10n('There is no criteria ! At least, one criteria is required to do search...')."\",
+    textSomethingWrong:\"".l10n('gpc_something_is_wrong_on_the_server_side')."\",
+    textCaddieUpdated:\"".l10n('gpc_the_caddie_is_updated')."\",
+    helpEdit:\"".l10n('gpc_help_edit_criteria')."\",
+    helpDelete:\"".l10n('gpc_help_delete_criteria')."\",
+    helpMove:\"".l10n('gpc_help_move_criteria')."\",
+    helpSwitchCondition:\"".l10n('gpc_help_switch_condition')."\",
+    ajaxUrl:'plugins/GrumPluginClasses/gpc_ajax.php',
   }
 </script>");
   }
@@ -561,17 +591,18 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     //$tableName=call_user_func(Array('RBCallBack'.$plugin, 'getFrom'));
     //$imageIdName=call_user_func(Array('RBCallBack'.$plugin, 'getImageId'));
 
-    $tempWHERE=array();
+    $tempClauses=array();
     foreach($_REQUEST['extraData'] as $key => $extraData)
     {
-      $tmpWHERE[$key]=array(
+      $tempClauses[$key]=array(
         'plugin' => $extraData['owner'],
-        'where' => call_user_func(Array('RBCallBack'.$extraData['owner'], 'getWhere'), $extraData['param'])
+        'where' => call_user_func(Array('RBCallBack'.$extraData['owner'], 'getWhere'), $extraData['param']),
+        'having' => call_user_func(Array('RBCallBack'.$extraData['owner'], 'getHaving'), $extraData['param']),
       );
     }
 
-    $sql="INSERT INTO ".self::$tables['temp']." ".self::buildGroupRequest($_REQUEST[$_REQUEST['requestName']], $tmpWHERE, $_REQUEST['operator'], ' AND ', $requestNumber);
-
+    $sql="INSERT INTO ".self::$tables['temp']." ".self::buildGroupRequest($_REQUEST[$_REQUEST['requestName']], $tempClauses, $_REQUEST['operator'], ' AND ', $requestNumber);
+//echo $sql;
     $result=pwg_query($sql);
 
     return($requestNumber);
@@ -609,7 +640,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
       'FROM' => '',
       'WHERE' => 'pit.level <= '.$user['level'],
       'GROUPBY' => '',
-      'FILTER' => '',
+      'FILTER' => ''
     );
     $tmpBuild=Array(
       'FROM' => Array(
@@ -705,8 +736,6 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
         $tmp[$key]='('.implode(' OR ', $val).')';
       }
       $build['FILTER']=' ('.implode(' AND ', $tmp).') ';
-      // array_flip twice => simply remove identical values...
-      //$build['FILTER']=' ('.implode(' AND ', array_flip(array_flip($tmpBuild['FILTER']))).') ';
     }
     unset($tmpBuild['FILTER']);
 
@@ -744,7 +773,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
 
     $sql="INSERT INTO ".self::$tables['result_cache']." (SELECT DISTINCT $requestNumber, ".$build['SELECT']." $sql)";
 
-
+//echo $sql;
     $returned="0;0";
 
     $result=pwg_query($sql);
@@ -767,6 +796,8 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
    * @param Integer $requestNumber : the request number (from cache table)
    * @param Integer $pageNumber : the page to be returned
    * @param Integer $numPerPage : the number of items returned on a page
+   * @param String $mode : if mode = 'count', the function returns the number of
+   *                       rows ; otherwise, returns rows in a html string
    * @return String : formatted HTML code
    */
   static private function getPage($requestNumber, $pageNumber, $numPerPage)
@@ -868,7 +899,6 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     $build['WHERE']=implode(' AND ', $tmpBuild['WHERE']);
     unset($tmpBuild['WHERE']);
 
-
     /* for each plugin, adds jointure with the IMAGE table
      */
     self::cleanArray($tmpBuild['JOIN']);
@@ -888,12 +918,14 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
 
     $imagesList=Array();
 
-    $sql='SELECT '.$build['SELECT']
+    $sql='SELECT DISTINCT '.$build['SELECT']
         .' FROM '.$build['FROM']
         .' WHERE '.$build['WHERE']
-        .' GROUP BY '.$build['GROUPBY']
-        .' ORDER BY pit.id '
-        .' LIMIT '.$limitFrom.', '.$numPerPage;
+        .' GROUP BY '.$build['GROUPBY'];
+
+    $sql.=' ORDER BY pit.id '
+         .' LIMIT '.$limitFrom.', '.$numPerPage;
+
 //echo $sql;
     $result=pwg_query($sql);
     if($result)
@@ -1055,15 +1087,15 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     preg_match('/((?:(?:[A-Z0-9_]*)\.)?([A-Z0-9_]*))(?:\s+AS\s+([A-Z0-9_]*))?/i', trim($val), $result);
     if(array_key_exists(3, $result))
     {
-      return("GROUP_CONCAT(".$result[1]." SEPARATOR '$sep') AS ".$result[3]);
+      return("GROUP_CONCAT(DISTINCT ".$result[1]." SEPARATOR '$sep') AS ".$result[3]);
     }
     elseif(array_key_exists(2, $result))
     {
-      return("GROUP_CONCAT(".$result[1]." SEPARATOR '$sep') AS ".$result[2]);
+      return("GROUP_CONCAT(DISTINCT ".$result[1]." SEPARATOR '$sep') AS ".$result[2]);
     }
     else
     {
-      return("GROUP_CONCAT($val SEPARATOR '$sep') AS ".$val);
+      return("GROUP_CONCAT(DISTINCT $val SEPARATOR '$sep') AS ".$val);
     }
   }
 
@@ -1174,10 +1206,13 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
    * this function is called recursively
    *
    * @param Array $groupContent :
-   * @param Array $items :
-   * @return String : a SQL request
+   * @param Array $clausesItems : array with 'where' and 'having' conditions (and 'plugin' for the plugin)
+   * @param Array $groups : operators of each group
+   * @param String $operator : 'OR' or 'AND', according with the current group operator
+   * @param String $requestNumber : the request number
+   * @return String : part of a SQL request
    */
-  static private function buildGroupRequest($groupContent, $whereItems, $groups, $operator, $requestNumber)
+  static private function buildGroupRequest($groupContent, $clausesItems, $groups, $operator, $requestNumber)
   {
     $returnedS='';
     $returned=Array();
@@ -1187,7 +1222,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
       {
         preg_match('/[0-9]*$/i', $val['id'], $groupNumber);
 
-        $groupValue=self::buildGroupRequest($val['children'], $whereItems, $groups, $groups[$groupNumber[0]], $requestNumber);
+        $groupValue=self::buildGroupRequest($val['children'], $clausesItems, $groups, $groups[$groupNumber[0]], $requestNumber);
 
         if($groupValue!='')
           $returned[]=array(
@@ -1201,8 +1236,9 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
 
         $returned[]=array(
           'mode'  => 'item',
-          'plugin' => $whereItems[$itemNumber[0]]['plugin'],
-          'value' => " (".$whereItems[$itemNumber[0]]['where'].") "
+          'plugin' => $clausesItems[$itemNumber[0]]['plugin'],
+          'valueWhere' => ($clausesItems[$itemNumber[0]]['where']!='')?" (".$clausesItems[$itemNumber[0]]['where'].") ":'',
+          'valueHaving' => ($clausesItems[$itemNumber[0]]['having'])?" (".$clausesItems[$itemNumber[0]]['having'].") ":'',
         );
       }
     }
@@ -1219,8 +1255,12 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
           if($val['mode']=='item')
           {
             $returnedS.="(SELECT DISTINCT ".call_user_func(Array('RBCallBack'.$val['plugin'], 'getImageId'))." AS imageId
-                          FROM ".call_user_func(Array('RBCallBack'.$val['plugin'], 'getFrom'))."
-                          WHERE ".$val['value'].") t".self::$tGlobalId." ";
+                          FROM ".call_user_func(Array('RBCallBack'.$val['plugin'], 'getFrom'));
+            if($val['valueWhere']!='') $returnedS.=" WHERE ".$val['valueWhere'];
+            if($val['valueHaving']!='')
+              $returnedS.=" GROUP BY imageId
+                            HAVING ".$val['valueHaving'];
+            $returnedS.=") t".self::$tGlobalId." ";
           }
           else
           {
@@ -1231,7 +1271,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
           $tId++;
           self::$tGlobalId++;
         }
-        $returnedS="SELECT '$requestNumber', t".(self::$tGlobalId-$tId).".imageId FROM ".$returnedS;
+        $returnedS="SELECT DISTINCT '$requestNumber', t".(self::$tGlobalId-$tId).".imageId FROM ".$returnedS;
       }
       else
       {
@@ -1243,12 +1283,16 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
           {
             $returnedS.="SELECT DISTINCT '$requestNumber', t".self::$tGlobalId.".imageId
                           FROM (SELECT ".call_user_func(Array('RBCallBack'.$val['plugin'], 'getImageId'))." AS imageId
-                                FROM ".call_user_func(Array('RBCallBack'.$val['plugin'], 'getFrom'))."
-                                WHERE ".$val['value'].") t".self::$tGlobalId." ";
+                                FROM ".call_user_func(Array('RBCallBack'.$val['plugin'], 'getFrom'));
+            if($val['valueWhere']!='') $returnedS.=" WHERE ".$val['valueWhere'];
+            if($val['valueHaving']!='')
+              $returnedS.=" GROUP BY imageId
+                            HAVING ".$val['valueHaving'];
+            $returnedS.=") t".self::$tGlobalId." ";
           }
           else
           {
-            $returnedS.="SELECT '$requestNumber', t".self::$tGlobalId.".imageId FROM (".$val['value'].") t".self::$tGlobalId;
+            $returnedS.="SELECT DISTINCT '$requestNumber', t".self::$tGlobalId.".imageId FROM (".$val['value'].") t".self::$tGlobalId;
           }
 
           self::$tGlobalId++;

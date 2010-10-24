@@ -45,9 +45,6 @@
  *                         button ; event.data contain the item Id
  *       . onDelete      : handler on a function to manage click on the 'Delete'
  *                         button ; event.data contain the item Id
- *       . imgEditUrl    : String, with default value = '',
- *       . imgDeleteUrl  : String, with default value = '',
- *
  *
  *
  * :: HISTORY ::
@@ -85,6 +82,8 @@ function criteriaBuilder(container)
           textOR:'OR',
           textNoCriteria:'There is no criteria ! At least, one criteria is required to do search...',
           textHint:'',
+          textSomethingWrong:'An error has occured on the server-side',
+          textCaddieUpdated:'Caddie was updated',
           classGroup:'',
           classItem:'',
           classOperator:'',
@@ -96,8 +95,10 @@ function criteriaBuilder(container)
           onRequestError:null,
           onGetPageSuccess:null,
           onGetPageError:null,
-          imgEditUrl:'',
-          imgDeleteUrl:'',
+          helpEditUrl:'',
+          helpDeleteUrl:'',
+          helpMove:'',
+          helpSwitchCondition:'',
           ajaxUrl:'',
         },
       extraData = new Array();
@@ -227,12 +228,18 @@ function criteriaBuilder(container)
   {
     counters.group++;
 
-    var content="<li id='"+itemsId.group+counters.group+"' class='cbGroup cbSortable cbOpAND "+options.classGroup+"'>";
+    var content="<li id='"+itemsId.group+counters.group+"' class='cbGroup cbSortable cbOpAND "+options.classGroup+" cbItemUnique'>";
     content+="<ul></ul></li>";
 
     $('#'+itemId).wrap(content);
 
-    content="<div class='cbSortHandle'>";
+    content="<div class='cbSortHandle' style='display:none;'>";
+
+    content+="<div class='cbItemButtons' style='float:left;'>";
+    content+="<div class='iconMove' id='iImgMoveItem"+counters.item+"' title=\""+options.helpMove+"\"></div>";
+    content+="<div class='iconSwitchCondition' id='iImgSwitchCItem"+counters.item+"' title=\""+options.helpSwitchCondition+"\"></div>";
+    content+="</div>";
+
     content+="<div id='"+itemsId.group+counters.group+"OpAND' class='"+options.classOperator+"' style='display:none;'>"+options.textAND+"</div>";
 
     content+="<div id='"+itemsId.group+counters.group+"OpOR' class='"+options.classOperator+"' style='display:none;'>"+options.textOR+"</div>";
@@ -240,8 +247,7 @@ function criteriaBuilder(container)
 
     $("#"+itemsId.group+counters.group).prepend(content);
 
-    $('#'+itemsId.group+counters.group+'OpAND').bind('click', itemsId.group+counters.group, onSwitchOperator);
-    $('#'+itemsId.group+counters.group+'OpOR').bind('click', itemsId.group+counters.group, onSwitchOperator);
+    $('#'+itemsId.group+counters.group+'OpOR, #'+itemsId.group+counters.group+'OpAND, #'+itemsId.group+counters.group+' div.iconSwitchCondition ').bind('click', itemsId.group+counters.group, onSwitchOperator);
 
     applyNested();
   };
@@ -266,31 +272,27 @@ function criteriaBuilder(container)
     counters.item++;
 
     var content="<li id='"+itemsId.item+counters.item+"' class='cbItem cbSortable "+options.classItem+"'>";
+
     content+="<div class='cbItemButtons' style='float:right;'>";
 
-    if(options.imgEditUrl!='' &&
-       options.onEdit!=null &&
-       jQuery.isFunction(options.onEdit)) content+="<img id='iImgEdit"+counters.item+"' src='"+options.imgEditUrl+"'/>";
+    if(options.onEdit!=null &&
+       jQuery.isFunction(options.onEdit)) content+="<div class='iconEdit' id='iImgEdit"+counters.item+"' title=\""+options.helpEdit+"\"></div>";
 
-    if(options.imgDeleteUrl!='' &&
-       options.onDelete!=null &&
-       jQuery.isFunction(options.onDelete)) content+="<img id='iImgDelete"+counters.item+"' src='"+options.imgDeleteUrl+"'/>";
+    if(options.onDelete!=null &&
+       jQuery.isFunction(options.onDelete)) content+="<div class='iconDelete' id='iImgDelete"+counters.item+"' title=\""+options.helpDelete+"\"></div>";
 
-    content+="</div><div class='cbSortHandle'>"+itemContent+"</div></li>";
+    content+="</div><div class='cbSortHandle'>";
+    content+="<div class='cbItemButtons' style='float:left;'> <div class='iconMove' id='iImgMoveItem"+counters.item+"' title=\""+options.helpMove+"\"></div></div>";
+    content+="<div class='itemContent'>"+itemContent+"</div></div></li>";
 
     $('#'+itemsId.container).append(content);
 
     addGroup(itemsId.item+counters.item);
 
-    if(options.imgEditUrl!='' && options.onEdit!=null)
-    {
-      $('#iImgEdit'+counters.item).bind('click', itemsId.item+counters.item, options.onEdit);
-    }
+    if(options.onEdit!=null) $('#iImgEdit'+counters.item).bind('click', itemsId.item+counters.item, options.onEdit);
 
-    if(options.imgDeleteUrl!='' && options.onDelete!=null)
-    {
-      $('#iImgDelete'+counters.item).bind('click', itemsId.item+counters.item, options.onDelete);
-    }
+    if(options.onDelete!=null) $('#iImgDelete'+counters.item).bind('click', itemsId.item+counters.item, options.onDelete);
+
 
     extraData[counters.item]=data;
   };
@@ -324,7 +326,7 @@ function criteriaBuilder(container)
   {
     if($('#'+itemId).length!=0)
     {
-      $('#'+itemId+' .cbSortHandle').html(content);
+      $('#'+itemId+' .itemContent').html(content);
       re=/[0-9]*$/;
       extraData[eval(re.exec(itemId)[0])]=data;
     }
@@ -466,6 +468,14 @@ function criteriaBuilder(container)
         $('#'+groupId+'OpOR').css('display', 'none');
       }
     }
+    if(visible)
+    {
+      $('#'+groupId).children('div.cbSortHandle').css('display', 'block');
+    }
+    else
+    {
+      $('#'+groupId).children('div.cbSortHandle').css('display', 'none');
+    }
   };
 
   /**
@@ -489,10 +499,12 @@ function criteriaBuilder(container)
           }
           else if($('#'+this.id+' li.cbItem').length==1)
           {
+            $('#'+this.id).addClass('cbItemUnique').removeClass('cbItemMultiple');
             displayOperator(this.id, false);
           }
           else
           {
+            $('#'+this.id).removeClass('cbItemUnique').addClass('cbItemMultiple');
             displayOperator(this.id, true);
           }
         }
@@ -526,6 +538,7 @@ function criteriaBuilder(container)
         handle: '.cbSortHandle',
         ghosting:false,
         nestingPxSpace:15,
+        currentNestingClass:'cbItemOverGroup',
 
         onChange: function(serialized) {
           manage();

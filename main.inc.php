@@ -87,6 +87,11 @@ Author URI: http://photos.grum.fr/
 |         |            | * Add the jQuery plugins
 |         |            |   . ui.tagSelector.js + ui.tagSelector.packed.js
 |         |            |
+|         |            | * Externalize and pack JS scripts
+|         |            |   . rbSearch.js + rbSearch.packed.js
+|         |            |
+|         |            | * Rename js script
+|         |            |   . criteriaBuilder.js => rbCriteriaBuilder.js
 |         |            |
 |         |            |
 |         |            |

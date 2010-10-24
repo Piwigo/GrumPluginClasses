@@ -19,5 +19,9 @@ $lang['gpc_something_is_wrong_on_the_server_side'] = 'An error has occured on th
 // GPC 3.3.2
 $lang['There is no criteria ! At least, one criteria is required to do search...']="There is no criteria ! At least, one criteria is required to do search...";
 
+$lang['gpc_help_edit_criteria']="Edit criteria";
+$lang['gpc_help_delete_criteria']="Delete criteria";
+$lang['gpc_help_move_criteria']="Drag'n'drop to organize search conditions";
+$lang['gpc_help_switch_condition']="Invert the nature of the condition (AND &hArr; OR)";
 
 ?>

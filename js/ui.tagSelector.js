@@ -942,6 +942,8 @@
           {
             properties.tags=[];
             objects.selectedTagList.children('.ui-tag-selector-selected-tag').remove();
+            privateMethods.cacheClear(object);
+            objects.input.val('');
           }
           else
           {
@@ -1033,6 +1035,14 @@
               objects=object.data('objects');
 
           privateMethods.clearTimerHandle(object);
+
+          if(objects.input.val()=='')
+          {
+            privateMethods.cacheClear(object);
+            privateMethods.displaySelector(object, true);
+            return(false);
+          }
+
 
           $.ajax(
             {
@@ -1171,7 +1181,7 @@
           if(index>-1)
           {
             properties.tags.splice(index,1);
-            item=objects.selectedTagList.children('[value='+id+']').remove();
+            objects.selectedTagList.children('[value='+id+']').remove();
 
             if(options.remove) object.trigger('tagSelectorRemove', id);
           }
