@@ -1,21 +1,23 @@
 <?php
-// need to be translated ! thanks :-)
 
-$lang['gpc_rb_search_criterion']='Search criteria';
-$lang['gpc_rb_do_modify_request']='Modify search';
-$lang['gpc_rb_result_query']='Search result';
-$lang['gpc_rb_number_of_item_found']='Number of images found';
-$lang['gpc_rb_add_criterions']='Criteria';
-$lang['gpc_rb_clear_criterions']='Reset criteria';
-$lang['gpc_rb_search']='Search';
-$lang['gpc_rb_textAND']='All criteria must be verified';
-$lang['gpc_rb_textOR']='At least one criterion must be checked';
+$lang['gpc_rb_search_criterion']='Criterios de busqueda';
+$lang['gpc_rb_do_modify_request']='Modificar la busqueda';
+$lang['gpc_rb_result_query']='Résultado de la busqueda';
+$lang['gpc_rb_number_of_item_found']='Numero de imagenes encontradas';
+$lang['gpc_rb_add_criterions']='Criterios';
+$lang['gpc_rb_clear_criterions']='Restablecer les criterios';
+$lang['gpc_rb_search']='Buscar';
+$lang['gpc_rb_textAND']='Todo los criterios deben ser verificados';
+$lang['gpc_rb_textOR']='Al menos un criterio debe ser verificado';
 
-$lang['gpc_manage_caddie'] = 'Caddie management';
-$lang['gpc_add_caddie'] = 'Search result is added in the caddie';
-$lang['gpc_replace_caddie'] = 'Search result replace the caddie';
-$lang['gpc_the_caddie_is_updated'] = 'Caddie was updated';
-$lang['gpc_something_is_wrong_on_the_server_side'] = 'An error has occured on the server-side';
+$lang['gpc_manage_caddie'] = 'Gestión de la cesta';
+$lang['gpc_add_caddie'] = 'El resultado se añade a la cesta';
+$lang['gpc_replace_caddie'] = 'El resultado se sustituye a la cesta';
+$lang['gpc_the_caddie_is_updated'] = 'La cesta a sido actualisada';
+$lang['gpc_something_is_wrong_on_the_server_side'] = 'Una anomalia surgio durante la conecciòn con el servidor';
+
+// GPC 3.3.2
+$lang['There is no criteria ! At least, one criteria is required to do search...']="No hay criterios! Como mínimo, un criterio es necesario para la búsqueda ...";
 
 
 ?>

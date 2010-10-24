@@ -9,4 +9,9 @@ $lang['GPC required'] = 'GPC requerido';
 $lang['Installed'] = 'Instalado';
 $lang['Infos'] = 'Informaciones';
 
+// gpc > 3.3.0
+$lang['Public'] = 'Publico';
+$lang['Private'] = 'Privado';
+$lang['All the gallery'] = 'Toda la galeria';
+
 ?>
