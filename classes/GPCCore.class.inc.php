@@ -29,6 +29,8 @@
 |         |            |
 |         |            | * implement the getPiwigoSystemPath function
 |         |            |
+|         |            | * implement the rmDir function
+|         |            |
 |         |            |
 
   ------------------------------------------------------------------------------
@@ -47,6 +49,7 @@
     - static function getUserLanguageDesc
     - static function getPiwigoSystemPath
     - static function formatOctet
+    - static function rmDir
    ---------------------------------------------------------------------- */
 
 
@@ -75,13 +78,13 @@ class GPCCore
       Array(
         Array('name' => "CommonPlugin", 'version' => "2.2.0"),
         Array('name' => "GPCAjax", 'version' => "3.0.0"),
-        Array('name' => "GPCCore", 'version' => "1.2.0"),
+        Array('name' => "GPCCore", 'version' => "1.3.1"),
         Array('name' => "GPCCss", 'version' => "3.0.0"),
         Array('name' => "GPCPagesNavigations", 'version' => "2.0.0"),
         Array('name' => "GPCPublicIntegration", 'version' => "2.0.0"),
         Array('name' => "GPCRequestBuilder", 'version' => "1.1.0"),
         Array('name' => "GPCTables", 'version' => "1.5.0"),
-        Array('name' => "GPCTabSheet", 'version' => "1.1.0"),
+        Array('name' => "GPCTabSheet", 'version' => "1.1.1"),
         Array('name' => "GPCTranslate", 'version' => "2.1.0"),
         Array('name' => "GPCUsersGroups", 'version' => "2.0.0"),
       )
@@ -391,6 +394,42 @@ class GPCCore
       return($value);
     }
   }
+
+
+  /**
+   * remove a path recursively
+   *
+   * @param String $directory : directory to remove
+   * @param Bool $removePath : if set to true, remove the path himself, if set
+   *                           to false, remove only file & sub-directories
+   * @return Bool : true if directory was succesfully removed, otherwise false
+   */
+  static public function rmDir($directory, $removePath=true)
+  {
+    $directory=rtrim($directory, '\/').'/';
+    $returned=true;
+    if(file_exists($directory) and is_dir($directory) and $directory!='./' and $directory!='../')
+    {
+      $dhandle=scandir($directory);
+      foreach($dhandle as $file)
+      {
+        if($file!='.' and $file!='..' )
+        {
+          if(is_dir($directory.$file))
+          {
+            $returned=self::rmDir($directory.$file, true) & $returned;
+          }
+          else
+          {
+            $returned=unlink($directory.$file) & $returned;
+          }
+        }
+      }
+      if($returned and $removePath) $returned=rmdir($directory);
+    }
+    return($returned);
+  }
+
 
   /**
    * returns the piwigo system path

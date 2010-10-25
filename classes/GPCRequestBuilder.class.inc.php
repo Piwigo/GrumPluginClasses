@@ -81,6 +81,9 @@
 
   --------------------------------------------------------------------------- */
 
+if(!defined('GPC_DIR')) define('GPC_DIR' , basename(basename(dirname(__FILE__))));
+if(!defined('GPC_PATH')) define('GPC_PATH' , PHPWG_PLUGINS_PATH . GPC_DIR . '/');
+
 include_once('GPCTables.class.inc.php');
 
 /**
