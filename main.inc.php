@@ -135,8 +135,9 @@ See each file to know more about them
 
 if(!defined('PHPWG_ROOT_PATH')) die('Hacking attempt!');
 
-define('GPC_DIR' , basename(dirname(__FILE__)));
-define('GPC_PATH' , PHPWG_PLUGINS_PATH . GPC_DIR . '/');
+if(!defined('GPC_DIR')) define('GPC_DIR' , basename(dirname(__FILE__)));
+if(!defined('GPC_PATH')) define('GPC_PATH' , PHPWG_PLUGINS_PATH . GPC_DIR . '/');
+
 
 include_once('gpc_version.inc.php'); // => Don't forget to update this file !!
 include_once(GPC_PATH.'classes/GPCCore.class.inc.php');
