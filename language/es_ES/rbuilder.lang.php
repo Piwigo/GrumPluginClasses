@@ -19,5 +19,9 @@ $lang['gpc_something_is_wrong_on_the_server_side'] = 'Una anomalia surgio durant
 // GPC 3.3.2
 $lang['There is no criteria ! At least, one criteria is required to do search...']="No hay criterios! Como mínimo, un criterio es necesario para la búsqueda ...";
 
+$lang['gpc_help_edit_criteria']="Editar el criterio";
+$lang['gpc_help_delete_criteria']="Suprimir el criterio";
+$lang['gpc_help_move_criteria']="Arrastrar y soltar para organizar las condiciones de búsqueda";
+$lang['gpc_help_switch_condition']="Invertir la naturaleza de la condición (Y &hArr; O)";
 
 ?>
