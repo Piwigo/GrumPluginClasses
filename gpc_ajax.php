@@ -53,6 +53,16 @@
   class GPC_Ajax extends CommonPlugin
   {
     /**
+     * return true if string equals 'true' ; otherwise return false
+     * @param String $value
+     * @return Bool
+     */
+    static function stringBool($value)
+    {
+      return($value=='true');
+    }
+
+    /**
      * constructor
      */
     public function __construct($prefixeTable, $filelocation)
@@ -151,6 +161,7 @@
 
           if(!isset($_REQUEST['ignoreCase'])) $_REQUEST['ignoreCase']=true;
 
+          $_REQUEST['ignoreCase']=self::stringBool($_REQUEST['ignoreCase']);
         }
 
 
@@ -376,10 +387,15 @@
 
       $binary='';
       $where=' LOWER(ptt.name) ';
+
       if(!$ignoreCase)
       {
         $binary=" BINARY ";
         $where=" ptt.name ";
+      }
+      else
+      {
+        $letters=strtolower($letters);
       }
 
 

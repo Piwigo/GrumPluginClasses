@@ -96,6 +96,13 @@ Author URI: http://photos.grum.fr/
 | 3.3.3   | 2010/10/20 | * Enhance GPCPublicIntegration functionnalities
 |         |            |   . add the 'pageIsSection()' function
 |         |            |
+|         |            | * mantis bug:1960
+|         |            |   . Ajax function *.tagSelector.get don't work with
+|         |            |     uppercase
+|         |            |
+|         |            | * mantis bug:1971
+|         |            |   . optimization for RBuilder loading language management
+|         |            |
 |         |            |
 |         |            |
 |         |            |

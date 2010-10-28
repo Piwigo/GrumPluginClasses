@@ -289,7 +289,7 @@ class GPCSearchCallback {
 }
 
 
-load_language('rbuilder.lang', GPC_PATH);
+//load_language('rbuilder.lang', GPC_PATH);
 
 
 class GPCRequestBuilder {
@@ -493,6 +493,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
    */
   static public function loadJSandCSS()
   {
+    load_language('rbuilder.lang', GPC_PATH);
     add_event_handler('loc_begin_page_header', array('GPCRequestBuilder', 'insertJSandCSSFiles'), 9);
   }
 
@@ -1368,8 +1369,6 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
   static public function displaySearchPage($filter=array())
   {
     global $template, $lang;
-
-    //load_language('rbuilder.lang', GPC_PATH);
 
     if(is_string($filter)) $filter=array($filter);
     $filter=array_flip($filter);
