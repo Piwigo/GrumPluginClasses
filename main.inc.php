@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.3.2
+Version: 3.3.3
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -93,12 +93,14 @@ Author URI: http://photos.grum.fr/
 |         |            | * Rename js script
 |         |            |   . criteriaBuilder.js => rbCriteriaBuilder.js
 |         |            |
+| 3.3.3   | 2010/10/20 | * Enhance GPCPublicIntegration functionnalities
+|         |            |   . add the 'pageIsSection()' function
+|         |            |
+|         |            |
+|         |            |
 |         |            |
 |         |            |
 |         |            | ===== Don't forget to update the plugin version ! =====
-|         |            |
-|         |            |
-|         |            |
 |         |            |
 |         |            |
 |         |            |

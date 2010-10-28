@@ -15,7 +15,7 @@
 | release | date       |
 | 2.0.0   | 2010/03/30 | * Update class & function names
 |         |            |
-|         |            |
+| 2.1.0   | 2010/10/28 | * Add the pageIsSection() function
 |         |            |
 |         |            |
 |         |            |
@@ -26,10 +26,11 @@
   page
 
   - constructor GPCPublicIntegration($section)
-  - (public) function init_events()
+  - (public) function initEvents()
   - (public) function setCallbackPageFunction($value)
-  - (private) function init_section()
-  - (private) function call_page()
+  - (public) function pageIsSection()
+  - (private) function initSection()
+  - (private) function callPage()
 
   use initEvents() function to initialize needed triggers for updating menubar
 
@@ -54,7 +55,9 @@ class GPCPublicIntegration
     unset($this->callback_page_function);
   }
 
-  //initialize events to manage menu & page integration
+  /**
+   * initialize events to manage menu & page integration
+   */
   public function initEvents()
   {
     add_event_handler('loc_end_section_init', array(&$this, 'initSection'));
@@ -66,9 +69,9 @@ class GPCPublicIntegration
     $this->callback_page_function=$value;
   }
 
-  /*
-    init section
-  */
+  /**
+   * initialize section in piwigo
+   */
   public function initSection()
   {
     global $tokens, $page;
@@ -77,9 +80,9 @@ class GPCPublicIntegration
     { $page['section'] = $this->section; }
   }
 
-  /*
-    loads a page
-  */
+  /**
+   * loads the section page
+   */
   public function callPage()
   {
     global $page, $user;
@@ -88,6 +91,14 @@ class GPCPublicIntegration
     {
       @call_user_func($this->callback_page_function);
     }
+  }
+
+  /**
+   * return true if current page is the section
+   */
+  public function pageIsSection()
+  {
+    return($_SERVER['QUERY_STRING']=='/'.$this->section);
   }
 
 } //class GPCPublicIntegration
