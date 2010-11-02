@@ -11,8 +11,8 @@ $lang['Infos'] = 'Информация';
 $lang['Some plugins are dependent on Grum Plugin Classes: before uninstall, you must first uninstall the plugins dependent'] = 'Некоторые модули зависят от Grum Plugin Classes: перед удалением вам нужно сначала удалить их';
 
 // gpc > 3.3.0
-$lang['Public'] = 'Public';
-$lang['Private'] = 'Private';
-$lang['All the gallery'] = 'All the gallery';
+$lang['Public'] = 'Общедоступная';
+$lang['Private'] = 'Приватная';
+$lang['All the gallery'] = 'Вся галерея';
 
 ?>
