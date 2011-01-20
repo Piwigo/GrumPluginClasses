@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.3.3
+Version: 3.3.4
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -103,7 +103,7 @@ Author URI: http://photos.grum.fr/
 |         |            | * mantis bug:1971
 |         |            |   . optimization for RBuilder loading language management
 |         |            |
-|         |            |
+| 3.3.4   | 2011/01/20 | * Add languages
 |         |            |
 |         |            |
 |         |            |
