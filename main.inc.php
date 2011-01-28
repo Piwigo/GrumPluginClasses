@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.3.4
+Version: 3.4.0
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -103,8 +103,34 @@ Author URI: http://photos.grum.fr/
 |         |            | * mantis bug:1971
 |         |            |   . optimization for RBuilder loading language management
 |         |            |
-| 3.3.4   | 2011/01/20 | * Add languages
+| 3.4.0   | 2011/01/28 | * mantis bug:1984
+|         |            |   . RBuilder returns an error message when one picture
+|         |            |     have multiple categories
 |         |            |
+|         |            | * fix bug:2109
+|         |            |   . Incompatibility with IE8 (rbuilder)
+|         |            |
+|         |            | * Fix bug on simpleTip.js (script release 1.0.1)
+|         |            |
+|         |            | * GPCCore, GPCTranslate, GPCUsersGroups classes updated
+|         |            |
+|         |            | * add jQuery plugin pack & associated css files
+|         |            |   . inputText
+|         |            |   . inputList
+|         |            |   . inputRadio
+|         |            |   . inputCheckbox
+|         |            |   . inputColorPicker
+|         |            |   . inputColorsFB
+|         |            |   . inputConsole
+|         |            |   . inputDotArea
+|         |            |   . inputNum
+|         |            |   . inputPosition
+|         |            |   . inputStatusBar
+|         |            |
+|         |            | * update categorySelector jQuery plugin
+|         |            |
+|         |            | * minify js scripts (larger size than packed files but
+|         |            |   better performance)
 |         |            |
 |         |            |
 |         |            | ===== Don't forget to update the plugin version ! =====
@@ -136,7 +162,6 @@ Classes version for this package
     GPCTranslate.class.inc.php + google_translate.js
     GPCUsersGroups.class.inc.php
 
-    genericjs.class.inc.php  + genericjs.js
 
 See each file to know more about them
 --------------------------------------------------------------------------------

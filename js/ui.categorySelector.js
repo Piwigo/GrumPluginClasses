@@ -1,8 +1,8 @@
 /**
  * -----------------------------------------------------------------------------
  * file: ui.categorySelector.js
- * file version: 1.0.1
- * date: 2010-10-10
+ * file version: 1.1.0
+ * date: 2011-01-12
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -26,6 +26,18 @@
  * |         |            |   ':invert'
  * |         |            |
  * |         |            | * add 'name' property
+ * |         |            |
+ * | 1.1.0   | 2011/01/12 | * checkbox moved between +/- button and text
+ * |         |            |
+ * |         |            | * dropdown list is managed like dropdown list on
+ * |         |            |   <select> object (hidden only when object loose
+ * |         |            |   focus )
+ * |         |            |
+ * |         |            | * selected values are dislayed like tags
+ * |         |            |
+ * |         |            | * add 'isValid' method
+ * |         |            |
+ * |         |            | * add 'displayPath' property
  * |         |            |
  * |         |            |
  *
@@ -60,14 +72,16 @@
                       listMaxHeight:0,
                       levelIndent:16,
                       iconWidthEC:15,
-                      iconWidthCheck:18,
                       serverUrl:'plugins/GrumPluginClasses/gpc_ajax.php',
                       filter:'accessible',
                       popup:null,
                       change:null,
                       load:null,
                       multiple:false,
-                      userMode:'public'
+                      userMode:'public',
+                      popupMode:'click',
+                      displayPath:false,
+                      downArrow:'&dArr;'
                     };
 
               // if options given, merge it
@@ -85,6 +99,8 @@
                     selectorVisible:false,
                     categories:[],
                     labelStatus:['', ''],
+                    mouseOver:false,
+                    isValid:true
                   }
                 );
                 properties=$this.data('properties');
@@ -97,6 +113,7 @@
                     container:$('<div/>',
                         {
                           'class':'ui-category-selector',
+                          tabindex:0,
                           css:{
                             width:'100%'
                           }
@@ -105,14 +122,16 @@
                         function ()
                         {
                           privateMethods.displaySelector($this, !$this.data('properties').selectorVisible);
+                          $(this).focus();
                         }
                       ),
                     containerName:$('<div/>',
                       {
                         html: '&nbsp;',
-                        'class':'ui-category-selector-name',
+                        'class':'ui-category-selector-name'
                       }
                     ),
+                    containerList:null,
                     containerStatus:$('<div/>',
                       {
                         'class':'ui-category-selector-status',
@@ -131,8 +150,17 @@
                           cursor:'pointer'
                         }
                       }
+                    ).bind('mousedown',
+                        function ()
+                        {
+                          $(this).addClass('ui-category-selector-arrow-active');
+                        }
+                    ).bind('mouseup',
+                        function ()
+                        {
+                          $(this).removeClass('ui-category-selector-arrow-active');
+                        }
                     ),
-
                     listContainer:$('<div/>',
                         {
                           html: "",
@@ -143,12 +171,7 @@
                             position:'absolute'
                           }
                         }
-                    ).bind('mouseleave.categorySelector',
-                        function ()
-                        {
-                          privateMethods.displaySelector($this, false);
-                        }
-                      ),
+                    ),
                     list:$('<ul/>',
                       {
                         css: {
@@ -159,16 +182,20 @@
                       }
                     )
                   };
-
-                $this
-                  .html('')
-                  .append(objects.container.append(objects.containerArrow).append(objects.containerStatus).append(objects.containerName))
-                  .append(objects.listContainer.append(objects.list));
-
-                $this.data('objects', objects);
               }
 
+              $this.data('objects', objects);
+
               privateMethods.setOptions($this, opt);
+
+
+              if($this.html()!='') privateMethods.setItems($this, $this.html());
+
+              $this
+                .html('')
+                .append(objects.container.append(objects.containerArrow).append(objects.containerStatus).append(objects.containerName))
+                .append(objects.listContainer.append(objects.list));
+
             }
           );
         }, // init
@@ -257,7 +284,7 @@
 
       listMaxWidth: function (value)
         {
-          if(value)
+          if(value!=null)
           {
             return this.each(function()
               {
@@ -282,7 +309,7 @@
 
       listMaxHeight: function (value)
         {
-          if(value)
+          if(value!=null)
           {
             return this.each(function()
               {
@@ -332,7 +359,7 @@
 
       levelIndent: function (value)
         {
-          if(value)
+          if(value!=null)
           {
             return this.each(function()
               {
@@ -357,7 +384,7 @@
 
       serverUrl: function (value)
         {
-          if(value)
+          if(value!=null)
           {
             return this.each(function()
               {
@@ -382,7 +409,7 @@
 
       filter: function (value)
         {
-          if(value)
+          if(value!=null)
           {
             return this.each(function()
               {
@@ -427,7 +454,7 @@
 
       iconWidthEC: function (value)
         {
-          if(value)
+          if(value!=null)
           {
             return this.each(function()
               {
@@ -450,34 +477,9 @@
           }
         }, // iconWidthEC
 
-      iconWidthCheck: function (value)
-        {
-          if(value)
-          {
-            return this.each(function()
-              {
-                privateMethods.setIconWidthCheck($(this), value);
-              }
-            );
-          }
-          else
-          {
-            var options = this.data('options');
-
-            if(options)
-            {
-              return(options.iconWidthCheck);
-            }
-            else
-            {
-              return(0);
-            }
-          }
-        }, // iconWidthCheck
-
       userMode: function (value)
         {
-          if(value)
+          if(value!=null)
           {
             return this.each(function()
               {
@@ -503,8 +505,7 @@
       name: function ()
         {
           var options=this.data('options'),
-              properties=this.data('properties'),
-              objects=this.data('objects');
+              properties=this.data('properties');
 
           if(!options.multiple)
           {
@@ -521,9 +522,84 @@
           }
         }, // userMode
 
+      popupMode: function (value)
+        {
+          if(value!=null)
+          {
+            return this.each(function()
+              {
+                privateMethods.setPopupMode($(this), value);
+              }
+            );
+          }
+          else
+          {
+            var options = this.data('options');
+
+            if(options)
+            {
+              return(options.popupMode);
+            }
+            else
+            {
+              return(0);
+            }
+          }
+        }, // popupMode
+
+      displayPath: function (value)
+        {
+          if(value!=null)
+          {
+            return this.each(function()
+              {
+                privateMethods.setDisplayPath($(this), value);
+              }
+            );
+          }
+          else
+          {
+            var options = this.data('options');
+
+            if(options)
+            {
+              return(options.displayPath);
+            }
+            else
+            {
+              return(0);
+            }
+          }
+        }, // displayPath
+
+      downArrow: function (value)
+        {
+          if(value!=null)
+          {
+            return this.each(function()
+              {
+                privateMethods.setDownArrow($(this), value);
+              }
+            );
+          }
+          else
+          {
+            var options = this.data('options');
+
+            if(options)
+            {
+              return(options.downArrow);
+            }
+            else
+            {
+              return('');
+            }
+          }
+        }, // downArrow
+
       value: function (value)
         {
-          if(value)
+          if(value!=null)
           {
             // set selected value
             return this.each(function()
@@ -558,6 +634,24 @@
             }
           }
         }, // value
+
+      isValid: function (value)
+        {
+          if(value!=null)
+          {
+            return this.each(function()
+              {
+                privateMethods.setIsValid($(this), value);
+              }
+            );
+          }
+          else
+          {
+            var properties=this.data('properties');
+            return(properties.isValid);
+          }
+        }, // isValid
+
       load: function (value)
         {
           /*
@@ -633,6 +727,7 @@
             }
           }
         }, // popup
+
       numberOfCategories: function ()
         {
           var properties=this.data('properties');
@@ -646,9 +741,11 @@
             return(null);
           }
         }, // numberOfCategories
+
       properties: function (value)
         {
-          var properties=this.data('properties');
+          var properties=this.data('properties'),
+              options=this.data('options');
 
           if(properties && value==':first' && properties.categories.length>0)
           {
@@ -656,11 +753,11 @@
           }
           else if(properties && properties.index!=null && (value==':selected' || value==null) && properties.categories.length>0)
           {
-            if(!option.multiple && properties.index>-1 && properties.index<properties.categories.length)
+            if(!options.multiple && properties.index>-1 && properties.index<properties.categories.length)
             {
               return(properties.categories[properties.index]);
             }
-            else if(option.multiple)
+            else if(options.multiple)
             {
               var returned=[];
               for(var i=0;i<properties.index.length;i++)
@@ -685,7 +782,7 @@
           {
             return(null);
           }
-        }, // numberOfCategories
+        } // numberOfCategories
     }; // methods
 
 
@@ -710,10 +807,12 @@
           privateMethods.setListMaxHeight(object, (value.listMaxHeight!=null)?value.listMaxHeight:options.listMaxHeight);
           privateMethods.setLevelIndent(object, (value.levelIndent!=null)?value.levelIndent:options.levelIndent);
           privateMethods.setIconWidthEC(object, (value.iconWidthEC!=null)?value.iconWidthEC:options.iconWidthEC);
-          privateMethods.setIconWidthCheck(object, (value.iconWidthCheck!=null)?value.iconWidthCheck:options.iconWidthCheck);
           privateMethods.setServerUrl(object, (value.serverUrl!=null)?value.serverUrl:options.serverUrl);
           privateMethods.setFilter(object, (value.filter!=null)?value.filter:options.filter);
           privateMethods.setUserMode(object, (value.userMode!=null)?value.userMode:options.userMode);
+          privateMethods.setPopupMode(object, (value.popupMode!=null)?value.popupMode:options.popupMode);
+          privateMethods.setDisplayPath(object, (value.displayPath!=null)?value.displayPath:options.displayPath);
+          privateMethods.setDownArrow(object, (value.downArrow!=null)?value.downArrow:options.downArrow);
           privateMethods.setEventPopup(object, (value.popup!=null)?value.popup:options.popup);
           privateMethods.setEventChange(object, (value.change!=null)?value.change:options.change);
           privateMethods.setEventLoad(object, (value.load!=null)?value.load:options.load);
@@ -724,10 +823,31 @@
           properties.initialized=true;
         },
 
+      setIsValid : function (object, value)
+        {
+          var objects=object.data('objects'),
+              properties=object.data('properties');
+
+          if(properties.isValid!=value)
+          {
+            properties.isValid=value;
+            if(properties.isValid)
+            {
+              objects.container.removeClass('ui-error');
+            }
+            else
+            {
+              objects.container.addClass('ui-error');
+            }
+          }
+          return(properties.isValid);
+        },
+
       setAutoLoad : function (object, value)
         {
           var options=object.data('options'),
               properties=object.data('properties');
+
           if((!properties.initialized || options.autoLoad!=value) && (value==true || value==false))
           {
             options.autoLoad=value;
@@ -739,6 +859,7 @@
         {
           var options=object.data('options'),
               properties=object.data('properties');
+
           if((!properties.initialized || options.galleryRoot!=value) && (value==true || value==false))
           {
             options.galleryRoot=value;
@@ -752,6 +873,7 @@
           var options=object.data('options'),
               properties=object.data('properties'),
               objects=object.data('objects');
+
           if((!properties.initialized || options.listMaxWidth!=value) && value>=0)
           {
             options.listMaxWidth=value;
@@ -772,6 +894,7 @@
           var options=object.data('options'),
               properties=object.data('properties'),
               objects=object.data('objects');
+
           if((!properties.initialized || options.listMaxHeight!=value) && value>=0)
           {
             options.listMaxHeight=value;
@@ -792,6 +915,7 @@
           var options=object.data('options'),
               properties=object.data('properties'),
               objects=object.data('objects');
+
           if((!properties.initialized || options.displayStatus!=value) && (value==true || value==false))
           {
             options.displayStatus=value;
@@ -812,13 +936,14 @@
           var options=object.data('options'),
               properties=object.data('properties'),
               objects=object.data('objects');
+
           if((!properties.initialized || options.levelIndent!=value) && value>=0)
           {
             options.levelIndent=value;
             objects.list.find('.ui-category-selector-item').each(
               function ()
               {
-                $(this).css('padding-left', (options.iconWidthEC+options.iconWidthCheck+$(this).attr('level')*options.levelIndent)+'px');
+                $(this).css('padding-left', (options.iconWidthEC+$(this).attr('level')*options.levelIndent)+'px');
               }
             );
           }
@@ -829,6 +954,7 @@
         {
           var options=object.data('options'),
               properties=object.data('properties');
+
           if(!properties.initialized || options.serverUrl!=value)
           {
             options.serverUrl=value;
@@ -837,11 +963,11 @@
           return(options.serverUrl);
         },
 
-
       setFilter : function (object, value)
         {
           var options=object.data('options'),
               properties=object.data('properties');
+
           if((!properties.initialized || options.filter!=value) && (value=='none' || value=='accessible' || value=='public'))
           {
             options.filter=value;
@@ -855,35 +981,18 @@
           var options=object.data('options'),
               properties=object.data('properties'),
               objects=object.data('objects');
+
           if((!properties.initialized || options.iconWidthEC!=value) && value>=0)
           {
             options.iconWidthEC=value;
             objects.list.find('.ui-category-selector-item').each(
               function ()
               {
-                $(this).css('padding-left', (options.iconWidthEC+options.iconWidthCheck+$(this).attr('level')*options.levelIndent)+'px');
+                $(this).css('padding-left', (options.iconWidthEC+$(this).attr('level')*options.levelIndent)+'px');
               }
             );
           }
-          return(options.filter);
-        },
-
-      setIconWidthCheck : function (object, value)
-        {
-          var options=object.data('options'),
-              properties=object.data('properties'),
-              objects=object.data('objects');
-          if((!properties.initialized || options.iconWidthCheck!=value) && (value>=0 && options.multiple || !options.multiple && value==0))
-          {
-            options.iconWidthCheck=value;
-            objects.list.find('.ui-category-selector-item').each(
-              function ()
-              {
-                $(this).css('padding-left', (options.iconWidthEC+options.iconWidthCheck+$(this).attr('level')*options.levelIndent)+'px');
-              }
-            );
-          }
-          return(options.filter);
+          return(options.iconWidthEC);
         },
 
       setMultiple : function (object, value)
@@ -891,35 +1000,184 @@
           var options=object.data('options'),
               properties=object.data('properties'),
               objects=object.data('objects');
+
           if((!properties.initialized || options.multiple!=value) && (value==true || value==false))
           {
             if(!value)
             {
-              privateMethods.setIconWidthCheck(object, 0);
               properties.index=-1;
+              if(objects.containerList!=null)
+              {
+                objects.containerList.remove();
+                objects.containerList=null;
+              }
             }
             else
             {
               properties.index=[];
               objects.listContainer.addClass('ui-category-selector-multiple');
+              if(objects.containerList==null)
+              {
+                objects.containerList=$('<ul/>',
+                  {
+                    css: {
+                      listStyle:'none',
+                      padding:'0px',
+                      margin:'0px',
+                      overflow:"auto"
+                    },
+                    html:'<li>&nbsp;</li>'
+                  }
+                );
+                objects.containerName.html('').append(objects.containerList);
+              }
             }
             options.multiple=value;
           }
-          return(options.filter);
+          return(options.multiple);
         }, //setMultiple
 
       setUserMode : function (object, value)
         {
           var options=object.data('options'),
-              properties=object.data('properties'),
-              objects=object.data('objects');
+              properties=object.data('properties');
+
           if((!properties.initialized || options.userMode!=value) && (value=='admin' || value=='public'))
           {
             options.userMode=value;
             if(options.autoLoad && properties.initialized) privateMethods.load(object);
           }
-          return(options.filter);
+          return(options.userMode);
         }, //setUserMode
+
+      setPopupMode : function (object, value)
+        {
+          var options=object.data('options'),
+              properties=object.data('properties'),
+              objects=object.data('objects');
+
+          if((!properties.initialized || options.popupMode!=value) && (value=='click' || value=='mouseout'))
+          {
+            options.popupMode=value;
+
+            if(value=='mouseout')
+            {
+              objects.listContainer
+                .unbind('mouseleave.categorySelector')
+                .unbind('mouseenter.categorySelector')
+                .bind('mouseleave.categorySelector',
+                  function ()
+                  {
+                    privateMethods.displaySelector(object, false);
+                  }
+                );
+            }
+            else
+            {
+              objects.listContainer
+                .unbind('mouseleave.categorySelector')
+                .bind('mouseleave.categorySelector',
+                  function ()
+                  {
+                    properties.mouseOver=false;
+                  }
+                )
+                .bind('mouseenter.categorySelector',
+                  function ()
+                  {
+                    properties.mouseOver=true;
+                  }
+                );
+              $(document).bind('focusout focusin',
+                function (event)
+                {
+                  if(!properties.mouseOver) privateMethods.displaySelector(object, false);
+                }
+              );
+            }
+          }
+          return(options.popupMode);
+        }, //setUserMode
+
+
+      setDisplayPath : function (object, value)
+        {
+          var options=object.data('options'),
+              properties=object.data('properties'),
+              objects=object.data('objects');
+
+          if((!properties.initialized || options.displayPath!=value) && (value==true || value==false))
+          {
+            options.displayPath=value;
+
+          }
+          return(options.userMode);
+        }, //setDisplayPath
+
+      setDownArrow : function (object, value)
+        {
+          var options=object.data('options'),
+              properties=object.data('properties'),
+              objects=object.data('objects');
+
+          if(!properties.initialized || options.downArrow!=value)
+          {
+            options.downArrow=value;
+            objects.containerArrow.html(options.downArrow);
+          }
+          return(options.downArrow);
+        }, //setDownArrow
+
+
+      setItems : function (object, value)
+        {
+          var properties=object.data('properties'),
+              options=object.data('options'),
+              objects=object.data('objects');
+
+          if(value=='' || value==null)
+          {
+            value={
+              status:['',''],
+              categories:[]
+            }
+          }
+          else if($.isArray(value))
+          {
+            value={
+              status:'public',
+              categories:value
+            }
+          }
+          else
+          {
+            try
+            {
+              value=$.parseJSON($.trim(value));
+            }
+            catch (e)
+            {
+              return(false);
+            }
+          }
+
+          properties.labelStatus=value.status;
+          privateMethods.listClear(object);
+          if(value.categories.length>0) privateMethods.listAddItems(object, value.categories, objects.list);
+
+          properties.initialized=false;
+          if(options.multiple)
+          {
+            privateMethods.setValue(object, ':none');
+          }
+          else
+          {
+            privateMethods.setValue(object, ':first');
+          }
+          properties.initialized=true;
+
+          if(options.load) object.trigger('categorySelectorLoad');
+        },
 
       /**
        * usage : see notes on the header file
@@ -1197,10 +1455,12 @@
 
           if(!options.multiple && (!properties.initialized || properties.index!=index) && index>-1)
           {
+
             objects.list.find('.ui-category-selector-selected-item').removeClass('ui-category-selector-selected-item');
             objects.list.find('[catId="'+value+'"]').addClass('ui-category-selector-selected-item');
+            title=privateMethods.getParentName(object, objects.list.find('[catId="'+value+'"] div.ui-category-selector-name')).replace('&amp;', '&').replace('&gt;', '>').replace('&lt;', '<');
             properties.index=index;
-            objects.containerName.html(properties.categories[properties.index].name);
+            objects.containerName.html(properties.categories[properties.index].name).attr('title', title);
             objects.containerStatus.html(properties.labelStatus[properties.categories[properties.index].status]);
             if(trigger && options.change) object.trigger('categorySelectorChange', [properties.categories[properties.index].id]);
             if(properties.index>-1) return(properties.categories[properties.index].id);
@@ -1231,26 +1491,71 @@
               }
               tmp.push(properties.categories[index[i]].id);
             }
-            containerHtml='';
+            objects.containerList.html('');
             objects.list.find('.ui-category-selector-selected-item div.ui-category-selector-name').each(
               function ()
               {
-                containerHtml+=((containerHtml=='')?'':'&nbsp;; ')+$(this).html();
+                var path='';
+
+                title=privateMethods.getParentName(object, $(this)).replace('&amp;', '&').replace('&gt;', '>').replace('&lt;', '<');
+                if(!options.displayPath)
+                {
+                  path=$(this).html();
+                }
+                else
+                {
+                  path=title;
+                }
+
+                objects.containerList.append(
+                  $('<li/>',
+                    {
+                      html:path,
+                      title:title,
+                      'class':'ui-category-selector-selected-cat'
+                    }
+                  ).prepend(
+                      $('<span/>',
+                        {
+                          html:'x'
+                        }
+                       ).bind('click.categorySelector',
+                          {object:object, value:$(this).parent().parent().attr('catid')},
+                          function (event)
+                          {
+                            event.stopPropagation();
+                            privateMethods.setValue(event.data.object, event.data.value);
+                          }
+                        )
+                      )
+                )
               }
             );
-            if(containerHtml=='') containerHtml="&nbsp;";
-            objects.containerName.html(containerHtml);
+
+            if(objects.containerList.children().length==0) objects.containerList.append('<li>&nbsp;</li>');
+
             if(trigger && options.change) object.trigger('categorySelectorChange', [tmp]);
             return(tmp);
           }
           return(null);
         },
 
+      getParentName : function (object, item)
+      {
+        if(item==null || item.length==0) return('');
+        foundItem=item.parent().parent().parent().prev().find('div.ui-category-selector-name');
+
+        if(foundItem.length==0) return(item.html());
+
+        return(privateMethods.getParentName(object, foundItem)+' / '+item.html());
+      },
+
       displaySelector : function (object, value)
         {
           var options=object.data('options'),
               properties=object.data('properties'),
               objects=object.data('objects');
+
           if(properties.selectorVisible!=value)
           {
             properties.selectorVisible=value;
@@ -1265,6 +1570,7 @@
                     'min-width':objects.listContainer.parent().css('width')
                   }
                 );
+
               if($.isArray(properties.index))
               {
                 if (properties.index.length>0) index=properties.index[0];
@@ -1288,8 +1594,9 @@
         {
           // load datas from server through an asynchronous ajax call
           var options=object.data('options'),
-              properties=object.data('properties'),
               objects=object.data('objects');
+
+          if(options.serverUrl=='') return(false);
 
           $.ajax(
             {
@@ -1305,22 +1612,12 @@
                 },
               success: function(msg)
                 {
-                  list=$.parseJSON(msg);
-
-                  properties.labelStatus=list.status;
-                  privateMethods.listClear(object);
-                  privateMethods.listAddItems(object, list.categories, objects.list);
-
-                  properties.initialized=false;
-                  privateMethods.setValue(object, ':first');
-                  properties.initialized=true;
-
-                  if(options.load) object.trigger('categorySelectorLoad');
+                  privateMethods.setItems(object, msg);
                 },
               error: function(msg)
                 {
                   objects.listContainer.html('Error ! '+msg);
-                },
+                }
             }
          );
         },
@@ -1344,6 +1641,7 @@
           }
           properties.categories=[];
         },
+
       listAddItems : function (object, listItems, parent)
         {
           // add the items to the categorie list
@@ -1373,7 +1671,7 @@
               status="";
             }
 
-            var spaceWidth = (options.iconWidthEC+options.iconWidthCheck+listItems[i].level*options.levelIndent),
+            var spaceWidth = (options.iconWidthEC+listItems[i].level*options.levelIndent),
                 li=$('<li/>',
                       {
                         'class':'ui-category-selector-item',
@@ -1388,12 +1686,8 @@
                         {object:object, expandArea: spaceWidth, nbchilds:listItems[i].childs.length },
                         function (event)
                         {
-                          if(!event.layerX && event.offsetX)
-                          {
-                            // trick for IE..
-                            event.layerX=event.offsetX;
-                            event.layerY=event.offsetY;
-                          }
+                          event.layerX=event.pageX-$(event.currentTarget).offset().left;
+                          event.layerY=event.pageY-$(event.currentTarget).offset().top;
 
                           if(event.layerX<event.data.expandArea && event.data.nbchilds>0 )
                           {
@@ -1423,16 +1717,18 @@
                               privateMethods.displaySelector(event.data.object, false);
                             }
                           }
+
+                          if(options.multiple) objects.container.focus();
                         }
                       );
             if(listItems[i].childs.length>0)
             {
-              li.addClass('ui-category-selector-collapsable-item').css('background-position', (options.iconWidthCheck+options.levelIndent*listItems[i].level)+'px 0px');
+              li.addClass('ui-category-selector-collapsable-item').css('background-position', (options.levelIndent*listItems[i].level)+'px 0px');
             }
 
             if(options.multiple)
             {
-              li.prepend('<div class="ui-category-selector-check"></div>');
+              li.children().prepend('<div class="ui-category-selector-check"></div>');
             }
 
             parent.append(li);
@@ -1464,31 +1760,38 @@
            * in the array
            */
           var properties=object.data('properties');
+
           for(var i=0;i<properties.categories.length;i++)
           {
             if(properties.categories[i].id==value) return(i);
           }
           return(-1);
         },
+
       setEventPopup : function (object, value)
         {
           var options=object.data('options');
+
           options.popup=value;
           object.unbind('categorySelectorPopup');
           if(value) object.bind('categorySelectorPopup', options.popup);
           return(options.popup);
         },
+
       setEventChange : function (object, value)
         {
           var options=object.data('options');
+
           options.change=value;
           object.unbind('categorySelectorChange');
           if(value) object.bind('categorySelectorChange', options.change);
           return(options.change);
         },
+
       setEventLoad : function (object, value)
         {
           var options=object.data('options');
+
           options.load=value;
           object.unbind('categorySelectorLoad');
           if(value) object.bind('categorySelectorLoad', options.load);

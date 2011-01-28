@@ -1,8 +1,8 @@
 /**
  * -----------------------------------------------------------------------------
  * file: simpleTip.js
- * file version: 1.0.0
- * date: 2010-07-10
+ * file version: 1.0.1
+ * date: 2010-12-23
  *
  * JS file provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -29,9 +29,9 @@
  * :: HISTORY ::
  *
  * | release | date       |
- * | 1.0.0   | 2010/07/10 | start to coding
+ * | 1.0.0   | 2010-07-10 | start to coding
  * |         |            |
- * |         |            |
+ * | 1.0.1   | 2010-12-23 | fix minor bugs
  * |         |            |
  * |         |            |
  * |         |            |
@@ -69,9 +69,9 @@ function tipItem(item, index, options)
       offsetX:0,
       offsetY:0,
       classes:'',
-      arrowImgDir: './plugins/GrumPluginClasses/icons/',
+      arrowImgDir: '',
       arrowWidth: 12,
-      arrowHeight: 12,
+      arrowHeight: 12
     },
     options
   );
@@ -83,7 +83,7 @@ function simpleTip()
   var items = new Array(),
       itemIndexInc = 0,
       options={
-          name:'',
+          name:''
         };
 
   if(arguments.length>=1)
@@ -149,7 +149,7 @@ function simpleTip()
         .attr(
           {
            title: '',
-           simpleTip: tip.index,
+           simpleTip: tip.index
           }
         )
         .bind('mouseover', {index:tip.index}, function (event)
@@ -252,7 +252,7 @@ function simpleTip()
         {
           left: '-1500px',
           top:  '-1500px',
-          display: 'block',
+          display: 'block'
         }
       );
 
@@ -305,10 +305,10 @@ function simpleTip()
     }
 
 
-    stWidth=$('#iSimpleTip').outerWidth();
-    stHeight=$('#iSimpleTip').outerHeight();
-    stWidthI=$('#iSimpleTip').innerWidth();
-    stHeightI=$('#iSimpleTip').innerHeight();
+    stWidth=$('#iSimpleTipContent'+options.name).outerWidth();
+    stHeight=$('#iSimpleTipContent'+options.name).outerHeight();
+    stWidthI=$('#iSimpleTipContent'+options.name).innerWidth();
+    stHeightI=$('#iSimpleTipContent'+options.name).innerHeight();
     bwX=(stWidth-stWidthI)/2;
     bwY=(stHeight-stHeightI)/2;
     arrowModel='';
@@ -320,30 +320,31 @@ function simpleTip()
         x+=items[itemIndex].options.offsetX;
         y+=items[itemIndex].options.offsetY;
         arrowX=-bwX;
-        arrowY=-10-bwY;
+        arrowY=-items[itemIndex].options.arrowHeight+bwY;
         arrowModel='up';
         break;
 
       case 'top-middle':
         x-=stWidth/2;
         y+=items[itemIndex].options.offsetY;
-        arrowX=(stWidthI-10)/2;
-        arrowY=-10-bwY;
+        arrowX=(stWidthI-items[itemIndex].options.arrowWidth)/2;
+        arrowY=-items[itemIndex].options.arrowHeight+bwY;
         arrowModel='up';
         break;
 
       case 'top-right':
         x-=stWidth+items[itemIndex].options.offsetX;
         y+=items[itemIndex].options.offsetY;
-        arrowX=stWidthI-10+bwX;
-        arrowY=-10-bwY;
+        arrowX=stWidthI-items[itemIndex].options.arrowWidth+bwX;
+        arrowY=-items[itemIndex].options.arrowHeight+bwY;
         arrowModel='up';
         break;
 
       case 'middle-left':
+        x+=items[itemIndex].options.offsetX;
         y-=stHeight/2;
-        arrowX=-10-bwX;
-        arrowY=(stHeightI-10)/2;
+        arrowX=-items[itemIndex].options.arrowWidth+bwX;
+        arrowY=(stHeightI-items[itemIndex].options.arrowHeight)/2+bwY;
         arrowModel='left';
         break;
 
@@ -356,11 +357,12 @@ function simpleTip()
         x-=stWidth+items[itemIndex].options.offsetX;
         y-=stHeight/2;
         arrowX=stWidthI+bwX;
-        arrowY=(stHeightI-10)/2;
+        arrowY=(stHeightI-items[itemIndex].options.arrowHeight)/2+bwY;
         arrowModel='right';
         break;
 
       case 'bottom-left':
+        x+=items[itemIndex].options.offsetX;
         y-=stHeight+items[itemIndex].options.offsetY;
         arrowX=-bwX;
         arrowY=stHeightI+bwY;
@@ -370,7 +372,7 @@ function simpleTip()
       case 'bottom-middle':
         x-=stWidth/2;
         y-=stHeight+items[itemIndex].options.offsetY;
-        arrowX=(stWidthI-10)/2;
+        arrowX=(stWidthI-items[itemIndex].options.arrowWidth)/2+bwX;
         arrowY=stHeightI+bwY;
         arrowModel='down';
         break;
@@ -378,7 +380,7 @@ function simpleTip()
       case 'bottom-right':
         x-=stWidth+items[itemIndex].options.offsetX;
         y-=stHeight+items[itemIndex].options.offsetY;
-        arrowX=stWidthI-10+bwX;
+        arrowX=stWidthI-items[itemIndex].options.arrowWidth+bwX;
         arrowY=stHeightI+bwY;
         arrowModel='down';
         break;
@@ -393,7 +395,7 @@ function simpleTip()
           marginLeft: arrowX+'px',
           marginTop: arrowY+'px',
           width: items[itemIndex].options.arrowWidth+'px',
-          height: items[itemIndex].options.arrowHeight+'px',
+          height: items[itemIndex].options.arrowHeight+'px'
         }
       );
     }
@@ -408,7 +410,7 @@ function simpleTip()
         {
           left: x+'px',
           top:  y+'px',
-          display: 'none',
+          display: 'none'
         }
       )
       .removeClass()

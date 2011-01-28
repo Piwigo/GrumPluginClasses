@@ -2,9 +2,9 @@
 
 /* -----------------------------------------------------------------------------
   class name     : GPCCore
-  class version  : 1.3.1
-  plugin version : 3.3.2
-  date           : 2010-10-20
+  class version  : 1.3.2
+  plugin version : 3.4.0
+  date           : 2011-01-28
   ------------------------------------------------------------------------------
   author: grum at piwigo.org
   << May the Little SpaceFrog be with you >>
@@ -27,9 +27,14 @@
 |         |            | * implement the getUserLanguageDesc() function, using
 |         |            |   extended description function if present
 |         |            |
-|         |            | * implement the getPiwigoSystemPath function
+|         |            | * implement the getPiwigoSystemPath() function
 |         |            |
-|         |            | * implement the rmDir function
+|         |            | * implement the rmDir() function
+|         |            |
+| 1.3.2   | 2011/01/28 | * implement the addUI() function
+|         |            |
+|         |            | * implement getMinified() & setMinifiedState() functions
+|         |            |
 |         |            |
 |         |            |
 
@@ -46,6 +51,9 @@
     - static function BBtoHTML
     - static function addHeaderCSS
     - static function addHeaderJS
+    - static function addUI
+    - static function getMinified
+    - static function setMinifiedState
     - static function getUserLanguageDesc
     - static function getPiwigoSystemPath
     - static function formatOctet
@@ -57,6 +65,7 @@
 class GPCCore
 {
   static private $piwigoSystemPath;
+  static private $minified='.min';
 
   static public $pluginName = "GPCCore";
   static protected $headerItems = array(
@@ -78,15 +87,16 @@ class GPCCore
       Array(
         Array('name' => "CommonPlugin", 'version' => "2.2.0"),
         Array('name' => "GPCAjax", 'version' => "3.0.0"),
-        Array('name' => "GPCCore", 'version' => "1.3.1"),
+        Array('name' => "GPCCategorySelector", 'version' => "1.0.1"),
+        Array('name' => "GPCCore", 'version' => "1.3.2"),
         Array('name' => "GPCCss", 'version' => "3.0.0"),
-        Array('name' => "GPCPagesNavigations", 'version' => "2.0.0"),
+        Array('name' => "GPCPagesNavigation", 'version' => "2.0.0"),
         Array('name' => "GPCPublicIntegration", 'version' => "2.0.0"),
-        Array('name' => "GPCRequestBuilder", 'version' => "1.1.0"),
+        Array('name' => "GPCRequestBuilder", 'version' => "1.1.2"),
         Array('name' => "GPCTables", 'version' => "1.5.0"),
         Array('name' => "GPCTabSheet", 'version' => "1.1.1"),
-        Array('name' => "GPCTranslate", 'version' => "2.1.0"),
-        Array('name' => "GPCUsersGroups", 'version' => "2.0.0"),
+        Array('name' => "GPCTranslate", 'version' => "2.1.1"),
+        Array('name' => "GPCUsersGroups", 'version' => "2.1.0")
       )
     );
   }
@@ -364,6 +374,8 @@ class GPCCore
   static public function applyHeaderItems()
   {
     global $template;
+    $dummy1=null;
+    $dummy2=null;
 
     foreach(self::$headerItems['css'] as $file)
     {
@@ -372,9 +384,159 @@ class GPCCore
 
     foreach(self::$headerItems['js'] as $file)
     {
-      $template->append('head_elements', '<script type="text/javascript" src="'.$file.'"></script>');
+      //$template->append('head_elements', '<script type="text/javascript" src="'.$file.'"></script>');
+      $template->block_html_head(null, '<script type="text/javascript" src="'.$file.'"></script>', $dummy1, $dummy2);
     }
   }
+
+  /**
+   * add a ui component ; css & js dependencies are managed
+   *
+   * @param Array $list : possibles values are
+   *                        - inputCheckbox
+   *                        - inputColorPicker
+   *                        - inputColorsFB
+   *                        - inputConsole
+   *                        - inputDotArea
+   *                        - inputList
+   *                        - inputNum
+   *                        - inputPosition
+   *                        - inputRadio
+   *                        - inputStatusBar
+   *                        - inputText
+   *                        - categorySelector
+   */
+  static public function addUI($list)
+  {
+    global $template;
+
+    if(is_string($list)) $list=explode(',', $list);
+    if(!is_array($list)) return(false);
+
+    if(defined('IN_ADMIN'))
+    {
+      $themeFile=GPC_PATH.'css/%s_'.$template->get_themeconf('name').'.css';
+    }
+    else
+    {
+      $themeFile='themes/'.$template->get_themeconf('name').'/css/GPC%s.css';
+    }
+
+    foreach($list as $ui)
+    {
+      switch($ui)
+      {
+        case 'googleTranslate':
+          self::addHeaderJS('google.jsapi', 'http://www.google.com/jsapi');
+          self::addHeaderJS('gpc.googleTranslate', 'plugins/GrumPluginClasses/js/google_translate'.self::$minified.'.js');
+        case 'categorySelector':
+          self::addHeaderCSS('gpc.categorySelector', GPC_PATH.'css/categorySelector.css');
+          self::addHeaderCSS('gpc.categorySelectorT', sprintf($themeFile, 'categorySelector'));
+          self::addHeaderJS('gpc.categorySelector', GPC_PATH.'js/ui.categorySelector'.self::$minified.'.js');
+          break;
+        case 'inputCheckbox':
+          self::addHeaderCSS('gpc.inputCheckbox', GPC_PATH.'css/inputCheckbox.css');
+          self::addHeaderJS('gpc.inputCheckbox', GPC_PATH.'js/ui.inputCheckbox'.self::$minified.'.js');
+          break;
+        case 'inputColorPicker':
+          self::addHeaderCSS('gpc.inputText', GPC_PATH.'css/inputText.css');
+          self::addHeaderCSS('gpc.inputNum', GPC_PATH.'css/inputNum.css');
+          self::addHeaderCSS('gpc.inputColorsFB', GPC_PATH.'css/inputColorsFB.css');
+          self::addHeaderCSS('gpc.inputDotArea', GPC_PATH.'css/inputDotArea.css');
+          self::addHeaderCSS('gpc.inputColorPicker', GPC_PATH.'css/inputColorPicker.css');
+          self::addHeaderCSS('gpc.inputTextT', sprintf($themeFile, 'inputText'));
+          self::addHeaderCSS('gpc.inputNumT', sprintf($themeFile, 'inputNum'));
+          self::addHeaderCSS('gpc.inputColorsFBT', sprintf($themeFile, 'inputColorsFB'));
+          self::addHeaderCSS('gpc.inputDotAreaT', sprintf($themeFile, 'inputDotArea'));
+          self::addHeaderCSS('gpc.inputColorPickerT', sprintf($themeFile, 'inputColorPicker'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/packed/ui.core.packed.js');
+          self::addHeaderJS('jquery.ui.slider', 'themes/default/js/ui/packed/ui.slider.packed.js');
+          self::addHeaderJS('jquery.ui.draggable', 'themes/default/js/ui/packed/ui.draggable.packed.js');
+          self::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/packed/ui.slider.dialog.js');
+          self::addHeaderJS('gpc.inputText', GPC_PATH.'js/ui.inputText'.self::$minified.'.js');
+          self::addHeaderJS('gpc.inputNum', GPC_PATH.'js/ui.inputNum'.self::$minified.'.js');
+          self::addHeaderJS('gpc.inputColorsFB', GPC_PATH.'js/ui.inputColorsFB'.self::$minified.'.js');
+          self::addHeaderJS('gpc.inputDotArea', GPC_PATH.'js/ui.inputDotArea'.self::$minified.'.js');
+          self::addHeaderJS('gpc.inputColorPicker', GPC_PATH.'js/ui.inputColorPicker'.self::$minified.'.js');
+          break;
+        case 'inputColorsFB':
+          self::addHeaderCSS('gpc.inputColorsFB', GPC_PATH.'css/inputColorsFB.css');
+          self::addHeaderCSS('gpc.inputColorsFBT', sprintf($themeFile, 'inputColorsFB'));
+          self::addHeaderJS('gpc.inputColorsFB', GPC_PATH.'js/ui.inputColorsFB'.self::$minified.'.js');
+          break;
+        case 'inputConsole':
+          self::addHeaderCSS('gpc.inputConsole', GPC_PATH.'css/inputConsole.css');
+          self::addHeaderCSS('gpc.inputConsoleT', sprintf($themeFile, 'inputConsole'));
+          self::addHeaderJS('gpc.inputConsole', GPC_PATH.'js/ui.inputConsole'.self::$minified.'.js');
+          break;
+        case 'inputDotArea':
+          self::addHeaderCSS('gpc.inputDotArea', GPC_PATH.'css/inputDotArea.css');
+          self::addHeaderCSS('gpc.inputDotAreaT', sprintf($themeFile, 'inputDotArea'));
+          self::addHeaderJS('gpc.inputDotArea', GPC_PATH.'js/ui.inputDotArea'.self::$minified.'.js');
+          break;
+        case 'inputList':
+          self::addHeaderCSS('gpc.inputList', GPC_PATH.'css/inputList.css');
+          self::addHeaderCSS('gpc.inputListT', sprintf($themeFile, 'inputList'));
+          self::addHeaderJS('gpc.inputList', GPC_PATH.'js/ui.inputList'.self::$minified.'.js');
+          break;
+        case 'inputNum':
+          self::addHeaderCSS('gpc.inputNum', GPC_PATH.'css/inputNum.css');
+          self::addHeaderCSS('gpc.inputNumT', sprintf($themeFile, 'inputNum'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/packed/ui.core.packed.js');
+          self::addHeaderJS('jquery.ui.slider', 'themes/default/js/ui/packed/ui.slider.packed.js');
+          self::addHeaderJS('gpc.inputNum', GPC_PATH.'js/ui.inputNum'.self::$minified.'.js');
+          break;
+        case 'inputPosition':
+          self::addHeaderCSS('gpc.inputPosition', GPC_PATH.'css/inputPosition.css');
+          self::addHeaderCSS('gpc.inputPositionT', sprintf($themeFile, 'inputPosition'));
+          self::addHeaderJS('gpc.inputPosition', GPC_PATH.'js/ui.inputPosition'.self::$minified.'.js');
+          break;
+        case 'inputRadio':
+          self::addHeaderJS('gpc.inputRadio', GPC_PATH.'js/ui.inputRadio'.self::$minified.'.js');
+          break;
+        case 'inputStatusBar':
+          self::addHeaderCSS('gpc.inputStatusBar', GPC_PATH.'css/inputStatusBar.css');
+          self::addHeaderCSS('gpc.inputStatusBarT', sprintf($themeFile, 'inputStatusBar'));
+          self::addHeaderJS('gpc.inputStatusBar', GPC_PATH.'js/ui.inputStatusBar'.self::$minified.'.js');
+          break;
+        case 'inputText':
+          self::addHeaderCSS('gpc.inputText', GPC_PATH.'css/inputText.css');
+          self::addHeaderCSS('gpc.inputTextT', sprintf($themeFile, 'inputText'));
+          self::addHeaderJS('gpc.inputText', GPC_PATH.'js/ui.inputText'.self::$minified.'.js');
+          break;
+      }
+    }
+  }
+
+  /**
+   * return the minified value
+   *
+   * @return String
+   */
+  static public function getMinified()
+  {
+    return(self::$minified);
+  }
+
+  /**
+   * set the minified state
+   *
+   * @param Bool $state
+   * @return Bool
+   */
+  static public function setMinifiedState($state)
+  {
+    if($state)
+    {
+      self::$minified='.min';
+    }
+    else
+    {
+      self::$minified='';
+    }
+    return(self::$minified!='');
+  }
+
 
   /**
    * use the extended description get_user_language_desc() function if exist

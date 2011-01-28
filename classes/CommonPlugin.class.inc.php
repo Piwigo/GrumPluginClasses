@@ -7,8 +7,8 @@
 
   ------------------------------------------------------------------------------
   Author     : Grum
-    email    : grum@grum.dnsalias.com
-    website  : http://photos.grum.dnsalias.com
+    email    : grum@piwigo.org
+    website  : http://photos.grum.fr
     PWG user : http://forum.phpwebgallery.net/profile.php?id=3706
 
     << May the Little SpaceFrog be with you ! >>

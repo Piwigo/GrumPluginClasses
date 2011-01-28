@@ -1,7 +1,7 @@
 /* -----------------------------------------------------------------------------
   file: google_translate.js
-  file version: 2.0.0
-  date: 2008-05-25
+  file version: 2.1.0
+  date: 2011-01-09
   ------------------------------------------------------------------------------
   author: grum at piwigo.org
   << May the Little SpaceFrog be with you >>
@@ -11,11 +11,13 @@
   ------------------------------------------------------------------------------
   HISTORY VERSION
   v2.0.0  +
+  v2.1.0  + add googleTranslate function with callback parameter
   --------------------------------------------------------------------------- */
 
   google.load("language", "1");
 
   var global_google_translate_plugin_objdest;
+  var global_google_translate_plugin_callback;
   var global_google_translate_plugin_objproperty;
 
   function google_translate(text, pfrom, pto, objdest, objproperty)
@@ -39,3 +41,18 @@
       }
     }
   }
+
+  function googleTranslate(text, pfrom, pto, callback)
+  {
+    global_google_translate_plugin_callback=callback;
+    google.language.translate(text, pfrom, pto, googleTranslateDo);
+  }
+
+  function googleTranslateDo(result)
+  {
+    if (!result.error)
+    {
+      global_google_translate_plugin_callback(result.translation);
+    }
+  }
+

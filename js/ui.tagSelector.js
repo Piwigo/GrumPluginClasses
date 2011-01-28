@@ -21,8 +21,9 @@
  * :: HISTORY ::
  *
  * | release | date       |
- * | 1.0.0   | 2010/10/10 | first release
+ * | 1.0.0   | 2010/10/10 | * first release
  * |         |            |
+ * | 1.1.0   | 2010/11/03 | * add 'isValid' method
  * |         |            |
  * |         |            |
  * |         |            |
@@ -92,6 +93,7 @@
                     tags:[], // a tag = {id:0, name:''}
                     cache:[],
                     timerHandle:null,
+                    isValid:true
                   }
                 );
                 properties=$this.data('properties');
@@ -117,7 +119,7 @@
                     selectedTagList:$('<ul/>',
                       {
                         html: '',
-                        'class':'ui-tag-selector-selected-tag-list',
+                        'class':'ui-tag-selector-selected-tag-list'
                       }
                     ),
                     input:$('<input>',
@@ -150,7 +152,7 @@
                           css: {
                             display:'none',
                             position:'absolute',
-                            zIndex:9999,
+                            zIndex:9999
                           }
                         }
                     ).bind('mouseleave.tagSelector',
@@ -165,7 +167,7 @@
                           listStyle:'none',
                           padding:'0px',
                           margin:'0px',
-                          overflow:"auto",
+                          overflow:"auto"
                         }
                       }
                     ),
@@ -216,11 +218,9 @@
 
       options: function (value)
         {
-          this.each(function()
+          return this.each(function()
             {
-              var $this=$(this);
-              privateMethods.setOptions($this, value);
-              return($this);
+              privateMethods.setOptions($(this), value);
             }
           );
         }, // autoLoad
@@ -228,13 +228,11 @@
 
       ignoreCase: function (value)
         {
-          if(value)
+          if(value!=null)
           {
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setIgnoreCase($this, value);
-                return($this);
+                privateMethods.setIgnoreCase($(this), value);
               }
             );
           }
@@ -255,13 +253,11 @@
 
       inputNumCar: function (value)
         {
-          if(value)
+          if(value!=null)
           {
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setInputNumCar($this, value);
-                return($this);
+                privateMethods.setInputNumCar($(this), value);
               }
             );
           }
@@ -310,13 +306,11 @@
 */
       maximumTagLoaded: function (value)
         {
-          if(value)
+          if(value!=null)
           {
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setMaximumTagLoaded($this, value);
-                return($this);
+                privateMethods.setMaximumTagLoaded($(this), value);
               }
             );
           }
@@ -337,13 +331,11 @@
 
       listMaxWidth: function (value)
         {
-          if(value)
+          if(value!=null)
           {
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setListMaxWidth($this, value);
-                return($this);
+                privateMethods.setListMaxWidth($(this), value);
               }
             );
           }
@@ -364,13 +356,11 @@
 
       listMaxHeight: function (value)
         {
-          if(value)
+          if(value!=null)
           {
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setListMaxHeight($this, value);
-                return($this);
+                privateMethods.setListMaxHeight($(this), value);
               }
             );
           }
@@ -392,13 +382,11 @@
 
       serverCallDelay: function (value)
         {
-          if(value)
+          if(value!=null)
           {
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setServerCallDelay($this, value);
-                return($this);
+                privateMethods.setServerCallDelay($(this), value);
               }
             );
           }
@@ -420,13 +408,11 @@
 
       serverUrl: function (value)
         {
-          if(value)
+          if(value!=null)
           {
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setServerUrl($this, value);
-                return($this);
+                privateMethods.setServerUrl($(this), value);
               }
             );
           }
@@ -447,13 +433,11 @@
 
       textStart: function (value)
         {
-          if(value)
+          if(value!=null)
           {
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setTextStart($this, value);
-                return($this);
+                privateMethods.setTextStart($(this), value);
               }
             );
           }
@@ -474,13 +458,11 @@
 
       textFound: function (value)
         {
-          if(value)
+          if(value!=null)
           {
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setTextFound($this, value);
-                return($this);
+                privateMethods.setTextFound($(this), value);
               }
             );
           }
@@ -501,13 +483,11 @@
 
       textDisplay: function (value)
         {
-          if(value)
+          if(value!=null)
           {
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setTextDisplay($this, value);
-                return($this);
+                privateMethods.setTextDisplay($(this), value);
               }
             );
           }
@@ -528,13 +508,11 @@
 
       filter: function (value)
         {
-          if(value)
+          if(value!=null)
           {
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setFilter($this, value);
-                return($this);
+                privateMethods.setFilter($(this), value);
               }
             );
           }
@@ -555,13 +533,11 @@
 
       mode: function (value)
         {
-          if(value)
+          if(value!=null)
           {
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setMode($this, value);
-                return($this);
+                privateMethods.setMode($(this), value);
               }
             );
           }
@@ -582,7 +558,7 @@
 
       value: function (value)
         {
-          if(value)
+          if(value!=null)
           {
             // set selected value
             return this.each(function()
@@ -595,9 +571,30 @@
           {
             // return the selected tags
             var properties=this.data('properties');
+
             return(properties.tags);
           }
         }, // value
+
+      isValid: function (value)
+        {
+          if(value!=null)
+          {
+            // set selected value
+            return this.each(function()
+              {
+                privateMethods.setIsValid($(this), value);
+              }
+            );
+          }
+          else
+          {
+            // return the selected tags
+            var properties=this.data('properties');
+
+            return(properties.isValid);
+          }
+        }, // isValid
 
       load: function (value)
         {
@@ -609,11 +606,9 @@
           if(value && $.isFunction(value))
           {
             // set selected value
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setEventLoad($this, value);
-                return($this);
+                privateMethods.setEventLoad($(this), value);
               }
             );
           }
@@ -629,11 +624,9 @@
           if(value && $.isFunction(value))
           {
             // set selected value
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setEventPopup($this, value);
-                return($this);
+                privateMethods.setEventPopup($(this), value);
               }
             );
           }
@@ -657,11 +650,9 @@
           if(value && $.isFunction(value))
           {
             // set selected value
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setEventAdd($this, value);
-                return($this);
+                privateMethods.setEventAdd($(this), value);
               }
             );
           }
@@ -685,11 +676,9 @@
           if(value && $.isFunction(value))
           {
             // set selected value
-            this.each(function()
+            return this.each(function()
               {
-                var $this=$(this);
-                privateMethods.setEventRemove($this, value);
-                return($this);
+                privateMethods.setEventRemove($(this), value);
               }
             );
           }
@@ -763,10 +752,33 @@
           properties.initialized=true;
         },
 
+      setIsValid : function (object, value)
+        {
+          var objects=object.data('objects'),
+              properties=object.data('properties');
+
+          if(properties.isValid!=value)
+          {
+            properties.isValid=value;
+            if(properties.isValid)
+            {
+              objects.container.removeClass('ui-error');
+              objects.input.removeClass('ui-error');
+            }
+            else
+            {
+              objects.container.addClass('ui-error');
+              objects.input.addClass('ui-error');
+            }
+          }
+          return(properties.isValid);
+        },
+
       setIgnoreCase : function (object, value)
         {
           var options=object.data('options'),
               properties=object.data('properties');
+
           if((!properties.initialized || options.ignoreCase!=value) && (value==true || value==false))
           {
             options.ignoreCase=value;
@@ -779,6 +791,7 @@
           var options=object.data('options'),
               objects=object.data('objects'),
               properties=object.data('properties');
+
           if((!properties.initialized || options.inputNumCar!=value) && value>0)
           {
             options.inputNumCar=value;
@@ -804,6 +817,7 @@
         {
           var options=object.data('options'),
               properties=object.data('properties');
+
           if((!properties.initialized || options.setMaximumTagLoaded!=value) && value>=0)
           {
             options.maximumTagLoaded=value;
@@ -816,6 +830,7 @@
         {
           var options=object.data('options'),
               properties=object.data('properties');
+
           if(!properties.initialized || options.textStart!=value)
           {
             options.textStart=value;
@@ -827,6 +842,7 @@
         {
           var options=object.data('options'),
               properties=object.data('properties');
+
           if(!properties.initialized || options.textFound!=value)
           {
             options.textFound=value;
@@ -838,6 +854,7 @@
         {
           var options=object.data('options'),
               properties=object.data('properties');
+
           if(!properties.initialized || options.textDisplay!=value)
           {
             options.textDisplay=value;
@@ -850,6 +867,7 @@
           var options=object.data('options'),
               properties=object.data('properties'),
               objects=object.data('objects');
+
           if((!properties.initialized || options.listMaxWidth!=value) && value>=0)
           {
             options.listMaxWidth=value;
@@ -870,6 +888,7 @@
           var options=object.data('options'),
               properties=object.data('properties'),
               objects=object.data('objects');
+
           if((!properties.initialized || options.listMaxHeight!=value) && value>=0)
           {
             options.listMaxHeight=value;
@@ -889,6 +908,7 @@
         {
           var options=object.data('options'),
               properties=object.data('properties');
+
           if((!properties.initialized || options.serverCallDelay!=value) && value>0 )
           {
             options.serverCallDelay=value;
@@ -900,6 +920,7 @@
         {
           var options=object.data('options'),
               properties=object.data('properties');
+
           if(!properties.initialized || options.serverUrl!=value)
           {
             options.serverUrl=value;
@@ -913,6 +934,7 @@
         {
           var options=object.data('options'),
               properties=object.data('properties');
+
           if((!properties.initialized || options.mode!=value) && (value=='admin' || value=='public'))
           {
             options.mode=value;
@@ -924,6 +946,7 @@
         {
           var options=object.data('options'),
               properties=object.data('properties');
+
           if((!properties.initialized || options.filter!=value) && (value=='all' || value=='affected'))
           {
             options.filter=value;
@@ -934,8 +957,7 @@
 
       setValue : function (object, value)
         {
-          var options=object.data('options'),
-              properties=object.data('properties'),
+          var properties=object.data('properties'),
               objects=object.data('objects');
 
           if(value=='clear')
@@ -1070,7 +1092,7 @@
               error: function(msg)
                 {
                   objects.selectorList.html('Error ! '+msg);
-                },
+                }
             }
          );
         },
@@ -1079,12 +1101,12 @@
         {
           // clear the cache tag list
           var objects=object.data('objects'),
-              options=object.data('options'),
               properties=object.data('properties');
 
           objects.tagList.children().unbind().remove();
           properties.cache=[];
         },
+
       cacheAddItems : function (object, listItems)
         {
           // add the items to the cache list
@@ -1097,7 +1119,7 @@
             properties.cache.push(
               {
                 id:listItems[i].id,
-                name:listItems[i].name,
+                name:listItems[i].name
               }
             );
 
@@ -1212,27 +1234,33 @@
       setEventPopup : function (object, value)
         {
           var options=object.data('options');
+
           options.popup=value;
           object.unbind('tagSelectorPopup');
           if(value) object.bind('tagSelectorPopup', options.popup);
           return(options.popup);
         },
+
       setEventAdd : function (object, value)
         {
           var options=object.data('options');
+
           options.add=value;
           object.unbind('tagSelectorAdd');
           if(value) object.bind('tagSelectorAdd', options.add);
           return(options.add);
         },
+
       setEventRemove : function (object, value)
         {
           var options=object.data('options');
+
           options.remove=value;
           object.unbind('tagSelectorRemove');
           if(value) object.bind('tagSelectorRemove', options.remove);
           return(options.remove);
         },
+
       setEventLoad : function (object, value)
         {
           var options=object.data('options');
@@ -1252,6 +1280,7 @@
             properties.timerHandle=null;
           }
         },
+
       setTimerHandle : function(object)
         {
           var properties=object.data('properties'),

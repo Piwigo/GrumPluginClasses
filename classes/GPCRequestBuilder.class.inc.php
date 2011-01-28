@@ -1,8 +1,8 @@
 <?php
 /* -----------------------------------------------------------------------------
   class name: GCPRequestBuilder
-  class version  : 1.1.1
-  plugin version : 3.3.2
+  class version  : 1.1.2
+  plugin version : 3.3.3
   date           : 2010-09-08
 
   ------------------------------------------------------------------------------
@@ -74,8 +74,9 @@
 |         |            |
 |         |            | * fix bug on user level access to picture
 |         |            |
-|         |            |
-|         |            |
+| 1.1.2   | 2010/11/01 | * mantis bug:1984
+|         |            |   . RBuilder returns an error message when one picture
+|         |            |     have multiple categories
 |         |            |
 |         |            |
 
@@ -521,7 +522,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     GPCCore::addHeaderJS('jquery', 'themes/default/js/jquery.packed.js');
     GPCCore::addHeaderJS('gpc.interface', 'plugins/'.$baseName.'external/interface/interface.js');
     GPCCore::addHeaderJS('gpc.inestedsortable', 'plugins/'.$baseName.'external/inestedsortable.pack.js');
-    GPCCore::addHeaderJS('gpc.rbCriteriaBuilder', 'plugins/'.$baseName.'rbCriteriaBuilder.packed.js');
+    GPCCore::addHeaderJS('gpc.rbCriteriaBuilder', 'plugins/'.$baseName.'rbCriteriaBuilder'.GPCCore::getMinified().'.js');
 
     $template->append('head_elements',
 "<script type=\"text/javascript\">
@@ -828,10 +829,10 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     $tmpBuild=Array(
       'SELECT' => Array(
         'RB_PIT' => "pit.id AS imageId, pit.name AS imageName, pit.path AS imagePath", // from the piwigo's image table
-        'RB_PIC' => "GROUP_CONCAT(DISTINCT pic.category_id SEPARATOR ',') AS imageCategoriesId",     // from the piwigo's image_category table
-        'RB_PCT' => "GROUP_CONCAT(DISTINCT CASE WHEN pct.name IS NULL THEN '' ELSE pct.name END SEPARATOR '#sep#') AS imageCategoriesNames,
-                     GROUP_CONCAT(DISTINCT CASE WHEN pct.permalink IS NULL THEN '' ELSE pct.permalink END SEPARATOR '#sep#') AS imageCategoriesPLink,
-                     GROUP_CONCAT(DISTINCT CASE WHEN pct.dir IS NULL THEN 'V' ELSE 'P' END) AS imageCategoriesDir",   //from the piwigo's categories table
+        'RB_PIC' => "GROUP_CONCAT( pic.category_id SEPARATOR ',') AS imageCategoriesId",     // from the piwigo's image_category table
+        'RB_PCT' => "GROUP_CONCAT( CASE WHEN pct.name IS NULL THEN '' ELSE pct.name END SEPARATOR '#sep#') AS imageCategoriesNames,
+                     GROUP_CONCAT( CASE WHEN pct.permalink IS NULL THEN '' ELSE pct.permalink END SEPARATOR '#sep#') AS imageCategoriesPLink,
+                     GROUP_CONCAT( CASE WHEN pct.dir IS NULL THEN 'V' ELSE 'P' END) AS imageCategoriesDir",   //from the piwigo's categories table
       ),
       'FROM' => Array(
         // join rb result_cache table with piwigo's images table, joined with the piwigo's image_category table, joined with the categories table
@@ -1372,6 +1373,12 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
 
     if(is_string($filter)) $filter=array($filter);
     $filter=array_flip($filter);
+
+    GPCCore::addHeaderJS('jquery.ui', 'themes/default/js/ui/packed/ui.core.packed.js');
+    GPCCore::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/packed/ui.dialog.packed.js');
+    GPCCore::addHeaderJS('gpc.pagesNavigator', 'plugins/'.$baseName.'/js/pagesNavigator'.GPCCore::getMinified().'.js');
+    GPCCore::addHeaderJS('gpc.rbSearch', 'plugins/'.$baseName.'/js/rbSearch'.GPCCore::getMinified().'.js');
+
 
     $template->set_filename('gpc_search_page',
                 dirname(dirname(__FILE__)).'/templates/GPCRequestBuilder_search.tpl');

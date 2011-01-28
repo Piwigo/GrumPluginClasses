@@ -1,8 +1,8 @@
 /**
  * -----------------------------------------------------------------------------
  * file: criteriaBuilder.js
- * file version: 1.1.0
- * date: 2010-10-21
+ * file version: 1.1.1
+ * date: 2010-01-13
  *
  * JS file provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -57,8 +57,8 @@
  * |         |            | * fix bug : if there is no criteria, don't send
  * |         |            |   request
  * |         |            |
- * |         |            |
- * |         |            |
+ * | 1.1.1   | 2011/01/13 | * fix bug:2109
+ * |         |            |   . Incompatibility with IE8
  * |         |            |
  * |         |            |
  *
@@ -353,7 +353,7 @@ function criteriaBuilder(container)
    */
   var serializeData=function(prefix, value)
   {
-    returned='';
+    var returned='';
     if(typeof value =='object')
     {
       for(var key in value )
@@ -362,13 +362,13 @@ function criteriaBuilder(container)
         {
           returned+=serializeData(prefix+'['+key+']', value[key]);
         }
-        else
+        else if(typeof value[key] =='string' || typeof value[key] =='number' || typeof value[key] =='boolean')
         {
           returned+='&'+prefix+'['+key+']='+value[key];
         }
       }
     }
-    else
+    else if(typeof value =='string' || typeof value =='number' || typeof value =='boolean')
     {
       returned+='&'+prefix+'='+value;
     }

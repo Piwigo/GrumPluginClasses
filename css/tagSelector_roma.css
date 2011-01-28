@@ -58,3 +58,9 @@ li.ui-tag-selector-list-item:hover {
   font-weight:bold;
   background:#666666;
 }
+
+.ui-error, input[type='text'].ui-error {
+  background:#ff8080;
+  border-color:#800000;
+  color:#800000;
+}

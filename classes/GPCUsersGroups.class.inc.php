@@ -2,8 +2,8 @@
 
 /* -----------------------------------------------------------------------------
   class name: GPCAllowedAccess, GPCGroups, GPCUsers
-  class version  : 2.0.0
-  plugin version : 3.0.0
+  class version  : 2.1.0
+  plugin version : 3.4.0
   date           : 2010-03-30
   ------------------------------------------------------------------------------
   author: grum at piwog.org
@@ -13,16 +13,14 @@
    this classes provides base functions to manage users/groups access
   groups and users classes extends GPCAllowedAccess classes
 
-    - constructor GPCAllowedAccess($alloweds="")
-    - constructor groups($alloweds="")
-    - constructor users($alloweds="")
+    - constructor GPCAllowedAccess($alloweds = array(), $accessMode='a')
+    - constructor groups($alloweds = array(), $accessMode='a')
+    - constructor users($alloweds = array(), $accessMode='a')
     - (public) function getList()
     - (public) function setAllowed($id, $allowed)
-    - (public) function setAlloweds()
-    - (public) function getAlloweds($return_type)
+    - (public) function setAlloweds($idList, $allowed)
+    - (public) function getAlloweds()
     - (public) function isAllowed($id)
-    - (public) function htmlView($sep=", ", $empty="")
-    - (public) function htmlForm($basename)
     - (private) function initList()
 
 
@@ -33,198 +31,139 @@
 |         |            |   functions
 |         |            | * update classes & functions names
 |         |            |
+| 2.1.0   | 2011/01/15 | * remove html function
+|         |            |
+|         |            | * implement accessMode
+|         |            |
 |         |            |
 
    ---------------------------------------------------------------------- */
 class GPCAllowedAccess
 {
-  public $access_list;
+  protected $accessList;
+  protected $accessMode='a'; // 'a' : allowed, 'n' : not allowed
 
-  /*
-    constructor initialize the groups_getListgetListlist
-  */
-  public function __construct($alloweds = "")
+  /**
+   * constructor initialize default values
+   *
+   * @param Array $alloweds  : list of items
+   *        String $alloweds : list of items (separator : '/')
+   *
+   * @param String $accessMode : 'a' = access is allowed by default for all values, $allowed param is a list of not allowed values
+   *                             'n' = access is not allowed by default for all values, $allowed param is a list of allowed values
+   *                             priority is given to the $allowed value
+   */
+  public function __construct($alloweds = array(), $accessMode='a')
   {
     $this->initList();
-    $this->setAlloweds($alloweds);
+    $this->setAlloweds($alloweds, $accessMode=='n');
   }
 
   public function __destruct()
   {
-    unset($this->access_list);
+    unset($this->accessList);
   }
 
-  /*
-    initialize the groups list
-  */
+  /**
+   * destroy the groups list
+   */
   protected function initList()
   {
-    $this->access_list=array();
+    $this->accessList=array();
   }
 
-  /*
-    returns list (as an array)
-  */
+  /**
+   * returns list of items (as an array)
+   * each array item is an array :
+   *  'id'      : (String) id of item
+   *  'name'    : (String) name of item
+   *  'allowed' : (Bool)   access is allowed or not
+   *
+   * @return Array
+   */
   function getList()
   {
-    return($this->access_list);
+    return($this->accessList);
   }
 
-  /*
-    set element an allowed state
-  */
+  /**
+   * set allowed value for an item
+   *
+   * @param String $id : id of item
+   * @param Bool $allowed : access allowed or not
+   */
   function setAllowed($id, $allowed)
   {
-    if(isset($this->access_list[$id]))
+    if(isset($this->accessList[$id]))
     {
-      $this->access_list[$id]['allowed']=$allowed;
+      $this->accessList[$id]['allowed']=$allowed;
     }
   }
 
-  /*
-    set a group enabled/disabled state
-  */
-  function setState($id, $enabled)
-  {
-    if(isset($this->access_list[$id]))
-    {
-      $this->access_list[$id]['enabled']=$enabled;
-    }
-  }
 
-  /*
-    set alloweds list
-    $list is string of id, separated with "/"
-  */
-  function setAlloweds($list)
+  /**
+   * set alloweds items (can be given as an array or a string with separator '/')
+   * according to the
+   *
+   * @param Array $idList  : list of items to set
+   * @param String $idList
+   * @param Bool $allowed : access allowed or not
+   */
+  function setAlloweds($idList, $allowed)
   {
-    $alloweds=explode("/", $list);
-    $alloweds=array_flip($alloweds);
-    foreach($this->access_list as $key => $val)
+    if(!is_array($idList)) $idList=explode("/", $idList);
+
+    $idList=array_flip($idList);
+
+    foreach($this->accessList as $key => $val)
     {
-      if(isset($alloweds[$key]))
+      if(isset($idList[$key]))
       {
-        $this->access_list[$key]['allowed']=true;
+        $this->accessList[$key]['allowed']=$allowed;
       }
       else
       {
-        $this->access_list[$key]['allowed']=false;
+        $this->accessList[$key]['allowed']=!$allowed;
       }
     }
   }
 
-  /*
-    get alloweds list
-    return a string of groups, separated with "/"
-  */
-  function getAlloweds($return_type = 'name')
+
+  /**
+   * return list of alloweds items
+   *
+   * @return Array
+   */
+  function getAlloweds()
   {
-    $returned="";
-    foreach($this->access_list as $key => $val)
+    $returned=Array();
+
+    foreach($this->accessList as $key => $val)
     {
-      if($val['allowed'])
-      { $returned.=$val[$return_type]."/"; }
+      if($val['allowed']) $returned[]=$val;
     }
     return($returned);
   }
 
 
-  /*
-    returns true if is allowed
-  */
+  /**
+   * returns true if is allowed
+   *
+   * @param String $id : item id
+   * @retrun Bool
+   */
   function isAllowed($id)
   {
-    if(isset($this->access_list[$id]))
-    { return($this->access_list[$id]['allowed']); }
+    if(isset($this->accessList[$id]))
+    {
+      return($this->accessList[$id]['allowed']);
+    }
     else
-    { return(false); }
+    {
+      return($this->accessMode=='a');
+    }
   }
 
-  /*
-    returns true if all or one is allowed
-      ids is an array
-  */
-  function areAllowed($ids, $all=false)
-  {
-    foreach($ids as $val)
-    {
-      if($all)
-      {
-        if(!$this->isAllowed($val))
-        {
-          return(false);
-        }
-      }
-      else
-      {
-        if($this->isAllowed($val))
-        {
-          return(true);
-        }
-      }
-    }
-    return(false);
-  }
-
-  /*
-    returns an HTML list with label rather than id
-  */
-  function htmlView($sep=", ", $empty="")
-  {
-    $returned="";
-    foreach($this->access_list as $key => $val)
-    {
-      if($val['allowed'])
-      {
-        if($returned!="")
-        {
-          $returned.=$sep;
-        }
-        $returned.=$val['name'];
-      }
-    }
-    if($returned=="")
-    {
-      $returned=$empty;
-    }
-    return($returned);
-  }
-  /*
-    returns a generic HTML form to manage the groups access
-  */
-  function htmlForm($basename)
-  {
-    /*
-    <!-- BEGIN allowed_group_row -->
-    <label><input type="checkbox" name="fmypolls_att_allowed_groups_{allowed_group_row.ID}" {allowed_group_row.CHECKED}/>&nbsp;{allowed_group_row.NAME}</label>
-    <!-- END allowed_group_row -->
-    */
-    $text='';
-    foreach($this->access_list as $key => $val)
-    {
-      if($val['allowed'])
-      {
-        $checked=' checked';
-      }
-      else
-      {
-        $checked='';
-      }
-
-      if($val['enabled'])
-      {
-        $enabled='';
-      }
-      else
-      {
-        $enabled=' disabled';
-      }
-
-      $text.='<label><input type="checkbox" name="'.$basename.$val['id'].'" '.$checked.$enabled.'/>
-          &nbsp;'.$val['name'].'</label>&nbsp;';
-    }
-    return($text);
-  }
 } //GPCAllowedAccess
 
 
@@ -234,29 +173,31 @@ class GPCAllowedAccess
 
 
 
-/* ----------------------------------------------------------------------
-   this class provides base functions to manage groups access
-    initList redefined to initialize access_list from database GROUPS
-   ---------------------------------------------------------------------- */
+/**
+ * ----------------------------------------------------------------------------
+ *  this class provides base functions to manage groups access
+ *  initList redefined to initialize accessList from database GROUPS
+ * ----------------------------------------------------------------------------
+ */
 class GPCGroups extends GPCAllowedAccess
 {
-  /*
-    initialize the groups list
-  */
+  /**
+   * initialize the groups list
+   */
   protected  function initList()
   {
-    $this->access_list=array();
+    $this->accessList=array();
     $sql="SELECT id, name FROM ".GROUPS_TABLE." ORDER BY name";
     $result=pwg_query($sql);
     if($result)
     {
       while($row=pwg_db_fetch_assoc($result))
       {
-        $this->access_list[$row['id']] =
-                   array('id' => $row['id'],
-                         'name' => $row['name'],
-                         'allowed' => false,
-                         'enabled' => true);
+        $this->accessList[$row['id']]=array(
+            'id' => $row['id'],
+            'name' => $row['name'],
+            'allowed' => ($this->accessMode=='a')
+          );
       }
     }
   }
@@ -269,35 +210,28 @@ class GPCGroups extends GPCAllowedAccess
 
 
 
-/* -----------------------------------------------------------------------------
-   this class provides base functions to manage users access
------------------------------------------------------------------------------ */
+/**
+ * ----------------------------------------------------------------------------
+ *  this class provides base functions to manage users access
+ *  initList redefined to initialize accessList from piwigo's predefined values
+ * ----------------------------------------------------------------------------
+ */
 class GPCUsers extends GPCAllowedAccess
 {
-  /*
-    constructor
-  */
-  public function __construct($alloweds = "")
-  {
-    parent::__construct($alloweds);
-    $this->setState('admin', false);
-    $this->setAllowed('admin', true);
-  }
-
-  /*
-    initialize the groups list
-  */
+  /**
+   * initialize the users list
+   */
   protected function initList()
   {
-    $users_list = array('guest', 'generic', 'normal', 'webmaster', 'admin');
-    $this->access_list=array();
-    foreach($users_list as $val)
+    $usersList = array('guest', 'generic', 'normal', 'webmaster', 'admin');
+    $this->accessList=array();
+    foreach($usersList as $val)
     {
-      $this->access_list[$val] =
-                  array('id' => $val,
-                        'name' => l10n('user_status_'.$val),
-                        'allowed' => false,
-                        'enabled' => true);
+      $this->accessList[$val]=array(
+          'id' => $val,
+          'name' => l10n('user_status_'.$val),
+          'allowed' => ($this->accessMode=='a')
+        );
     }
   }
 } //class users

@@ -147,7 +147,7 @@
                   {
                     container:$('<div/>',
                         {
-                          'class':' ui-icon-selector ',
+                          'class':' ui-icon-selector '
                         }
                     ).bind('click.iconSelector',
                         function ()

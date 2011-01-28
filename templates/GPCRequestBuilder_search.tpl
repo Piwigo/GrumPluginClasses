@@ -1,7 +1,3 @@
-{known_script id="jquery.ui" src=$ROOT_URL|@cat:"themes/default/js/ui/packed/ui.core.packed.js"}
-{known_script id="jquery.ui.dialog" src=$ROOT_URL|@cat:"themes/default/js/ui/packed/ui.dialog.packed.js"}
-{known_script id="gpc.pagesNavigator" src=$ROOT_URL|@cat:"plugins/GrumPluginClasses/js/pagesNavigator.packed.js"}
-{known_script id="gpc.rbSearch" src=$ROOT_URL|@cat:"plugins/GrumPluginClasses/js/rbSearch.packed.js"}
 
 {foreach from=$datas.dialogBox item=dialogBox}
   {$dialogBox.content}
