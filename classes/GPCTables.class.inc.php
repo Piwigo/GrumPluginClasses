@@ -44,7 +44,7 @@ class GPCTables
 
   public function __construct($tables)
   {
-    $this->tables = $tables;
+    $this->setTables($tables);
   }
 
   public function __destruct()
@@ -54,21 +54,26 @@ class GPCTables
   }
 
 
-  /*
-      create tables
-      $tables_def is an array of SQL CREATE queries
+  public function setTables($tables)
+  {
+    $this->tables = $tables;
+  }
 
-      return true if everything is ok, otherwise tablename
-  */
-  public function create($tables_def)
+  /**
+   *   create tables
+   *
+   * @param Array $tablesDef : array of SQL CREATE queries
+   * @return Bool : true if everything is ok, otherwise tablename
+   */
+  public function create($tablesDef)
   {
     //deleting tables if exists
 
-    $this->drop($tables_def);
+    $this->drop();
 
-    for($i=0;$i<count($tables_def);$i++)
+    for($i=0;$i<count($tablesDef);$i++)
     {
-      $result=pwg_query($tables_def[$i]);
+      $result=pwg_query($tablesDef[$i]);
       if(!$result)
       {
         //if an error occurs, deleting created tables
