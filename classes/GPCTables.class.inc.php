@@ -63,7 +63,8 @@ class GPCTables
   public function create($tables_def)
   {
     //deleting tables if exists
-    $this->drop();
+
+    $this->drop($tables_def);
 
     for($i=0;$i<count($tables_def);$i++)
     {
@@ -131,9 +132,10 @@ class GPCTables
   /*
       delete tables listed in $this->tables_list
   */
-  public function drop()
+  public function drop($list=array())
   {
-    foreach($this->tables as $key => $table_name)
+    if(count($list)==0) $list=$this->tables;
+    foreach($list as $key => $table_name)
     {
       $sql="DROP TABLE IF EXISTS ".$table_name;
       $result=pwg_query($sql);
