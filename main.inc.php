@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.4.1
+Version: 3.4.2
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -134,6 +134,12 @@ Author URI: http://photos.grum.fr/
 |         |            |
 | 3.4.1   | 2011/01/31 | * mantis bug:2156
 |         |            |   . undefined variable on RBuilder screens
+|         |            |
+| 3.4.2   | 2011/01/31 | * mantis bug:2162
+|         |            |   . Personalised blocks : when adding a new block,
+|         |            |     previous title & content are not reseted  (AMM bug
+|         |            |     due to inputText.js ui component)
+|         |            |
 |         |            |
 |         |            |
 |         |            | ===== Don't forget to update the plugin version ! =====

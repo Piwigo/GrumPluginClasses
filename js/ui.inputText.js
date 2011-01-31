@@ -1,7 +1,7 @@
 /**
  * -----------------------------------------------------------------------------
  * file: ui.inputText.js
- * file version: 1.1.0
+ * file version: 1.1.1
  * date: 2011-01-09
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
@@ -27,6 +27,12 @@
  * |         |            |   defined, use of div content to define text value
  * |         |            |
  * |         |            | * add multilanguage managment
+ * |         |            |
+ * | 1.1.1   | 2011/01/31 | * add function ':clear' for 'languageValues' method
+ * |         |            |
+ * |         |            |
+ * |         |            |
+ * |         |            |
  * |         |            |
  * |         |            |
  * |         |            |
@@ -803,10 +809,20 @@
           var options=object.data('options'),
               properties=object.data('properties');
 
-          for(var langValue in value)
+          if(value==':clear')
           {
-            if(properties.languagesValues[langValue]!=null)
-                privateMethods.setLanguageValue(object, langValue, value[langValue], langValue==options.currentLanguage);
+            for(var langValue in properties.languagesValues)
+            {
+              privateMethods.setLanguageValue(object, langValue, '', langValue==options.currentLanguage);
+            }
+          }
+          else if(!$.isEmptyObject(value))
+          {
+            for(var langValue in value)
+            {
+              if(properties.languagesValues[langValue]!=null)
+                  privateMethods.setLanguageValue(object, langValue, value[langValue], langValue==options.currentLanguage);
+            }
           }
 
           return(properties.languagesValues);
