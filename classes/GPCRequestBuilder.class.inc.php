@@ -78,9 +78,12 @@
 |         |            |   . RBuilder returns an error message when one picture
 |         |            |     have multiple categories
 |         |            |
+| 1.1.3   | 2011/01/31 | * mantis bug:2156
+|         |            |   . undefined variable on RBuilder screens
+|         |            |
 |         |            |
 
-  --------------------------------------------------------------------------- */
+ --------------------------------------------------------------------------- */
 
 if(!defined('GPC_DIR')) define('GPC_DIR' , baseName(dirname(dirname(__FILE__))));
 if(!defined('GPC_PATH')) define('GPC_PATH' , PHPWG_PLUGINS_PATH . GPC_DIR . '/');
@@ -1374,10 +1377,11 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     if(is_string($filter)) $filter=array($filter);
     $filter=array_flip($filter);
 
+    GPCCore::addHeaderJS('jquery', 'themes/default/js/jquery.packed.js');
     GPCCore::addHeaderJS('jquery.ui', 'themes/default/js/ui/packed/ui.core.packed.js');
     GPCCore::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/packed/ui.dialog.packed.js');
-    GPCCore::addHeaderJS('gpc.pagesNavigator', 'plugins/'.$baseName.'/js/pagesNavigator'.GPCCore::getMinified().'.js');
-    GPCCore::addHeaderJS('gpc.rbSearch', 'plugins/'.$baseName.'/js/rbSearch'.GPCCore::getMinified().'.js');
+    GPCCore::addHeaderJS('gpc.pagesNavigator', 'plugins/GrumPluginClasses/js/pagesNavigator'.GPCCore::getMinified().'.js');
+    GPCCore::addHeaderJS('gpc.rbSearch', 'plugins/GrumPluginClasses/js/rbSearch'.GPCCore::getMinified().'.js');
 
 
     $template->set_filename('gpc_search_page',

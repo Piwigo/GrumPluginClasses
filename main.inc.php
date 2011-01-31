@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.4.0
+Version: 3.4.1
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -131,6 +131,9 @@ Author URI: http://photos.grum.fr/
 |         |            |
 |         |            | * minify js scripts (larger size than packed files but
 |         |            |   better performance)
+|         |            |
+| 3.4.1   | 2011/01/31 | * mantis bug:2156
+|         |            |   . undefined variable on RBuilder screens
 |         |            |
 |         |            |
 |         |            | ===== Don't forget to update the plugin version ! =====
