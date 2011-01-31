@@ -40,7 +40,7 @@
    ---------------------------------------------------------------------- */
 class GPCAllowedAccess
 {
-  protected $accessList;
+  public $access_list;
   protected $accessMode='a'; // 'a' : allowed, 'n' : not allowed
 
   /**
@@ -61,7 +61,7 @@ class GPCAllowedAccess
 
   public function __destruct()
   {
-    unset($this->accessList);
+    unset($this->access_list);
   }
 
   /**
@@ -69,7 +69,7 @@ class GPCAllowedAccess
    */
   protected function initList()
   {
-    $this->accessList=array();
+    $this->access_list=array();
   }
 
   /**
@@ -83,7 +83,7 @@ class GPCAllowedAccess
    */
   function getList()
   {
-    return($this->accessList);
+    return($this->access_list);
   }
 
   /**
@@ -94,9 +94,9 @@ class GPCAllowedAccess
    */
   function setAllowed($id, $allowed)
   {
-    if(isset($this->accessList[$id]))
+    if(isset($this->access_list[$id]))
     {
-      $this->accessList[$id]['allowed']=$allowed;
+      $this->access_list[$id]['allowed']=$allowed;
     }
   }
 
@@ -115,15 +115,15 @@ class GPCAllowedAccess
 
     $idList=array_flip($idList);
 
-    foreach($this->accessList as $key => $val)
+    foreach($this->access_list as $key => $val)
     {
       if(isset($idList[$key]))
       {
-        $this->accessList[$key]['allowed']=$allowed;
+        $this->access_list[$key]['allowed']=$allowed;
       }
       else
       {
-        $this->accessList[$key]['allowed']=!$allowed;
+        $this->access_list[$key]['allowed']=!$allowed;
       }
     }
   }
@@ -138,7 +138,7 @@ class GPCAllowedAccess
   {
     $returned=Array();
 
-    foreach($this->accessList as $key => $val)
+    foreach($this->access_list as $key => $val)
     {
       if($val['allowed']) $returned[]=$val;
     }
@@ -154,9 +154,9 @@ class GPCAllowedAccess
    */
   function isAllowed($id)
   {
-    if(isset($this->accessList[$id]))
+    if(isset($this->access_list[$id]))
     {
-      return($this->accessList[$id]['allowed']);
+      return($this->access_list[$id]['allowed']);
     }
     else
     {
@@ -176,7 +176,7 @@ class GPCAllowedAccess
 /**
  * ----------------------------------------------------------------------------
  *  this class provides base functions to manage groups access
- *  initList redefined to initialize accessList from database GROUPS
+ *  initList redefined to initialize access_list from database GROUPS
  * ----------------------------------------------------------------------------
  */
 class GPCGroups extends GPCAllowedAccess
@@ -186,14 +186,14 @@ class GPCGroups extends GPCAllowedAccess
    */
   protected  function initList()
   {
-    $this->accessList=array();
+    $this->access_list=array();
     $sql="SELECT id, name FROM ".GROUPS_TABLE." ORDER BY name";
     $result=pwg_query($sql);
     if($result)
     {
       while($row=pwg_db_fetch_assoc($result))
       {
-        $this->accessList[$row['id']]=array(
+        $this->access_list[$row['id']]=array(
             'id' => $row['id'],
             'name' => $row['name'],
             'allowed' => ($this->accessMode=='a')
@@ -213,7 +213,7 @@ class GPCGroups extends GPCAllowedAccess
 /**
  * ----------------------------------------------------------------------------
  *  this class provides base functions to manage users access
- *  initList redefined to initialize accessList from piwigo's predefined values
+ *  initList redefined to initialize access_list from piwigo's predefined values
  * ----------------------------------------------------------------------------
  */
 class GPCUsers extends GPCAllowedAccess
@@ -224,10 +224,10 @@ class GPCUsers extends GPCAllowedAccess
   protected function initList()
   {
     $usersList = array('guest', 'generic', 'normal', 'webmaster', 'admin');
-    $this->accessList=array();
+    $this->access_list=array();
     foreach($usersList as $val)
     {
-      $this->accessList[$val]=array(
+      $this->access_list[$val]=array(
           'id' => $val,
           'name' => l10n('user_status_'.$val),
           'allowed' => ($this->accessMode=='a')
