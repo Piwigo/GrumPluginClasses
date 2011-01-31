@@ -191,39 +191,31 @@ class GPCCore
    */
   static public function loadConfig($pluginName, &$config=Array())
   {
-    if(!is_array($config))
+    global $conf;
+
+    if(!isset($conf[$pluginName.'_config']))
     {
       return(false);
     }
 
-    $sql="SELECT value FROM ".CONFIG_TABLE."
-          WHERE param = '".$pluginName."_config'";
-    $result=pwg_query($sql);
-    if($result)
+    $configValues = unserialize($conf[$pluginName.'_config']);
+    reset($configValues);
+    while (list($key, $val) = each($configValues))
     {
-      $row=pwg_db_fetch_row($result);
-      if(is_string($row[0]))
+      if(is_array($val))
       {
-        $configValues = unserialize($row[0]);
-        reset($configValues);
-        while (list($key, $val) = each($configValues))
+        foreach($val as $key2 => $val2)
         {
-          if(is_array($val))
-          {
-            foreach($val as $key2 => $val2)
-            {
-              $config[$key][$key2]=$val2;
-            }
-          }
-          else
-          {
-            $config[$key] =$val;
-          }
+          $config[$key][$key2]=$val2;
         }
       }
-      return(true);
+      else
+      {
+        $config[$key] =$val;
+      }
     }
-    return(false);
+
+    return(true);
   }
 
   /**
