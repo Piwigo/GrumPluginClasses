@@ -1,8 +1,8 @@
 <?php
 /* -----------------------------------------------------------------------------
   class name: GCPRequestBuilder
-  class version  : 1.1.2
-  plugin version : 3.3.3
+  class version  : 1.1.4
+  plugin version : 3.4.3
   date           : 2010-09-08
 
   ------------------------------------------------------------------------------
@@ -80,6 +80,13 @@
 |         |            |
 | 1.1.3   | 2011/01/31 | * mantis bug:2156
 |         |            |   . undefined variable on RBuilder screens
+|         |            |
+| 1.1.4   | 2011/01/31 | * mantis bug:2167
+|         |            |
+|         |            |
+|         |            |
+|         |            |
+|         |            |
 |         |            |
 |         |            |
 
@@ -299,7 +306,7 @@ class GPCSearchCallback {
 class GPCRequestBuilder {
 
   static public $pluginName = 'GPCRequestBuilder';
-  static public $version = '1.1.0';
+  static public $version = '1.1.4';
 
   static private $tables = Array();
   static protected $tGlobalId=0;
@@ -315,17 +322,18 @@ class GPCRequestBuilder {
   static public function register($plugin, $fileName)
   {
     $config=Array();
-    if(GPCCore::loadConfig(self::$pluginName, $config))
+    if(!GPCCore::loadConfig(self::$pluginName, $config))
     {
-      $config['registered'][$plugin]=Array(
-        'name' => $plugin,
-        'fileName' => $fileName,
-        'date' => date("Y-m-d H:i:s"),
-        'version' => self::$version
-      );
-      return(GPCCore::saveConfig(self::$pluginName, $config));
+      $config['registered']=array();
     }
-    return(false);
+
+    $config['registered'][$plugin]=Array(
+      'name' => $plugin,
+      'fileName' => $fileName,
+      'date' => date("Y-m-d H:i:s"),
+      'version' => self::$version
+    );
+    return(GPCCore::saveConfig(self::$pluginName, $config));
   }
 
   /**
@@ -487,6 +495,14 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     return(true);
   }
 
+
+  /**
+   * delete the config
+   */
+  static public function deleteConfig()
+  {
+    GPCCore::deleteConfig(self::$pluginName);
+  }
 
   /**
    * this function add and handler on the 'loc_end_page_header' to add request

@@ -140,6 +140,9 @@ Author URI: http://photos.grum.fr/
 |         |            |     previous title & content are not reseted  (AMM bug
 |         |            |     due to inputText.js ui component)
 |         |            |
+| 3.4.3   | 2011/02/01 | * mantis bug:2167
+|         |            |   . RBuilder and GPCore not correctly initialized on
+|         |            |     fresh install
 |         |            |
 |         |            |
 |         |            | ===== Don't forget to update the plugin version ! =====

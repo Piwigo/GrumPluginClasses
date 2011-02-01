@@ -35,6 +35,13 @@
 |         |            |
 |         |            | * implement getMinified() & setMinifiedState() functions
 |         |            |
+| 1.3.3   | 2011/02/01 | * fix bug on loadConfig() function
+|         |            |
+|         |            | * update deleteConfig() function (allow to be used to
+|         |            |   delete the GPCCore config)
+|         |            |
+|         |            | * mantis bug:2167
+|         |            |
 |         |            |
 |         |            |
 
@@ -88,11 +95,11 @@ class GPCCore
         Array('name' => "CommonPlugin", 'version' => "2.2.0"),
         Array('name' => "GPCAjax", 'version' => "3.0.0"),
         Array('name' => "GPCCategorySelector", 'version' => "1.0.1"),
-        Array('name' => "GPCCore", 'version' => "1.3.2"),
+        Array('name' => "GPCCore", 'version' => "1.3.3"),
         Array('name' => "GPCCss", 'version' => "3.0.0"),
         Array('name' => "GPCPagesNavigation", 'version' => "2.0.0"),
         Array('name' => "GPCPublicIntegration", 'version' => "2.0.0"),
-        Array('name' => "GPCRequestBuilder", 'version' => "1.1.2"),
+        Array('name' => "GPCRequestBuilder", 'version' => "1.1.4"),
         Array('name' => "GPCTables", 'version' => "1.5.0"),
         Array('name' => "GPCTabSheet", 'version' => "1.1.1"),
         Array('name' => "GPCTranslate", 'version' => "2.1.1"),
@@ -118,17 +125,18 @@ class GPCCore
   static public function register($plugin, $release, $GPCneeded)
   {
     $config=Array();
-    if(self::loadConfig(self::$pluginName, $config))
+    if(!self::loadConfig(self::$pluginName, $config))
     {
-      $config['registered'][$plugin]=Array(
-        'name' => $plugin,
-        'release' => $release,
-        'needed' => $GPCneeded,
-        'date' => date("Y-m-d"),
-      );
-      return(self::saveConfig(self::$pluginName, $config));
+      $config['registered']=array();
     }
-    return(false);
+
+    $config['registered'][$plugin]=Array(
+      'name' => $plugin,
+      'release' => $release,
+      'needed' => $GPCneeded,
+      'date' => date("Y-m-d"),
+    );
+    return(self::saveConfig(self::$pluginName, $config));
   }
 
   /**
@@ -272,11 +280,12 @@ class GPCCore
    * delete config from CONFIG_TABLE
    *
    * @param String $pluginName : the plugin name, must contain only alphanumerical
-   *                             character
+   *                             character ; if empty, assume GPCCore config
    * @return Boolean : true if config is deleted, otherwise false
    */
-  static public function deleteConfig($pluginName)
+  static public function deleteConfig($pluginName='')
   {
+    if($pluginName=='') $pluginName=self::$pluginName;
     $sql="DELETE FROM ".CONFIG_TABLE."
           WHERE param='".$pluginName."_config'";
     $result=pwg_query($sql);

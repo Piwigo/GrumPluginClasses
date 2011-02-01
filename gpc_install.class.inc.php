@@ -68,6 +68,8 @@
       else
       {
         $this->deleteConfig();
+        GPCCore::deleteConfig();
+        GPCRequestBuilder::deleteConfig();
         $result=GPCRequestBuilder::deleteTables();
         return($result);
       }
