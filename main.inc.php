@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.4.2
+Version: 3.4.4
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -143,6 +143,20 @@ Author URI: http://photos.grum.fr/
 | 3.4.3   | 2011/02/01 | * mantis bug:2167
 |         |            |   . RBuilder and GPCore not correctly initialized on
 |         |            |     fresh install
+|         |            |
+| 3.4.4   | 2011/02/02 | * mantis bug:2170
+|         |            |   . File path for RBuilder registered plugins is corrupted
+|         |            |
+|         |            | * mantis bug:2178
+|         |            |   . RBuilder register function don't work
+|         |            |
+|         |            | * mantis bug:2179
+|         |            |   . JS file loaded in wrong order made incompatibility
+|         |            |     with Lightbox, GMaps & ASE plugins (and probably other)
+|         |            |
+|         |            | * add language pt_PT (thanks to translator)
+|         |            |
+|         |            |
 |         |            |
 |         |            |
 |         |            | ===== Don't forget to update the plugin version ! =====

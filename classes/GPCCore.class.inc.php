@@ -2,9 +2,9 @@
 
 /* -----------------------------------------------------------------------------
   class name     : GPCCore
-  class version  : 1.3.2
-  plugin version : 3.4.0
-  date           : 2011-01-28
+  class version  : 1.3.3
+  plugin version : 3.4.4
+  date           : 2011-02-02
   ------------------------------------------------------------------------------
   author: grum at piwigo.org
   << May the Little SpaceFrog be with you >>
@@ -41,6 +41,17 @@
 |         |            |   delete the GPCCore config)
 |         |            |
 |         |            | * mantis bug:2167
+|         |            |
+| 1.3.4   | 2011/02/02 | * mantis bug:2170
+|         |            |   . File path for RBuilder registered plugins is corrupted
+|         |            |
+|         |            | * mantis bug:2178
+|         |            |   . RBuilder register function don't work
+|         |            |
+|         |            | * mantis bug:2179
+|         |            |   . JS file loaded in wrong order made incompatibility
+|         |            |     with Lightbox, GMaps & ASE plugins (and probably other)
+|         |            |
 |         |            |
 |         |            |
 |         |            |
@@ -95,7 +106,7 @@ class GPCCore
         Array('name' => "CommonPlugin", 'version' => "2.2.0"),
         Array('name' => "GPCAjax", 'version' => "3.0.0"),
         Array('name' => "GPCCategorySelector", 'version' => "1.0.1"),
-        Array('name' => "GPCCore", 'version' => "1.3.3"),
+        Array('name' => "GPCCore", 'version' => "1.3.4"),
         Array('name' => "GPCCss", 'version' => "3.0.0"),
         Array('name' => "GPCPagesNavigation", 'version' => "2.0.0"),
         Array('name' => "GPCPublicIntegration", 'version' => "2.0.0"),
@@ -223,6 +234,8 @@ class GPCCore
       }
     }
 
+    $conf[$pluginName.'_config']=serialize($config);
+
     return(true);
   }
 
@@ -266,14 +279,21 @@ class GPCCore
    */
   static public function saveConfig($pluginName, $config)
   {
+    global $conf;
+
     $sql="REPLACE INTO ".CONFIG_TABLE."
            VALUES('".$pluginName."_config', '"
-           .serialize($config)."', '')";
+           .pwg_db_real_escape_string(serialize($config))."', '')";
     $result=pwg_query($sql);
     if($result)
-    { return true; }
+    {
+      $conf[$pluginName.'_config']=serialize($config);
+      return true;
+    }
     else
-    { return false; }
+    {
+      return false;
+    }
   }
 
   /**
@@ -363,7 +383,13 @@ class GPCCore
 
     if(!array_key_exists($id,  $template->known_scripts) and !array_key_exists($file, self::$headerItems['js']))
     {
-     $template->known_scripts[$id]=$file;
+      $dummy=null;
+
+      $template->func_known_script(
+        array('id'=>$id,
+              'src'=>$file),
+        $dummy);
+     //$template->known_scripts[$id]=$file;
      self::$headerItems['js'][$id]=$file;
     }
   }
@@ -382,12 +408,13 @@ class GPCCore
     {
       $template->append('head_elements', '<link rel="stylesheet" type="text/css" href="'.$file.'"/>');
     }
-
+/*
     foreach(self::$headerItems['js'] as $file)
     {
       //$template->append('head_elements', '<script type="text/javascript" src="'.$file.'"></script>');
       $template->block_html_head(null, '<script type="text/javascript" src="'.$file.'"></script>', $dummy1, $dummy2);
     }
+*/
   }
 
   /**
@@ -453,7 +480,7 @@ class GPCCore
           self::addHeaderJS('jquery.ui', 'themes/default/js/ui/packed/ui.core.packed.js');
           self::addHeaderJS('jquery.ui.slider', 'themes/default/js/ui/packed/ui.slider.packed.js');
           self::addHeaderJS('jquery.ui.draggable', 'themes/default/js/ui/packed/ui.draggable.packed.js');
-          self::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/packed/ui.slider.dialog.js');
+          self::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/packed/ui.dialog.packed.js');
           self::addHeaderJS('gpc.inputText', GPC_PATH.'js/ui.inputText'.self::$minified.'.js');
           self::addHeaderJS('gpc.inputNum', GPC_PATH.'js/ui.inputNum'.self::$minified.'.js');
           self::addHeaderJS('gpc.inputColorsFB', GPC_PATH.'js/ui.inputColorsFB'.self::$minified.'.js');
