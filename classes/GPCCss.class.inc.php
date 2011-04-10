@@ -2,9 +2,9 @@
 
 /* -----------------------------------------------------------------------------
   class name: GPCCss
-  class version  : 3.0.0
-  plugin version : 3.0.0
-  date           : 2010-03-30
+  class version  : 3.1.0
+  plugin version : 3.5.0
+  date           : 2011-01-31
 
   ------------------------------------------------------------------------------
   Author     : Grum
@@ -20,7 +20,7 @@
 | release | date       |
 | 3.0.0   | 2010/03/30 | * Update class & function names
 |         |            |
-|         |            |
+| 3.1.0   | 2011/01/31 | * Updated for piwigo 2.2
 |         |            |
 |         |            |
 |         |            |
@@ -53,12 +53,12 @@ class GPCCss
     if($fileName=="")
     {
       //if no filename given, load the gpc.css file
-      $fileName=basename(dirname(dirname(__FILE__))).'/css/gpc.css';
-      $template->append('head_elements', '<link rel="stylesheet" type="text/css" href="plugins/'.$fileName.'">');
+      $fileName='./plugins/'.basename(dirname(dirname(__FILE__))).'/css/gpc.css';
+      GPCCore::addHeaderCSS('gpc', $fileName);
     }
     elseif(file_exists($fileName))
     {
-      $template->append('head_elements', '<link rel="stylesheet" type="text/css" href="plugins/'.basename(dirname($fileName))."/".basename($fileName).'">');
+      GPCCore::addHeaderCSS(basename(dirname($fileName)), 'plugins/'.basename(dirname($fileName)).'/'.basename($fileName).'');
     }
   }
 

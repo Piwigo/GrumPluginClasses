@@ -1,7 +1,7 @@
 <?php
 /* -----------------------------------------------------------------------------
   class name: GCPRequestBuilder
-  class version  : 1.1.4
+  class version  : 1.1.5
   plugin version : 3.4.3
   date           : 2010-09-08
 
@@ -83,6 +83,7 @@
 |         |            |
 | 1.1.4   | 2011/01/31 | * mantis bug:2167
 |         |            |
+| 1.1.5   | 2011/04/10 | * Compatibility with piwigo 2.2
 |         |            |
 |         |            |
 |         |            |
@@ -90,7 +91,7 @@
 |         |            |
 |         |            |
 
- --------------------------------------------------------------------------- */
+  --------------------------------------------------------------------------- */
 
 if(!defined('GPC_DIR')) define('GPC_DIR' , baseName(dirname(dirname(__FILE__))));
 if(!defined('GPC_PATH')) define('GPC_PATH' , PHPWG_PLUGINS_PATH . GPC_DIR . '/');
@@ -538,10 +539,10 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
 
 
     $baseName=basename(dirname(dirname(__FILE__))).'/js/';
-    GPCCore::addHeaderJS('jquery', 'themes/default/js/jquery.packed.js');
-    GPCCore::addHeaderJS('gpc.interface', 'plugins/'.$baseName.'external/interface/interface.js');
-    GPCCore::addHeaderJS('gpc.inestedsortable', 'plugins/'.$baseName.'external/inestedsortable.pack.js');
-    GPCCore::addHeaderJS('gpc.rbCriteriaBuilder', 'plugins/'.$baseName.'rbCriteriaBuilder'.GPCCore::getMinified().'.js');
+    GPCCore::addHeaderJS('jquery', 'themes/default/js/jquery.min.js');
+    GPCCore::addHeaderJS('gpc.interface', 'plugins/'.$baseName.'external/interface/interface.js', array('jquery'));
+    GPCCore::addHeaderJS('gpc.inestedsortable', 'plugins/'.$baseName.'external/inestedsortable.pack.js', array('jquery', 'gpc.interface'));
+    GPCCore::addHeaderJS('gpc.rbCriteriaBuilder', 'plugins/'.$baseName.'rbCriteriaBuilder'.GPCCore::getMinified().'.js', array('gpc.inestedsortable'));
 
     $template->append('head_elements',
 "<script type=\"text/javascript\">
@@ -1393,7 +1394,6 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     if(is_string($filter)) $filter=array($filter);
     $filter=array_flip($filter);
 
-    GPCCore::addHeaderJS('jquery', 'themes/default/js/jquery.packed.js');
     GPCCore::addHeaderJS('jquery.ui', 'themes/default/js/ui/packed/ui.core.packed.js');
     GPCCore::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/packed/ui.dialog.packed.js');
     GPCCore::addHeaderJS('gpc.pagesNavigator', 'plugins/GrumPluginClasses/js/pagesNavigator'.GPCCore::getMinified().'.js');

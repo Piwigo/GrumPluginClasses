@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.4.4
+Version: 3.5.0
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -156,8 +156,13 @@ Author URI: http://photos.grum.fr/
 |         |            |
 |         |            | * add language pt_PT (thanks to translator)
 |         |            |
+| 3.5.0   | 2011/04/10 | * mantis bug:2149 
 |         |            |
 |         |            |
+|         |            |
+|         |            |
+|         |            |
+|         |            |   . Compatibility with piwigo 2.2
 |         |            |
 |         |            | ===== Don't forget to update the plugin version ! =====
 |         |            |

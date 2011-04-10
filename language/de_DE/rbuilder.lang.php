@@ -19,7 +19,6 @@ $lang['gpc_something_is_wrong_on_the_server_side'] = 'Auf dem Server ist ein Feh
 // GPC 3.3.2
 $lang['There is no criteria ! At least, one criteria is required to do search...']="Es gibt kein Kriterium! Es muss mindestens ein Kriterium angegeben werden um die Suche starten zu können...";
 
-// need to be translated ! thanks :-)
 $lang['gpc_help_edit_criteria']="Kriterium bearbeiten";
 $lang['gpc_help_delete_criteria']="Kriterium löschen";
 $lang['gpc_help_move_criteria']="Drag'n'drop um die Suchbedingungen zu organisieren";
