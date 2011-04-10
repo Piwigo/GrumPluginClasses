@@ -53,8 +53,9 @@ class GPCCss
     if($fileName=="")
     {
       //if no filename given, load the gpc.css file
-      $fileName='./plugins/'.basename(dirname(dirname(__FILE__))).'/css/gpc.css';
-      GPCCore::addHeaderCSS('gpc', $fileName);
+      $fileName='./plugins/'.basename(dirname(dirname(__FILE__))).'/css/gpc';
+      GPCCore::addHeaderCSS('gpc', $fileName.'.css');
+      GPCCore::addHeaderCSS('gpc_theme', $fileName.'_'.$template->get_themeconf('name').'.css');
     }
     elseif(file_exists($fileName))
     {
