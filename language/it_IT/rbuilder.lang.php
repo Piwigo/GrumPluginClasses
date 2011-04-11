@@ -2,8 +2,8 @@
 
 $lang['gpc_rb_search_criterion']='Criteri di ricerca';
 $lang['gpc_rb_do_modify_request']='Modificare la ricerca';
-$lang['gpc_rb_result_query']='Risultati della ricerca';
-$lang['gpc_rb_number_of_item_found']='Numero d\’immagini trovate';
+$lang['gpc_rb_result_query']='Risultato della ricerca';
+$lang['gpc_rb_number_of_item_found']='Numero di foto trovate';
 $lang['gpc_rb_add_criterions']='Criteri';
 $lang['gpc_rb_clear_criterions']='Ripristinare i criteri';
 $lang['gpc_rb_search']='Ricercare';

@@ -1,4 +1,5 @@
 <?php
+
 $lang['Module'] = 'Modulo';
 $lang['Version'] = 'Versione';
 $lang['List of shared modules'] = 'Elenco dei moduli condivisi';
