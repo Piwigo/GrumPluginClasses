@@ -19,10 +19,9 @@ $lang['gpc_something_is_wrong_on_the_server_side'] = 'Vyskytla sa chyba na stran
 // GPC 3.3.2
 $lang['There is no criteria ! At least, one criteria is required to do search...']="To nie je kritérium! Najmenej jedno kritérium je potrebné na vyhľadávanie...";
 
-// need to be translated ! thanks :-)
-$lang['gpc_help_edit_criteria']="Edit criteria";
-$lang['gpc_help_delete_criteria']="Delete criteria";
-$lang['gpc_help_move_criteria']="Drag'n'drop to organize search conditions";
-$lang['gpc_help_switch_condition']="Invert the nature of the condition (AND &hArr; OR)";
+$lang['gpc_help_edit_criteria'] = 'Opraviť kritérium';
+$lang['gpc_help_delete_criteria'] = 'Vymazať kritérium';
+$lang['gpc_help_move_criteria'] = 'Chytiť a presunúť na zostavenie vyhľadávania podmienok';
+$lang['gpc_help_switch_condition'] = 'Obrátiť druh podmienky (AND &hArr; OR)'; 
 
 ?>
