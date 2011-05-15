@@ -1,8 +1,8 @@
 /**
  * -----------------------------------------------------------------------------
  * file: criteriaBuilder.js
- * file version: 1.1.1
- * date: 2010-01-13
+ * file version: 1.1.2
+ * date: 2011-05-15
  *
  * JS file provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -60,6 +60,15 @@
  * | 1.1.1   | 2011/01/13 | * fix bug:2109
  * |         |            |   . Incompatibility with IE8
  * |         |            |
+ * | 1.1.2   | 2011/05/15 | * fix bug:
+ * |         |            |   . Fix some incompatibilities with IE7
+ * |         |            |
+ * |         |            | * fix bug:2302
+ * |         |            |   . Request builder interface don't work
+ * |         |            |
+ * |         |            |
+ * |         |            |
+ * |         |            |
  * |         |            |
  *
  */
@@ -71,11 +80,11 @@ function criteriaBuilder(container)
   var itemsId = {
           group:'iCbGroup',
           item:'iCbItem',
-          container:container,
+          container:container
         },
       counters = {
           group:0,
-          item:0,
+          item:0
         },
       options = {
           textAND:'AND',
@@ -99,7 +108,7 @@ function criteriaBuilder(container)
           helpDeleteUrl:'',
           helpMove:'',
           helpSwitchCondition:'',
-          ajaxUrl:'',
+          ajaxUrl:''
         },
       extraData = new Array();
 
@@ -308,7 +317,7 @@ function criteriaBuilder(container)
     if($('#'+itemId).length!=0)
     {
       $('#'+itemId).remove();
-      re=/[0-9]*$/;
+      var re=/[0-9]*$/;
       extraData[eval(re.exec(itemId)[0])]=null;
       manage();
     }
@@ -327,7 +336,7 @@ function criteriaBuilder(container)
     if($('#'+itemId).length!=0)
     {
       $('#'+itemId+' .itemContent').html(content);
-      re=/[0-9]*$/;
+      var re=/[0-9]*$/;
       extraData[eval(re.exec(itemId)[0])]=data;
     }
   };
@@ -382,11 +391,9 @@ function criteriaBuilder(container)
    */
   var getItems = function()
   {
-    //group & items tree
-    serialized=jQuery.iNestedSortable.serialize(itemsId.container)['hash'];
+    var serialized=jQuery.iNestedSortable.serialize(itemsId.container)['hash'], //group & items tree
+        tmp=Array(); //items extraData
 
-    //items extraData
-    tmp=Array();
     for(i=0;i<extraData.length;i++)
     {
       if(extraData[i]!=null)
@@ -422,7 +429,7 @@ function criteriaBuilder(container)
    */
   var getExtraData = function(itemId)
   {
-    re=/[0-9]*$/;
+    var re=/[0-9]*$/;
     extraDataNumber=re.exec(itemId)[0];
 
     return(extraData[extraDataNumber]);
@@ -535,14 +542,14 @@ function criteriaBuilder(container)
         helperclass: options.classHelper,
         serializeRegExp:/.*/i,
         autoScroll: true,
-        handle: '.cbSortHandle',
+        handle: '.cbSortHandle:first',
         ghosting:false,
         nestingPxSpace:15,
         currentNestingClass:'cbItemOverGroup',
 
         onChange: function(serialized) {
           manage();
-        },
+        }
       }
     );
   };
@@ -554,7 +561,7 @@ function criteriaBuilder(container)
    */
   onSwitchOperator = function (event)
   {
-    groupId=event.data;
+    var groupId=event.data;
 
     if($('#'+groupId).hasClass('cbOpAND'))
     {
@@ -582,7 +589,7 @@ function criteriaBuilder(container)
       return(false);
     }
 
-    datas=encodeURI('ajaxfct=public.rbuilder.searchExecute&requestName='+itemsId.container+'&'+getItems());
+    var datas=encodeURI('ajaxfct=public.rbuilder.searchExecute&requestName='+itemsId.container+'&'+getItems());
     $.ajax(
       {
         type: "POST",
@@ -596,7 +603,7 @@ function criteriaBuilder(container)
         error: function(msg)
           {
             if(options.onRequestError!=null && jQuery.isFunction(options.onRequestError)) options.onRequestError(msg);
-          },
+          }
        }
      );
 
@@ -621,7 +628,7 @@ function criteriaBuilder(container)
         error: function(msg)
           {
             if(options.onGetPageError!=null && jQuery.isFunction(options.onGetPageError)) options.onGetPageError(msg);
-          },
+          }
        }
      );
 
@@ -636,7 +643,7 @@ criteriaBuilder.makeExtendedData = function(owner, data)
   return(
     {
       owner:owner,
-      param:data,
+      param:data
     }
   );
 }

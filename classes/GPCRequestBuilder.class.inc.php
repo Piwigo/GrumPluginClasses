@@ -1,9 +1,9 @@
 <?php
 /* -----------------------------------------------------------------------------
   class name: GCPRequestBuilder
-  class version  : 1.1.5
-  plugin version : 3.4.3
-  date           : 2010-09-08
+  class version  : 1.1.6
+  plugin version : 3.5.1
+  date           : 2011-05-15
 
   ------------------------------------------------------------------------------
   Author     : Grum
@@ -85,7 +85,8 @@
 |         |            |
 | 1.1.5   | 2011/04/10 | * Compatibility with piwigo 2.2
 |         |            |
-|         |            |
+| 1.1.6   | 2011/05/15 | * mantis bug:2302
+|         |            |   . Request builder user interface don't work
 |         |            |
 |         |            |
 |         |            |
@@ -540,9 +541,8 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
 
     $baseName=basename(dirname(dirname(__FILE__))).'/js/';
     GPCCore::addHeaderJS('jquery', 'themes/default/js/jquery.min.js');
-    GPCCore::addHeaderJS('gpc.interface', 'plugins/'.$baseName.'external/interface/interface.js', array('jquery'));
-    GPCCore::addHeaderJS('gpc.inestedsortable', 'plugins/'.$baseName.'external/inestedsortable.pack.js', array('jquery', 'gpc.interface'));
-    GPCCore::addHeaderJS('gpc.rbCriteriaBuilder', 'plugins/'.$baseName.'rbCriteriaBuilder'.GPCCore::getMinified().'.js', array('gpc.inestedsortable'));
+    GPCCore::addHeaderJS('gpc.external.inestedsortable', 'plugins/'.$baseName.'external/iNestedSortablePack'.GPCCore::getMinified().'.js', array('jquery', 'jquery.ui'));
+    GPCCore::addHeaderJS('gpc.rbCriteriaBuilder', 'plugins/'.$baseName.'rbCriteriaBuilder'.GPCCore::getMinified().'.js', array('gpc.external.inestedsortable'));
 
     $template->append('head_elements',
 "<script type=\"text/javascript\">
@@ -1394,8 +1394,8 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     if(is_string($filter)) $filter=array($filter);
     $filter=array_flip($filter);
 
-    GPCCore::addHeaderJS('jquery.ui', 'themes/default/js/ui/packed/ui.core.packed.js');
-    GPCCore::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/packed/ui.dialog.packed.js');
+    GPCCore::addHeaderJS('jquery.ui', 'themes/default/js/ui/minified/jquery.ui.core.packed.js');
+    GPCCore::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/minified/jquery.ui.dialog.packed.js');
     GPCCore::addHeaderJS('gpc.pagesNavigator', 'plugins/GrumPluginClasses/js/pagesNavigator'.GPCCore::getMinified().'.js');
     GPCCore::addHeaderJS('gpc.rbSearch', 'plugins/GrumPluginClasses/js/rbSearch'.GPCCore::getMinified().'.js');
 

@@ -1,8 +1,8 @@
 /**
  * -----------------------------------------------------------------------------
  * file: criteriaBuilderSearch.js
- * file version: 1.0.0
- * date: 2010-10-23
+ * file version: 1.1.1
+ * date: 2011-05-15
  *
  * JS file provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -27,6 +27,7 @@
  * |         |            | * fix bug : if there is no criteria, don't send
  * |         |            |   request
  * |         |            |
+ * | 1.1.1   | 2011/05/15 | * fix some incompatibilities with IE7
  * |         |            |
  * |         |            |
  * |         |            |
@@ -50,7 +51,7 @@
             requestResultPagesNavigator:'',
             requestResultRequestNumber:0,
             onPageChange:null,
-            numberPerPage:30,
+            numberPerPage:30
           };
 
     /**
@@ -222,7 +223,7 @@
               {
                 options.onPageChange(requestNumber, page, options.numberPerPage);
               }
-            },
+            }
         }
       );
 
@@ -257,7 +258,7 @@
               $('#iMenuCaddieImg').css('display', 'none');
               $('#iMenuCaddieItems ul').css('display', 'block');
               alert(requestBuilderOptions.textSomethingWrong);
-            },
+            }
         }
       );
     };
@@ -275,7 +276,7 @@
         requestResult:'cResultQuery',
         requestResultContent:'iResultQueryContent',
         requestResultNfo:'iResultQueryNfo',
-        requestResultPagesNavigator:'iPagesNavigator',
+        requestResultPagesNavigator:'iPagesNavigator'
       }
     );
 
