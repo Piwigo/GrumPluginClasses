@@ -1,7 +1,7 @@
 /**
  * -----------------------------------------------------------------------------
  * file: ui.inputConsole.js
- * file version: 1.0.0
+ * file version: 1.0.1
  * date: 2010-11-05
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
@@ -57,7 +57,9 @@
                       historySize:8,
                       historyHeight:60,
                       change:null,
-                      submit:null
+                      submit:null,
+                      submited:null,
+                      focusChanged:null
                     };
 
               // if options given, merge it
@@ -75,7 +77,8 @@
                     isValid:true,
                     mouseIsOver:false,
                     historyIsVisible:false,
-                    inputMargins:0
+                    inputMargins:0,
+                    focus:false
                   }
                 );
                 properties=$this.data('properties');
@@ -152,6 +155,16 @@
                         }
                       }
                     ),
+                    historyBackground:$('<div/>',
+                      {
+                        'class':'ui-inputConsole-historyBg'
+                      }
+                    ),
+                    historyListContainer:$('<div/>',
+                      {
+                        'class':'ui-inputConsole-historyListContainer'
+                      }
+                    ),
                     historyList:$('<ul/>')
 
                   };
@@ -161,7 +174,9 @@
                   .append(
                     objects.container
                     .append(
-                      objects.historyContainer.append(objects.historyList)
+                      objects.historyContainer
+                        .append(objects.historyBackground)
+                        .append(objects.historyListContainer.append(objects.historyList))
                     )
                     .append(
                       objects.inputContainer.append(objects.prompt).append(objects.input)
@@ -333,7 +348,7 @@
           }
         }, // value
 
-      history: function (value)
+      history: function (value, param)
         {
           var objects=this.data('objects');
 
@@ -342,9 +357,14 @@
             // set selected value
             return this.each(function()
               {
-                if(value=='clear')
+                switch(value)
                 {
-                  objects.historyList.html('');
+                  case 'clear':
+                    objects.historyList.html('');
+                    break;
+                  case 'addResult':
+                    privateMethods.updateHistoryResult($(this), param);
+                    break;
                 }
               }
             );
@@ -379,6 +399,25 @@
             // return the selected tags
             var properties=this.data('properties');
             return(properties.isValid);
+          }
+        }, // isValid
+
+      focus: function (value)
+        {
+          if(value!=null)
+          {
+            // set selected value
+            return this.each(function()
+              {
+                privateMethods.setFocus($(this), value);
+              }
+            );
+          }
+          else
+          {
+            // return the selected tags
+            var properties=this.data('properties');
+            return(properties.focus);
           }
         }, // isValid
 
@@ -435,7 +474,62 @@
               return(null);
             }
           }
-        } // submit
+        }, // submit
+
+      submited: function (value)
+        {
+          if(value!=null && $.isFunction(value))
+          {
+            // set selected value
+            return this.each(function()
+              {
+                privateMethods.setEventSubmited($(this), value);
+              }
+            );
+          }
+          else
+          {
+            // return the selected value
+            var options=this.data('options');
+
+            if(options)
+            {
+              return(options.submited);
+            }
+            else
+            {
+              return(null);
+            }
+          }
+        }, // submited
+
+      focusChanged: function (value)
+        {
+          if(value!=null && $.isFunction(value))
+          {
+            // set selected value
+            return this.each(function()
+              {
+                privateMethods.setEventFocusChanged($(this), value);
+              }
+            );
+          }
+          else
+          {
+            // return the selected value
+            var options=this.data('options');
+
+            if(options)
+            {
+              return(options.focusChanged);
+            }
+            else
+            {
+              return(null);
+            }
+          }
+        }, // focusChanged
+
 
 
     }; // methods
@@ -463,6 +557,8 @@
 
           privateMethods.setEventChange(object, (value.change!=null)?value.change:options.change);
           privateMethods.setEventSubmit(object, (value.submit!=null)?value.submit:options.submit);
+          privateMethods.setEventSubmited(object, (value.submited!=null)?value.submited:options.submited);
+          privateMethods.setEventFocusChanged(object, (value.focusChanged!=null)?value.focusChanged:options.focusChanged);
 
           properties.initialized=true;
         },
@@ -565,19 +661,51 @@
         }, //setValue
 
 
+      setFocus : function (object, value)
+        {
+          var objects=object.data('objects'),
+              options=object.data('options'),
+              properties=object.data('properties');
+
+          if(value===true||value===false)
+          {
+            if(value)
+            {
+              objects.input.focus();
+            }
+            else
+            {
+              objects.input.blur();
+            }
+
+            properties.focus=value;
+            if(options.focusChanged) object.trigger('inputConsoleFocusChanged', properties.focus);
+          }
+
+          return(properties.focus);
+        },
+
       getFocus : function (object)
         {
-          var objects=object.data('objects');
+          var objects=object.data('objects'),
+              options=object.data('options'),
+              properties=object.data('properties');
 
+          properties.focus=true;
           objects.historyContainer.css('display', 'block');
           privateMethods.setObjectsWidth(object);
+          if(options.focusChanged) object.trigger('inputConsoleFocusChanged', properties.focus);
         },
 
       lostFocus : function (object)
         {
-          var objects=object.data('objects');
+          var objects=object.data('objects'),
+              options=object.data('options'),
+              properties=object.data('properties');
 
+          properties.focus=false;
           objects.historyContainer.css('display', 'none');
+          if(options.focusChanged) object.trigger('inputConsoleFocusChanged', properties.focus);
         },
 
       setEventChange : function (object, value)
@@ -600,6 +728,26 @@
           return(options.submit);
         },
 
+      setEventSubmited : function (object, value)
+        {
+          var options=object.data('options');
+
+          options.submited=value;
+          object.unbind('inputConsoleSubmited');
+          if(value) object.bind('inputConsoleSubmited', options.submited);
+          return(options.submited);
+        },
+
+      setEventFocusChanged : function (object, value)
+        {
+          var options=object.data('options');
+
+          options.focusChanged=value;
+          object.unbind('inputConsoleFocusChanged');
+          if(value) object.bind('inputConsoleFocusChanged', options.focusChanged);
+          return(options.focusChanged);
+        },
+
       keyUp : function (object, event)
         {
           var properties=object.data('properties'),
@@ -611,6 +759,7 @@
           {
             if(options.submit) object.trigger('inputConsoleSubmit', properties.value);
             privateMethods.updateHistory(object, properties.value);
+            if(options.submited) object.trigger('inputConsoleSubmited', properties.value);
             privateMethods.setValue(object, '', true);
           }
           else
@@ -624,13 +773,37 @@
           var options=object.data('options'),
               objects=object.data('objects');
 
-          if(item!='' && item!=null) objects.historyList.append($('<li/>', { html: item }));
+          if(item!='' && item!=null)
+            objects.historyList.append(
+              $('<li/>', { html: '<span class="ui-inputConsole-historyCmd">'+item+'</span>' } )
+                .bind('click', object,
+                  function (event)
+                    {
+                      privateMethods.setValue(event.data, $(this).children('.ui-inputConsole-historyCmd').html(), true);
+                    }
+                )
+            );
 
           while(objects.historyList.children().length>options.historySize)
           {
             objects.historyList.children(':first').remove();
           }
           objects.historyContainer.scrollTop(objects.historyList.height());
+        },
+
+      updateHistoryResult : function (object, item)
+        {
+          var options=object.data('options'),
+              objects=object.data('objects');
+
+          if(item!='' && item!=null)
+          {
+            objects.historyList.children(':last').html(
+              objects.historyList.children(':last').html() + "<span class='ui-inputConsole-historyResult'>"+item+"</span>"
+            );
+          }
+
+          objects.historyListContainer.scrollTop(objects.historyList.height());
         },
 
       setObjectsWidth : function (object)
@@ -673,5 +846,3 @@
 
   }
 )(jQuery);
-
-

@@ -15,4 +15,18 @@ $lang['Public'] = 'Publique';
 $lang['Private'] = 'Privée';
 $lang['All the gallery'] = 'Toute la galerie';
 
+
+// gpc 3.5.2
+$lang['Your email']='Adresse email';
+$lang['Subject']='Sujet';
+$lang['Message']='Message';
+$lang['Submit']='Soumettre';
+$lang['Email is mandatory']='L\'adresse email est obligatoire';
+$lang['Email is not valid']='L\'adresse email est invalide';
+$lang['Subject is mandatory']='Le sujet du message est obligatoire';
+$lang['Message is mandatory']='Le message ne peut pas &ecirc;tre vide !';
+$lang['[%s][Message from %s] %s']='[%s][Message de %s] %s';
+$lang['Sorry, an error has occured while sending the message to the webmaster']='D&eacute;sol&eacute;, une erreur est survenue lors de l\'envoi du message au webmaster';
+$lang['Your message was sent to the webmaster!']='Votre message a bien &eacute;t&eacute; transmis !';
+
 ?>

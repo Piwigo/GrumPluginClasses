@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.5.1
+Version: 3.5.2
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -162,13 +162,20 @@ Author URI: http://photos.grum.fr/
 | 3.5.1   | 2011/05/15 | * mantis bug:2302
 |         |            |   . Request builder interface don't work
 |         |            |
+| 3.5.2   | 2011/05/15 | * Add function to manage special markup
+|         |            |   . BB like markup [b],[i],[url]...
+|         |            |   . [var=<name>] markup
+|         |            |   . [tabs],[tab=id(;default);<tab title>]
+|         |            |   . [form_mail]
+|         |            |
+|         |            | * mantis bug:2160
+|         |            |   . CategorySelector : extended description are not
+|         |            |     managed
 |         |            |
 |         |            |
 |         |            |
 |         |            |
 |         |            | ===== Don't forget to update the plugin version ! =====
-|         |            |
-|         |            |
 |         |            |
 |         |            |
 |         |            |

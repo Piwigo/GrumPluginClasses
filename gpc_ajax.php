@@ -24,12 +24,14 @@
  *  - public.rbuilder.searchGetPage
  *  - public.tagSelector.get
  *  - admin.tagSelector.get
+ *  - public.contact.sendMsg
  *
  *
  * -----------------------------------------------------------------------------
  */
 
   define('PHPWG_ROOT_PATH',dirname(dirname(dirname(__FILE__))).'/');
+
 
   /*
    * set ajax module in admin mode if request is used for admin interface
@@ -42,6 +44,7 @@
 
   // the common.inc.php file loads all the main.inc.php plugins files
   include_once(PHPWG_ROOT_PATH.'include/common.inc.php' );
+  include_once(PHPWG_ROOT_PATH.'include/functions_mail.inc.php' );
   include_once(PHPWG_PLUGINS_PATH.'GrumPluginClasses/classes/CommonPlugin.class.inc.php');
   include_once(PHPWG_PLUGINS_PATH.'GrumPluginClasses/classes/GPCAjax.class.inc.php');
 
@@ -97,7 +100,8 @@
            $_REQUEST['ajaxfct']=='admin.categorySelector.getList' or
            $_REQUEST['ajaxfct']=='public.categorySelector.getList' or
            $_REQUEST['ajaxfct']=='public.tagSelector.get' or
-           $_REQUEST['ajaxfct']=='admin.tagSelector.get'
+           $_REQUEST['ajaxfct']=='admin.tagSelector.get' or
+           $_REQUEST['ajaxfct']=='public.contact.sendMsg'
           )
         ) $_REQUEST['ajaxfct']='';
 
@@ -191,6 +195,19 @@
             ) $_REQUEST['tree']="n";
         }
 
+        /*
+         * check public.contact.sendMsg
+         */
+        if($_REQUEST['ajaxfct']=="public.contact.sendMsg")
+        {
+          if(!isset($_REQUEST['email'])) $_REQUEST['email']='';
+          if(!isset($_REQUEST['subject'])) $_REQUEST['subject']='';
+          if(!isset($_REQUEST['msg'])) $_REQUEST['msg']='';
+          if(!isset($_REQUEST['token'])) $_REQUEST['token']='';
+
+          if($_REQUEST['token']!=get_pwg_token()) $_REQUEST['ajaxfct']='';
+        }
+
       }
     } //checkRequest()
 
@@ -224,10 +241,24 @@
         case 'public.tagSelector.get':
           $result=$this->ajax_gpc_both_TagSelectorGet('public', $_REQUEST['letters'], $_REQUEST['filter'], $_REQUEST['maxTags'], $_REQUEST['ignoreCase']);
           break;
+        case 'public.contact.sendMsg':
+          $result=$this->ajax_gpc_public_contactSendMsg($_REQUEST['email'], $_REQUEST['subject'], $_REQUEST['msg']);
+          break;
       }
       GPCAjax::returnResult($result);
     }
 
+
+    /**
+     * check validity of an email address
+     *
+     * @param String $email : email to check
+     * @returned Boolean :
+     */
+    private function emailAdressValid($email)
+    {
+      return(preg_match('#^[_a-z0-9\.\-]*[_a-z0-9\-]+@[_a-z0-9\.\-]+\.[a-z0-9\-]{2,}$#im', $email)>0);
+    }
 
 
     /*------------------------------------------------------------------------*
@@ -451,6 +482,92 @@
 
       return(json_encode($returned));
     } //ajax_gpc_both_TagSelectorGet
+
+
+    /**
+     *
+     *
+     * @param String $email :
+     * @param String $subject :
+     * @param String $msg :
+     * @param Integer $token :
+     * @return String : json string
+     */
+    private function ajax_gpc_public_contactSendMsg($email, $subject, $msg)
+    {
+      global $user, $conf;
+
+      $returned=array('result' => false, 'msg' => '');
+
+      if($email==null or trim($email)=='')
+      {
+        $returned['msg']=l10n('Email is mandatory');
+        return(json_encode($returned));
+      }
+
+      if(!$this->emailAdressValid($email))
+      {
+        $returned['msg']=l10n('Email is not valid');
+        return(json_encode($returned));
+      }
+
+      if($subject==null or trim($subject)=='')
+      {
+        $returned['msg']=l10n('Subject is mandatory');
+        return(json_encode($returned));
+      }
+
+      if($msg==null or trim($msg)=='')
+      {
+        $returned['msg']=l10n('Message is mandatory');
+        return(json_encode($returned));
+      }
+
+
+
+      $admins=array();
+      $sql="SELECT put.".$conf['user_fields']['username']." AS username,
+                   put.".$conf['user_fields']['email']." AS mail_address
+            FROM ".USERS_TABLE." AS put
+              JOIN ".USER_INFOS_TABLE." AS puit
+                ON puit.user_id =  put.".$conf['user_fields']['id']."
+            WHERE puit.status IN ('webmaster',  'admin')
+              AND ".$conf['user_fields']['email']." IS NOT NULL
+              AND puit.user_id <> ".$user['id']."
+            ORDER BY username;";
+
+      $result = pwg_query($sql);
+      if($result)
+      {
+        while ($row = pwg_db_fetch_assoc($result))
+        {
+          if(!empty($row['mail_address']))
+          {
+            array_push($admins, format_email($row['username'], $row['mail_address']));
+          }
+        }
+      }
+
+      $args=array(
+        'subject' => sprintf(l10n('[%s][Message from %s] %s'), $conf['gallery_title'], $email, $subject),
+        'content' => sprintf("[%s]\n%s\n%s\n--------\n%s", $_SERVER['REMOTE_ADDR'], $email, $subject, stripslashes($msg))
+      );
+
+      $send=pwg_mail(implode(',', $admins), $args);
+
+      if(!$send)
+      {
+        $returned['msg']=l10n('Sorry, an error has occured while sending the message to the webmaster');
+      }
+      else
+      {
+        $returned['result']=true;
+        $returned['msg']=l10n('Your message was sent to the webmaster!');
+      }
+
+      return(json_encode($returned));
+
+    }
 
 
   } //class

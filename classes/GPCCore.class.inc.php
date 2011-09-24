@@ -2,9 +2,9 @@
 
 /* -----------------------------------------------------------------------------
   class name     : GPCCore
-  class version  : 1.4.0
-  plugin version : 3.5.0
-  date           : 2011-04-10
+  class version  : 1.4.1
+  plugin version : 3.5.2
+  date           : 2011-09-19
   ------------------------------------------------------------------------------
   author: grum at piwigo.org
   << May the Little SpaceFrog be with you >>
@@ -54,6 +54,7 @@
 |         |            |
 | 1.4.0   | 2011/04/10 | * Updated for piwigo 2.2
 |         |            |
+| 1.4.1   | 2011/09/19 | * Add [var] and [form_mail] markup interpreter
 |         |            |
 |         |            |
 
@@ -68,6 +69,8 @@
     - static function register
     - static function unregister
     - static function BBtoHTML
+    - static function VarToHTML
+    - static function FormMailToHTML
     - static function addHeaderCSS
     - static function addHeaderJS
     - static function addUI
@@ -77,6 +80,7 @@
     - static function getPiwigoSystemPath
     - static function formatOctet
     - static function rmDir
+    - static function applyMarkups
    ---------------------------------------------------------------------- */
 
 
@@ -94,7 +98,22 @@ class GPCCore
 
   static public function init()
   {
+    global $conf;
+
     self::$piwigoSystemPath=dirname(dirname(dirname(dirname(__FILE__))));
+
+    if(isset($conf['gpc.script.minify'])) self::setMinifiedState($conf['gpc.script.minify']);
+
+    if((isset($conf['gpc.markup.bb']) && $conf['gpc.markup.bb']) ||
+       (isset($conf['gpc.markup.var']) && $conf['gpc.markup.var']) ||
+       (isset($conf['gpc.markup.form']) && $conf['gpc.markup.form'])
+      )
+    {
+      add_event_handler('render_category_name', array('GPCCore', 'applyMarkups'), EVENT_HANDLER_PRIORITY_NEUTRAL+5);
+      add_event_handler('render_category_description', array('GPCCore', 'applyMarkups'), EVENT_HANDLER_PRIORITY_NEUTRAL+5, 2);
+      add_event_handler('render_element_description', array('GPCCore', 'applyMarkups'), EVENT_HANDLER_PRIORITY_NEUTRAL+5);
+      add_event_handler('AP_render_content', array('GPCCore', 'applyMarkups'), EVENT_HANDLER_PRIORITY_NEUTRAL+5);
+    }
   }
 
   /* ---------------------------------------------------------------------------
@@ -107,7 +126,7 @@ class GPCCore
         Array('name' => "CommonPlugin", 'version' => "2.2.0"),
         Array('name' => "GPCAjax", 'version' => "3.0.0"),
         Array('name' => "GPCCategorySelector", 'version' => "1.0.1"),
-        Array('name' => "GPCCore", 'version' => "1.4.0"),
+        Array('name' => "GPCCore", 'version' => "1.4.1"),
         Array('name' => "GPCCss", 'version' => "3.1.0"),
         Array('name' => "GPCPagesNavigation", 'version' => "2.0.0"),
         Array('name' => "GPCPublicIntegration", 'version' => "2.0.0"),
@@ -361,6 +380,148 @@ class GPCCore
     );
 
     return(preg_replace($patterns, $replacements, $text));
+  }
+
+  /**
+   * apply [var] tag
+   *
+   * [var=<name>]
+   * with <name> :
+   *  - USER
+   *  - GALLERY_TITLE
+   *  - NB_PHOTOS
+   *  - CATEGORY
+   *  - TOKEN
+   *  - IP
+   *
+   * @param String $text : text to convert
+   * @return String : processed text
+   */
+  static public function VarToHTML($text)
+  {
+    global $user, $page, $conf;
+
+    $patterns = Array(
+      '/\[var=user\]/im',
+      '/\[var=gallery_title\]/im',
+      '/\[var=nb_photos\]/im',
+      '/\[var=category\]/im',
+      '/\[var=token\]/im',
+      '/\[var=ip\]/im'
+    );
+    $replacements = Array(
+      isset($user['username'])?$user['username']:'',
+      isset($conf['gallery_title'])?$conf['gallery_title']:'',
+      isset($user['nb_total_images'])?$user['nb_total_images']:'',
+      isset($page['category']['name'])?$page['category']['name']:'',
+      get_pwg_token(),
+      $_SERVER['REMOTE_ADDR']
+    );
+
+    return(preg_replace($patterns, $replacements, $text));
+  }
+
+  /**
+   * apply [form_mail] tag
+   *
+   * @param String $text : text to convert
+   * @return String : processed text
+   */
+  static public function FormMailToHTML($text)
+  {
+    global $template;
+
+    $file=GPCCore::getPiwigoSystemPath().'/'.PWG_LOCAL_DIR.'templates/GPCFormMsg.tpl';
+    if(!file_exists($file)) $file=dirname(dirname(__FILE__))."/templates/GPCFormMsg.tpl";
+
+    $template->set_filename('gpc_form', $file);
+
+    $template->assign('token', get_pwg_token() );
+
+    $patterns = Array(
+      '/\[form_mail\]/im'
+    );
+    $replacements = Array(
+      $template->parse('gpc_form', true)
+    );
+
+    if(preg_match($patterns[0], $text)>0)
+    {
+      GPCCore::addHeaderJS('gpc.markup.formMail', GPC_PATH.'js/markup.formMail'.self::$minified.'.js', array('jquery'));
+      return(preg_replace($patterns, $replacements, $text));
+    }
+    return($text);
+  }
+
+  /**
+   * apply [tab], [/tab] and [tabs] tags
+   *
+   * @param String $text : text to convert
+   * @return String : processed text
+   */
+  static public function TabsToHTML($text)
+  {
+    $result=array();
+
+    $tabs='';
+    if(preg_match_all('/\[tab=([^(;\]).]*)(?:;(default))?;([^\].]*)\]/im', $text, $result, PREG_SET_ORDER)>0)
+    {
+      foreach($result as $val)
+      {
+        $tabs.="<li class='gpcTabSeparator'><a id='iGpcTab".$val[1]."' class='".($val[2]=='default'?'gpcTabSelected':'gpcTabNotSelected')."' tabId='#iGpcTabContent".$val[1]."'>".$val[3]."</a></li>";
+      }
+      $tabs="<div id='iGpcTabs'><ul>".$tabs."</ul></div>";
+    }
+    else return($text);
+
+    $patterns = Array(
+      '/\[tabs\]/im',
+      '/\[tab=([^(;\]).]*)(?!;default);.*\]/im',
+      '/\[tab=([^(;\]).]*);default;(.*)\]/im',
+      '/\[\/tab\]/im'
+    );
+    $replacements = Array(
+      $tabs,
+      '<div id="iGpcTabContent\1" class="gpcTabContent" style="display:none;">',
+      '<div id="iGpcTabContent\1" class="gpcTabContent">',
+      '</div>'
+    );
+
+    if(preg_match($patterns[0], $text)>0)
+    {
+      GPCCore::addHeaderJS('gpc.markup.tabs', GPC_PATH.'js/markup.tabs'.self::$minified.'.js', array('jquery'));
+      GPCCore::addHeaderCSS('gpc.markup.tabs', GPC_PATH.'css/gpcTabs.css');
+      return(preg_replace($patterns, $replacements, $text));
+    }
+    return($text);
+  }
+
+  static public function applyMarkups($text)
+  {
+    global $conf;
+
+    if(isset($conf['gpc.markup.form']) && $conf['gpc.markup.form'])
+    {
+      $text=GPCCore::FormMailToHTML($text);
+    }
+
+    if(isset($conf['gpc.markup.tabs']) && $conf['gpc.markup.tabs'])
+    {
+      $text=GPCCore::TabsToHTML($text);
+    }
+
+    if(isset($conf['gpc.markup.var']) && $conf['gpc.markup.var'])
+    {
+      $text=GPCCore::VarToHTML($text);
+    }
+
+    if(isset($conf['gpc.markup.bb']) && $conf['gpc.markup.bb'])
+    {
+      $text=GPCCore::BBtoHTML($text);
+    }
+
+
+    return($text);
   }
 
   /**

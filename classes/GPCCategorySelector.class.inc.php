@@ -300,6 +300,8 @@ class GPCCategorySelector
         }
         $row['rank']=implode('.', $row['rank']);
 
+        $row['name']=GPCCore::getUserLanguageDesc($row['name']);
+
         $returned[]=$row;
       }
     }
