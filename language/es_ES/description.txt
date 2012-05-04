@@ -1,1 +1,1 @@
-Clases compartidas entre el plugins
+Aquest complement en s&iacute; no t&eacute; cap funcionalitat, per&ograve; si &eacute;s necessari per a que funcionin altres complements que en depenen d'ell.
