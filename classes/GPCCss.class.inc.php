@@ -40,13 +40,14 @@
 class GPCCss
 {
   private $filename;
+  private $order;
 
   static public function applyGpcCss()
   {
     add_event_handler('loc_end_page_header', array('GPCCss', 'applyCSSFile'));
   }
 
-  static public function applyCSSFile($fileName="", $dependencies=array())
+  static public function applyCSSFile($fileName="", $order=25)
   {
     global $template;
 
@@ -54,18 +55,19 @@ class GPCCss
     {
       //if no filename given, load the gpc.css file
       $fileName='./plugins/'.basename(dirname(dirname(__FILE__))).'/css/gpc';
-      GPCCore::addHeaderCSS('gpc', $fileName.'.css');
-      GPCCore::addHeaderCSS('gpc_theme', $fileName.'_'.$template->get_themeconf('name').'.css');
+      GPCCore::addHeaderCSS('gpc', $fileName.'.css', 10);
+      GPCCore::addHeaderCSS('gpc_theme', $fileName.'_'.$template->get_themeconf('name').'.css', 15);
     }
     elseif(file_exists($fileName))
     {
-      GPCCore::addHeaderCSS(basename(dirname($fileName)), 'plugins/'.basename(dirname($fileName)).'/'.basename($fileName).'', array_merge(array('gpc', 'gpc_theme'),$dependencies) );
+      GPCCore::addHeaderCSS(basename(dirname($fileName)), 'plugins/'.basename(dirname($fileName)).'/'.basename($fileName).'', $order);
     }
   }
 
-  public function __construct($filename)
+  public function __construct($filename, $order=25)
   {
     $this->filename=$filename;
+    $this->order=$order;
   }
 
   public function __destruct()
@@ -107,7 +109,7 @@ class GPCCss
   {
     global $template;
 
-    GPCCss::applyCSSFile($this->filename);
+    GPCCss::applyCSSFile($this->filename, $this->order);
   }
 
 

@@ -535,8 +535,11 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
 
 
     $baseName=basename(dirname(dirname(__FILE__))).'/css/';
-    $template->append('head_elements', '<link href="plugins/'.$baseName.'rbuilder.css" type="text/css" rel="stylesheet"/>');
-    if(defined('IN_ADMIN')) $template->append('head_elements', '<link href="plugins/'.$baseName.'rbuilder_'.$template->get_themeconf('name').'.css" type="text/css" rel="stylesheet"/>');
+    GPCCore::addHeaderCSS('gpc.rbuilder', 'plugins/'.$baseName.'rbuilder.css', 25);
+
+    //$template->append('head_elements', '<link href="plugins/'.$baseName.'rbuilder.css" type="text/css" rel="stylesheet"/>');
+    if(defined('IN_ADMIN')) GPCCore::addHeaderCSS('gpc.rbuilder', 'plugins/'.$baseName.'rbuilder_'.$template->get_themeconf('name').'.css', 26);
+    //$template->append('head_elements', '<link href="plugins/'.$baseName.'rbuilder_'.$template->get_themeconf('name').'.css" type="text/css" rel="stylesheet"/>');
 
 
     $baseName=basename(dirname(dirname(__FILE__))).'/js/';
