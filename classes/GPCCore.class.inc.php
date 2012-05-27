@@ -538,7 +538,7 @@ class GPCCore
   {
     global $template;
 
-    if(!array_key_exists($file, self::$headerItems['css']))
+    if(!array_key_exists($file, self::$headerItems['css']) and file_exists($file))
     {
       self::$headerItems['css'][$id]=$file;
       $template->func_combine_css(array('path'=>$file, 'order'=>$order), $template->smarty);
@@ -548,7 +548,7 @@ class GPCCore
   {
     global $template;
 
-    if(!array_key_exists($file, self::$headerItems['js']))
+    if(!array_key_exists($file, self::$headerItems['js']) and file_exists($file))
     {
       self::$headerItems['js'][$id]=$file;
       $template->scriptLoader->add($id, 'header', $require, $file, 0);
