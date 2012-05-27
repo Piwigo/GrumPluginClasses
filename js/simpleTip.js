@@ -69,7 +69,6 @@ function tipItem(item, index, options)
       offsetX:0,
       offsetY:0,
       classes:'',
-      arrowImgDir: '',
       arrowWidth: 12,
       arrowHeight: 12
     },
@@ -321,7 +320,7 @@ function simpleTip()
         y+=items[itemIndex].options.offsetY;
         arrowX=-bwX;
         arrowY=-items[itemIndex].options.arrowHeight+bwY;
-        arrowModel='up';
+        arrowModel='Up';
         break;
 
       case 'top-middle':
@@ -329,7 +328,7 @@ function simpleTip()
         y+=items[itemIndex].options.offsetY;
         arrowX=(stWidthI-items[itemIndex].options.arrowWidth)/2;
         arrowY=-items[itemIndex].options.arrowHeight+bwY;
-        arrowModel='up';
+        arrowModel='Up';
         break;
 
       case 'top-right':
@@ -337,7 +336,7 @@ function simpleTip()
         y+=items[itemIndex].options.offsetY;
         arrowX=stWidthI-items[itemIndex].options.arrowWidth+bwX;
         arrowY=-items[itemIndex].options.arrowHeight+bwY;
-        arrowModel='up';
+        arrowModel='Up';
         break;
 
       case 'middle-left':
@@ -345,7 +344,7 @@ function simpleTip()
         y-=stHeight/2;
         arrowX=-items[itemIndex].options.arrowWidth+bwX;
         arrowY=(stHeightI-items[itemIndex].options.arrowHeight)/2+bwY;
-        arrowModel='left';
+        arrowModel='Left';
         break;
 
       case 'middle-middle':
@@ -358,7 +357,7 @@ function simpleTip()
         y-=stHeight/2;
         arrowX=stWidthI+bwX;
         arrowY=(stHeightI-items[itemIndex].options.arrowHeight)/2+bwY;
-        arrowModel='right';
+        arrowModel='Right';
         break;
 
       case 'bottom-left':
@@ -366,7 +365,7 @@ function simpleTip()
         y-=stHeight+items[itemIndex].options.offsetY;
         arrowX=-bwX;
         arrowY=stHeightI+bwY;
-        arrowModel='down';
+        arrowModel='Down';
         break;
 
       case 'bottom-middle':
@@ -374,7 +373,7 @@ function simpleTip()
         y-=stHeight+items[itemIndex].options.offsetY;
         arrowX=(stWidthI-items[itemIndex].options.arrowWidth)/2+bwX;
         arrowY=stHeightI+bwY;
-        arrowModel='down';
+        arrowModel='Down';
         break;
 
       case 'bottom-right':
@@ -382,16 +381,31 @@ function simpleTip()
         y-=stHeight+items[itemIndex].options.offsetY;
         arrowX=stWidthI-items[itemIndex].options.arrowWidth+bwX;
         arrowY=stHeightI+bwY;
-        arrowModel='down';
+        arrowModel='Down';
         break;
     }
 
     if(items[itemIndex].options.drawArrow & arrowModel!='')
     {
+      switch(arrowModel)
+      {
+        case 'Up':
+          bgp='-'+items[itemIndex].options.arrowHeight+'px 0px';
+          break;
+        case 'Left':
+          bgp='0px -'+items[itemIndex].options.arrowWeight+'px';
+          break;
+        case 'Down':
+          bgp='0px 0px';
+          break;
+        case 'Right':
+          bgp='-'+items[itemIndex].options.arrowHeight+'px -'+items[itemIndex].options.arrowWeight+'px';
+          break;
+      }
       $('#iSimpleTipArrow'+options.name).css(
         {
           display: 'block',
-          background: 'url("'+items[itemIndex].options.arrowImgDir+'/arrow_'+arrowModel+'.png") no-repeat scroll 0 0 transparent',
+          backgroundPosition: bgp,
           marginLeft: arrowX+'px',
           marginTop: arrowY+'px',
           width: items[itemIndex].options.arrowWidth+'px',
@@ -433,7 +447,7 @@ function simpleTip()
   {
     if($('#iSimpleTip'+options.name).length==0)
     {
-      text="<div id='iSimpleTip"+options.name+"' style='z-index:15000;display:none;position:absolute;left:0px;top:0px;'><div id='iSimpleTipShadow"+options.name+"' style='position:absolute;width:100%;height:100%;background:#000000;opacity:0.4;filter:alpha(opacity:40);display:block;z-index:-1;margin-left:2px;margin-top:2px;'></div><div id='iSimpleTipArrow"+options.name+"' style='position:absolute;'></div><div id='iSimpleTipContent"+options.name+"'></div></div>";
+      text="<div class='cSimpleTip' id='iSimpleTip"+options.name+"' style='z-index:15000;display:none;position:absolute;left:0px;top:0px;'><div class='cSimpleTipShadow' id='iSimpleTipShadow"+options.name+"'></div><div class='cSimpleTipArrow' id='iSimpleTipArrow"+options.name+"'></div><div class='cSimpleTipContent' id='iSimpleTipContent"+options.name+"'></div></div>";
       $('body').append(text);
     }
   };

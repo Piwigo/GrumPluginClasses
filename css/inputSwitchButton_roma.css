@@ -1,0 +1,15 @@
+
+/* roma css */
+
+.ui-inputSwitchButton-unchecked {
+  background:none repeat scroll 0 0 #666666;
+  border-color:#999999 #444444 #444444 #999999;
+  color:#ff3363;
+}
+
+.ui-inputSwitchButton-checked {
+  background:none repeat scroll 0 0 #555555;
+  border-color:#444444 #999999 #999999 #444444;
+  color:#ff3363;
+}
+

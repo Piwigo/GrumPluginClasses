@@ -540,9 +540,17 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
 
 
     $baseName=basename(dirname(dirname(__FILE__))).'/js/';
-    GPCCore::addHeaderJS('jquery', 'themes/default/js/jquery.min.js');
-    GPCCore::addHeaderJS('gpc.external.inestedsortable', 'plugins/'.$baseName.'external/iNestedSortablePack'.GPCCore::getMinified().'.js', array('jquery', 'jquery.ui'));
-    GPCCore::addHeaderJS('gpc.rbCriteriaBuilder', 'plugins/'.$baseName.'rbCriteriaBuilder'.GPCCore::getMinified().'.js', array('gpc.external.inestedsortable'));
+    GPCCore::addHeaderJS('jquery', 'themes/default/js/jquery.js');
+    GPCCore::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+    GPCCore::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+    GPCCore::addHeaderJS('jquery.ui.mouse', 'themes/default/js/ui/jquery.ui.mouse.js', array('jquery.ui.widget'));
+    GPCCore::addHeaderJS('jquery.ui.position', 'themes/default/js/ui/jquery.ui.position.js', array('jquery.ui.widget'));
+    GPCCore::addHeaderJS('jquery.ui.draggable', 'themes/default/js/ui/jquery.ui.draggable.js', array('jquery.ui.widget'));
+    GPCCore::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/jquery.ui.dialog.js', array('jquery.ui.widget'));
+    GPCCore::addHeaderJS('jquery.ui.slider', 'themes/default/js/ui/jquery.ui.slider.js', array('jquery.ui.widget'));
+
+    GPCCore::addHeaderJS('gpc.external.inestedsortable', 'plugins/'.$baseName.'external/iNestedSortablePack.js', array('jquery', 'jquery.ui'));
+    GPCCore::addHeaderJS('gpc.rbCriteriaBuilder', 'plugins/'.$baseName.'rbCriteriaBuilder.js', array('gpc.external.inestedsortable'));
 
     $template->append('head_elements',
 "<script type=\"text/javascript\">
@@ -958,7 +966,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
       while($row=pwg_db_fetch_assoc($result))
       {
         // affect standard datas
-        $datas['imageThumbnail']=dirname($row['imagePath'])."/".$conf['dir_thumbnail']."/".$conf['prefix_thumbnail'].basename($row['imagePath']);
+        $datas['imageThumbnail']=DerivativeImage::thumb_url(array('id'=>$row['imageId'], 'path'=>$row['imagePath']));
         $datas['imageId']=$row['imageId'];
         $datas['imagePath']=$row['imagePath'];
         $datas['imageName']=$row['imageName'];
@@ -1394,11 +1402,15 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     if(is_string($filter)) $filter=array($filter);
     $filter=array_flip($filter);
 
-    GPCCore::addHeaderJS('jquery.ui', 'themes/default/js/ui/minified/jquery.ui.core.packed.js');
-    GPCCore::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/minified/jquery.ui.dialog.packed.js');
-    GPCCore::addHeaderJS('gpc.pagesNavigator', 'plugins/GrumPluginClasses/js/pagesNavigator'.GPCCore::getMinified().'.js');
-    GPCCore::addHeaderJS('gpc.rbSearch', 'plugins/GrumPluginClasses/js/rbSearch'.GPCCore::getMinified().'.js');
-
+    GPCCore::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+    GPCCore::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+    GPCCore::addHeaderJS('jquery.ui.mouse', 'themes/default/js/ui/jquery.ui.mouse.js', array('jquery.ui.widget'));
+    GPCCore::addHeaderJS('jquery.ui.position', 'themes/default/js/ui/jquery.ui.position.js', array('jquery.ui.widget'));
+    GPCCore::addHeaderJS('jquery.ui.draggable', 'themes/default/js/ui/jquery.ui.draggable.js', array('jquery.ui.widget'));
+    GPCCore::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/jquery.ui.dialog.js', array('jquery.ui.widget'));
+    GPCCore::addHeaderJS('jquery.ui.slider', 'themes/default/js/ui/jquery.ui.slider.js', array('jquery.ui.widget'));
+    GPCCore::addHeaderJS('gpc.pagesNavigator', 'plugins/GrumPluginClasses/js/pagesNavigator.js');
+    GPCCore::addHeaderJS('gpc.rbSearch', 'plugins/GrumPluginClasses/js/rbSearch.js');
 
     $template->set_filename('gpc_search_page',
                 dirname(dirname(__FILE__)).'/templates/GPCRequestBuilder_search.tpl');

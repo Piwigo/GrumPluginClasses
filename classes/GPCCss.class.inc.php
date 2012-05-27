@@ -46,7 +46,7 @@ class GPCCss
     add_event_handler('loc_end_page_header', array('GPCCss', 'applyCSSFile'));
   }
 
-  static public function applyCSSFile($fileName="")
+  static public function applyCSSFile($fileName="", $dependencies=array())
   {
     global $template;
 
@@ -59,7 +59,7 @@ class GPCCss
     }
     elseif(file_exists($fileName))
     {
-      GPCCore::addHeaderCSS(basename(dirname($fileName)), 'plugins/'.basename(dirname($fileName)).'/'.basename($fileName).'');
+      GPCCore::addHeaderCSS(basename(dirname($fileName)), 'plugins/'.basename(dirname($fileName)).'/'.basename($fileName).'', array_merge(array('gpc', 'gpc_theme'),$dependencies) );
     }
   }
 

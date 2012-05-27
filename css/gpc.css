@@ -40,8 +40,8 @@ border-radius:4px;
 .tabsheet2 {
 display:table;
 font-family:verdana,arial,helvetica,sans-serif; font-size:8px;
-list-style:none; padding: 0 0 0 10px; position:relative; text-decoration:none;
-white-space:nowrap; margin: 0 0 0 -6px;top:-21px;border-bottom:1px solid;
+list-style:none; padding: 0 0 0 6px; position:relative; text-decoration:none;
+white-space:nowrap; margin: 0 0 0 0px;top:-21px;border-bottom:1px solid;
 width:100%;
 }
 .tabsheet2 li { float:left; margin:0 0 0 0; overflow:hidden; text-align:right; border-width:1px; position:relative; }
@@ -93,3 +93,8 @@ padding-top:6px; border-bottom:5px solid;
   border:1px solid #800000;
   color:#800000;
 }
+
+
+
+
+

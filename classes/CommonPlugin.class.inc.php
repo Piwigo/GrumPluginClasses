@@ -128,7 +128,8 @@ class CommonPlugin
 
     $this->fileLocation=$filelocation;
     $this->prefixeTable=$prefixeTable;
-    $this->page_link="admin.php?page=plugin&section=".basename(dirname($this->getFileLocation()))."/admin/".$this->plugin_admin_file.".php";
+    $this->page_link=get_root_url().'admin.php?page=plugin-'.basename(dirname($this->getFileLocation()));
+    //$this->page_link="admin.php?page=plugin&section=".basename(dirname($this->getFileLocation()))."/admin/".$this->plugin_admin_file.".php";
     $this->initConfig();
     $this->displayResult_ok="OK";
     $this->displayResult_ko="KO";
@@ -252,12 +253,20 @@ class CommonPlugin
   /* add plugin into administration menu */
   public function pluginAdminMenu($menu)
   {
+    array_push(
+      $menu,
+      array(
+        'NAME' => $this->plugin_name,
+        'URL' => get_root_url().'admin.php?page=plugin-'.basename(dirname($this->getFileLocation()))
+        )
+    );
+    /*
     array_push($menu,
                array(
                   'NAME' => $this->plugin_name,
                   'URL' => get_admin_plugin_menu_link(dirname($this->getFileLocation()).
                                 '/admin/'.$this->plugin_admin_file.'.php')
-                   ));
+                   ));*/
     return $menu;
   }
 

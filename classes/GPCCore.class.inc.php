@@ -56,6 +56,14 @@
 |         |            |
 | 1.4.1   | 2011/09/19 | * Add [var] and [form_mail] markup interpreter
 |         |            |
+|         | 2012/05/25 | * Add GPCUserAgent class
+|         |            |
+|         |            | * Compatibility with jquery 1.7.2 & jquery-ui 1.8.16
+|         |            |   . implement getMinified() & setMinifiedState() functions
+|         |            |        (let piwigo combined function manage the minified
+|         |            |         state)
+|         |            |   . add manually each component for ui functionnalities
+|         |            |
 |         |            |
 
   ------------------------------------------------------------------------------
@@ -74,8 +82,6 @@
     - static function addHeaderCSS
     - static function addHeaderJS
     - static function addUI
-    - static function getMinified
-    - static function setMinifiedState
     - static function getUserLanguageDesc
     - static function getPiwigoSystemPath
     - static function formatOctet
@@ -88,7 +94,6 @@
 class GPCCore
 {
   static private $piwigoSystemPath;
-  static private $minified='.min';
 
   static public $pluginName = "GPCCore";
   static protected $headerItems = array(
@@ -101,8 +106,6 @@ class GPCCore
     global $conf;
 
     self::$piwigoSystemPath=dirname(dirname(dirname(dirname(__FILE__))));
-
-    if(isset($conf['gpc.script.minify'])) self::setMinifiedState($conf['gpc.script.minify']);
 
     if((isset($conf['gpc.markup.bb']) && $conf['gpc.markup.bb']) ||
        (isset($conf['gpc.markup.var']) && $conf['gpc.markup.var']) ||
@@ -134,7 +137,8 @@ class GPCCore
         Array('name' => "GPCTables", 'version' => "1.5.0"),
         Array('name' => "GPCTabSheet", 'version' => "1.1.1"),
         Array('name' => "GPCTranslate", 'version' => "2.1.1"),
-        Array('name' => "GPCUsersGroups", 'version' => "2.1.0")
+        Array('name' => "GPCUsersGroups", 'version' => "2.1.0"),
+        Array('name' => "GPCUserAgent", 'version' => "1.0.0")
       )
     );
   }
@@ -447,7 +451,7 @@ class GPCCore
 
     if(preg_match($patterns[0], $text)>0)
     {
-      GPCCore::addHeaderJS('gpc.markup.formMail', GPC_PATH.'js/markup.formMail'.self::$minified.'.js', array('jquery'));
+      GPCCore::addHeaderJS('gpc.markup.formMail', GPC_PATH.'js/markup.formMail.js', array('jquery'));
       return(preg_replace($patterns, $replacements, $text));
     }
     return($text);
@@ -489,7 +493,7 @@ class GPCCore
 
     if(preg_match($patterns[0], $text)>0)
     {
-      GPCCore::addHeaderJS('gpc.markup.tabs', GPC_PATH.'js/markup.tabs'.self::$minified.'.js', array('jquery'));
+      GPCCore::addHeaderJS('gpc.markup.tabs', GPC_PATH.'js/markup.tabs.js', array('jquery'));
       GPCCore::addHeaderCSS('gpc.markup.tabs', GPC_PATH.'css/gpcTabs.css');
       return(preg_replace($patterns, $replacements, $text));
     }
@@ -590,15 +594,19 @@ class GPCCore
       {
         case 'googleTranslate':
           self::addHeaderJS('google.jsapi', 'http://www.google.com/jsapi');
-          self::addHeaderJS('gpc.googleTranslate', 'plugins/GrumPluginClasses/js/google_translate'.self::$minified.'.js', array('jquery', 'google.jsapi'));
+          self::addHeaderJS('gpc.googleTranslate', 'plugins/GrumPluginClasses/js/google_translate.js', array('jquery', 'google.jsapi'));
         case 'categorySelector':
           self::addHeaderCSS('gpc.categorySelector', GPC_PATH.'css/categorySelector.css');
           self::addHeaderCSS('gpc.categorySelectorT', sprintf($themeFile, 'categorySelector'));
-          self::addHeaderJS('gpc.categorySelector', GPC_PATH.'js/ui.categorySelector'.self::$minified.'.js', array('jquery'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('jquery.ui.mouse', 'themes/default/js/ui/jquery.ui.mouse.js', array('jquery.ui.widget'));
+          self::addHeaderJS('gpc.categorySelector', GPC_PATH.'js/ui.categorySelector.js', array('jquery.ui.widget'));
           break;
         case 'inputCheckbox':
           self::addHeaderCSS('gpc.inputCheckbox', GPC_PATH.'css/inputCheckbox.css');
-          self::addHeaderJS('gpc.inputCheckbox', GPC_PATH.'js/ui.inputCheckbox'.self::$minified.'.js', array('jquery'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('gpc.inputCheckbox', GPC_PATH.'js/ui.inputCheckbox.js', array('jquery.ui'));
           break;
         case 'inputColorPicker':
           self::addHeaderCSS('gpc.inputText', GPC_PATH.'css/inputText.css');
@@ -611,92 +619,98 @@ class GPCCore
           self::addHeaderCSS('gpc.inputColorsFBT', sprintf($themeFile, 'inputColorsFB'));
           self::addHeaderCSS('gpc.inputDotAreaT', sprintf($themeFile, 'inputDotArea'));
           self::addHeaderCSS('gpc.inputColorPickerT', sprintf($themeFile, 'inputColorPicker'));
-          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/minified/jquery.ui.core.min.js', array('jquery'));
-          self::addHeaderJS('jquery.ui.slider', 'themes/default/js/ui/minified/jquery.ui.slider.min.js', array('jquery.ui'));
-          self::addHeaderJS('jquery.ui.draggable', 'themes/default/js/ui/minified/jquery.ui.draggable.min.js', array('jquery.ui'));
-          self::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/minified/jquery.ui.slider.dialog.js', array('jquery.ui'));
-          self::addHeaderJS('gpc.inputText', GPC_PATH.'js/ui.inputText'.self::$minified.'.js', array('jquery'));
-          self::addHeaderJS('gpc.inputNum', GPC_PATH.'js/ui.inputNum'.self::$minified.'.js', array('jquery'));
-          self::addHeaderJS('gpc.inputColorsFB', GPC_PATH.'js/ui.inputColorsFB'.self::$minified.'.js', array('jquery'));
-          self::addHeaderJS('gpc.inputDotArea', GPC_PATH.'js/ui.inputDotArea'.self::$minified.'.js', array('jquery'));
-          self::addHeaderJS('gpc.inputColorPicker', GPC_PATH.'js/ui.inputColorPicker'.self::$minified.'.js', array('jquery.ui.slider','gpc.inputText','gpc.inputNum','gpc.inputColorsFB','gpc.inputDotArea'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('jquery.ui.mouse', 'themes/default/js/ui/jquery.ui.mouse.js', array('jquery.ui.widget'));
+          self::addHeaderJS('jquery.ui.position', 'themes/default/js/ui/jquery.ui.position.js', array('jquery.ui.widget'));
+          self::addHeaderJS('jquery.ui.draggable', 'themes/default/js/ui/jquery.ui.draggable.js', array('jquery.ui.widget'));
+          self::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/jquery.ui.dialog.js', array('jquery.ui.widget'));
+          self::addHeaderJS('jquery.ui.slider', 'themes/default/js/ui/jquery.ui.slider.js', array('jquery.ui.widget'));
+          self::addHeaderJS('gpc.inputText', GPC_PATH.'js/ui.inputText.js', array('jquery.ui.widget'));
+          self::addHeaderJS('gpc.inputNum', GPC_PATH.'js/ui.inputNum.js', array('jquery.ui.widget'));
+          self::addHeaderJS('gpc.inputColorsFB', GPC_PATH.'js/ui.inputColorsFB.js', array('jquery.ui.widget'));
+          self::addHeaderJS('gpc.inputDotArea', GPC_PATH.'js/ui.inputDotArea.js', array('jquery.ui.widget'));
+          self::addHeaderJS('gpc.inputColorPicker', GPC_PATH.'js/ui.inputColorPicker.js', array('jquery.ui.slider','gpc.inputText','gpc.inputNum','gpc.inputColorsFB','gpc.inputDotArea'));
           break;
         case 'inputColorsFB':
           self::addHeaderCSS('gpc.inputColorsFB', GPC_PATH.'css/inputColorsFB.css');
           self::addHeaderCSS('gpc.inputColorsFBT', sprintf($themeFile, 'inputColorsFB'));
-          self::addHeaderJS('gpc.inputColorsFB', GPC_PATH.'js/ui.inputColorsFB'.self::$minified.'.js', array('jquery'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('gpc.inputColorsFB', GPC_PATH.'js/ui.inputColorsFB.js', array('jquery.ui.widget'));
           break;
         case 'inputConsole':
           self::addHeaderCSS('gpc.inputConsole', GPC_PATH.'css/inputConsole.css');
           self::addHeaderCSS('gpc.inputConsoleT', sprintf($themeFile, 'inputConsole'));
-          self::addHeaderJS('gpc.inputConsole', GPC_PATH.'js/ui.inputConsole'.self::$minified.'.js', array('jquery'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('gpc.inputConsole', GPC_PATH.'js/ui.inputConsole.js', array('jquery.ui.widget'));
           break;
         case 'inputDotArea':
           self::addHeaderCSS('gpc.inputDotArea', GPC_PATH.'css/inputDotArea.css');
           self::addHeaderCSS('gpc.inputDotAreaT', sprintf($themeFile, 'inputDotArea'));
-          self::addHeaderJS('gpc.inputDotArea', GPC_PATH.'js/ui.inputDotArea'.self::$minified.'.js', array('jquery'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('gpc.inputDotArea', GPC_PATH.'js/ui.inputDotArea.js', array('jquery.ui.widget'));
           break;
         case 'inputList':
           self::addHeaderCSS('gpc.inputList', GPC_PATH.'css/inputList.css');
           self::addHeaderCSS('gpc.inputListT', sprintf($themeFile, 'inputList'));
-          self::addHeaderJS('gpc.inputList', GPC_PATH.'js/ui.inputList'.self::$minified.'.js', array('jquery'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('gpc.inputList', GPC_PATH.'js/ui.inputList.js', array('jquery.ui.widget'));
           break;
         case 'inputNum':
           self::addHeaderCSS('gpc.inputNum', GPC_PATH.'css/inputNum.css');
           self::addHeaderCSS('gpc.inputNumT', sprintf($themeFile, 'inputNum'));
-          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/minified/jquery.ui.core.min.js', array('jquery'));
-          self::addHeaderJS('jquery.ui.slider', 'themes/default/js/ui/minified/jquery.ui.slider.min.js', array('jquery.ui'));
-          self::addHeaderJS('gpc.inputNum', GPC_PATH.'js/ui.inputNum'.self::$minified.'.js', array('jquery','jquery.ui.slider'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('jquery.ui.mouse', 'themes/default/js/ui/jquery.ui.mouse.js', array('jquery.ui.widget'));
+          self::addHeaderJS('jquery.ui.slider', 'themes/default/js/ui/jquery.ui.slider.js', array('jquery.ui.widget'));
+          self::addHeaderJS('gpc.inputNum', GPC_PATH.'js/ui.inputNum.js', array('jquery','jquery.ui.slider'));
           break;
         case 'inputPosition':
           self::addHeaderCSS('gpc.inputPosition', GPC_PATH.'css/inputPosition.css');
           self::addHeaderCSS('gpc.inputPositionT', sprintf($themeFile, 'inputPosition'));
-          self::addHeaderJS('gpc.inputPosition', GPC_PATH.'js/ui.inputPosition'.self::$minified.'.js', array('jquery'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('gpc.inputPosition', GPC_PATH.'js/ui.inputPosition.js', array('jquery.ui.widget'));
           break;
         case 'inputRadio':
-          self::addHeaderJS('gpc.inputRadio', GPC_PATH.'js/ui.inputRadio'.self::$minified.'.js', array('jquery'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('gpc.inputRadio', GPC_PATH.'js/ui.inputRadio.js', array('jquery.ui.widget'));
           break;
         case 'inputStatusBar':
           self::addHeaderCSS('gpc.inputStatusBar', GPC_PATH.'css/inputStatusBar.css');
           self::addHeaderCSS('gpc.inputStatusBarT', sprintf($themeFile, 'inputStatusBar'));
-          self::addHeaderJS('gpc.inputStatusBar', GPC_PATH.'js/ui.inputStatusBar'.self::$minified.'.js', array('jquery'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('gpc.inputStatusBar', GPC_PATH.'js/ui.inputStatusBar.js', array('jquery.ui.widget'));
+          break;
+        case 'inputSwitchButton':
+          self::addHeaderCSS('gpc.inputSwitchButton', GPC_PATH.'css/inputSwitchButton.css');
+          self::addHeaderCSS('gpc.inputSwitchButtonT', sprintf($themeFile, 'inputSwitchButton'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('gpc.inputSwitchButton', GPC_PATH.'js/ui.inputSwitchButton.js', array('jquery.ui.widget'));
           break;
         case 'inputText':
           self::addHeaderCSS('gpc.inputText', GPC_PATH.'css/inputText.css');
           self::addHeaderCSS('gpc.inputTextT', sprintf($themeFile, 'inputText'));
-          self::addHeaderJS('gpc.inputText', GPC_PATH.'js/ui.inputText'.self::$minified.'.js', array('jquery'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('gpc.inputText', GPC_PATH.'js/ui.inputText.js', array('jquery.ui.widget'));
+          break;
+        case 'simpleTip':
+          self::addHeaderCSS('gpc.simpleTip', GPC_PATH.'css/simpleTip.css');
+          self::addHeaderCSS('gpc.simpleTipT', sprintf($themeFile, 'simpleTip'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('gpc.simpleTip', GPC_PATH.'js/simpleTip.js', array('jquery.ui.widget'));
           break;
       }
     }
-  }
-
-  /**
-   * return the minified value
-   *
-   * @return String
-   */
-  static public function getMinified()
-  {
-    return(self::$minified);
-  }
-
-  /**
-   * set the minified state
-   *
-   * @param Bool $state
-   * @return Bool
-   */
-  static public function setMinifiedState($state)
-  {
-    if($state)
-    {
-      self::$minified='.min';
-    }
-    else
-    {
-      self::$minified='';
-    }
-    return(self::$minified!='');
   }
 
 

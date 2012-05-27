@@ -1,8 +1,8 @@
 /**
  * -----------------------------------------------------------------------------
  * file: ui.inputList.js
- * file version: 1.0.0
- * date: 2010-11-02
+ * file version: 1.0.1
+ * date: 2012-05-25
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -23,7 +23,8 @@
  * | release | date       |
  * | 1.0.0   | 2010/10/10 | first release
  * |         |            |
- * |         |            |
+ * | 1.0.1   | 2012/05/25 | fix bug with jquery 1.7.2
+ * |         |            |  . display list now works :)
  * |         |            |
  * |         |            |
  * |         |            |
@@ -106,7 +107,7 @@
                         function ()
                         {
                           privateMethods.displaySelector($this, !$this.data('properties').selectorVisible);
-                          $(this).focus();
+                          //$(this).focus();  // if get the focus, it hide the dorp-down list.. ?
                         }
                       ),
                     containerValue:$('<div/>',
@@ -165,7 +166,7 @@
               $this.data('objects', objects);
               privateMethods.setOptions($this, opt);
 
-              if($this.text()!='') 
+              if($this.text()!='')
               {
                 var tmp=$.parseJSON($.trim($this.text())),
                     selectedValues=[],
@@ -179,12 +180,12 @@
                 {
                   values=tmp.values;
                 }
-                
+
                 if(tmp.selected!=null) selectedValues=tmp.selected;
-                
-                privateMethods.setItems($this, values); 
-                privateMethods.setValue($this, selectedValues); 
-                
+
+                privateMethods.setItems($this, values);
+                privateMethods.setValue($this, selectedValues);
+
               }
 
               $this
@@ -559,7 +560,7 @@
               else
               {
                 for(var i=0;i<properties.items.length;i++)
-                {    
+                {
                   if($.inArray(i, properties.index)==-1)
                     returned.push(properties.items[i].value);
                 }

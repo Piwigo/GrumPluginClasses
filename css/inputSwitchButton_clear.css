@@ -1,0 +1,13 @@
+
+/* clear css */
+.ui-inputSwitchButton-unchecked {
+  background:none repeat scroll 0 0 #999999;
+  border-color:#DDDDDD #666666 #666666 #DDDDDD;
+  color:#005E89;
+}
+
+.ui-inputSwitchButton-checked {
+  background:none repeat scroll 0 0 #666666;
+  border-color:#666666 #DDDDDD #DDDDDD #666666;
+  color:#ff3363;
+}

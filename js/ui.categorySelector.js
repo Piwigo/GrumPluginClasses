@@ -1,8 +1,8 @@
 /**
  * -----------------------------------------------------------------------------
  * file: ui.categorySelector.js
- * file version: 1.1.0
- * date: 2011-01-12
+ * file version: 1.1.1
+ * date: 2012-05-25
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -38,6 +38,11 @@
  * |         |            | * add 'isValid' method
  * |         |            |
  * |         |            | * add 'displayPath' property
+ * |         |            |
+ * | 1.1.1   | 2012-05-25 | * fix bug with jquery 1.7.2
+ * |         |            |   . display list now works :)
+ * |         |            |
+ * |         |            |
  * |         |            |
  * |         |            |
  *
@@ -122,7 +127,7 @@
                         function ()
                         {
                           privateMethods.displaySelector($this, !$this.data('properties').selectorVisible);
-                          $(this).focus();
+                          //$(this).focus(); // if get the focus, it hide the dorp-down list.. ?
                         }
                       ),
                     containerName:$('<div/>',
@@ -782,7 +787,7 @@
           {
             return(null);
           }
-        } // numberOfCategories
+        }, // numberOfCategories
     }; // methods
 
 
@@ -1617,7 +1622,7 @@
               error: function(msg)
                 {
                   objects.listContainer.html('Error ! '+msg);
-                }
+                },
             }
          );
         },

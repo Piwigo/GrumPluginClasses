@@ -168,9 +168,14 @@ Author URI: http://photos.grum.fr/
 |         |            |   . [tabs],[tab=id(;default);<tab title>]
 |         |            |   . [form_mail]
 |         |            |
+|         |            | * Add UserAgent classes
+|         |            |
 |         |            | * mantis bug:2160
 |         |            |   . CategorySelector : extended description are not
 |         |            |     managed
+|         |            |
+|         |            | * mantis feature:2634
+|         |            |   . Compatibility with Piwigo 2.4
 |         |            |
 |         |            |
 |         |            |
