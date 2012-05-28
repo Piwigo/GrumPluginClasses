@@ -64,6 +64,8 @@
 |         |            |         state)
 |         |            |   . add manually each component for ui functionnalities
 |         |            |
+|         |            | * Remove google translate connector (google has changed the useage
+|         |            |    and now an API key is needed)
 |         |            |
 
   ------------------------------------------------------------------------------
@@ -592,9 +594,6 @@ class GPCCore
     {
       switch($ui)
       {
-        case 'googleTranslate':
-          self::addHeaderJS('google.jsapi', 'http://www.google.com/jsapi');
-          self::addHeaderJS('gpc.googleTranslate', 'plugins/GrumPluginClasses/js/google_translate.js', array('jquery', 'google.jsapi'));
         case 'categorySelector':
           self::addHeaderCSS('gpc.categorySelector', GPC_PATH.'css/categorySelector.css');
           self::addHeaderCSS('gpc.categorySelectorT', sprintf($themeFile, 'categorySelector'));

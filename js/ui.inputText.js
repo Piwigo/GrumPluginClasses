@@ -28,7 +28,7 @@
  * |         |            |
  * |         |            | * add multilanguage managment
  * |         |            |
- * | 1.1.1   | 2011/01/31 | * add function ':clear' for 'languageValues' method
+ * | 1.1.1   | 2011/01/31 | * add function ':clear' for 'languagesValues' method
  * |         |            |
  * |         |            |
  * |         |            |
