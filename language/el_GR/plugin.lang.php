@@ -30,6 +30,6 @@ $lang['Module'] = 'Ενότητα';
 $lang['Plugin'] = 'Πρόσθετο';
 $lang['Private'] = 'Ιδιωτικό';
 $lang['Public'] = 'Δημόσιο';
-$lang['Some plugins are dependent on Grum Plugin Classes: before uninstall, you must first uninstall the plugins dependent'] = 'Μερικές πρόσθετα εξαρτώνται από το Grum Plugin Classes: πριν την απεγκατάσταση, θα πρέπει πρώτα να απεγκαταστήσετε τα πρόσθετα που εξαρτώνται.';
+$lang['Some plugins are dependent on Grum Plugin Classes: before uninstall, you must first uninstall the plugins dependent'] = 'Μερικά πρόσθετα εξαρτώνται από το Grum Plugin Classes: πριν την απεγκατάσταση, θα πρέπει πρώτα να απεγκαταστήσετε τα πρόσθετα που εξαρτώνται.';
 $lang['Version'] = 'Έκδοση';
 ?>
