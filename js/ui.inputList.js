@@ -10,7 +10,6 @@
  * Author     : Grum
  *   email    : grum@piwigo.com
  *   website  : http://photos.grum.fr
- *   PWG user : http://forum.phpwebgallery.net/profile.php?id=3706
  *
  *   << May the Little SpaceFrog be with you ! >>
  * -----------------------------------------------------------------------------
@@ -23,9 +22,10 @@
  * | release | date       |
  * | 1.0.0   | 2010/10/10 | first release
  * |         |            |
- * | 1.0.1   | 2012/05/25 | fix bug with jquery 1.7.2
- * |         |            |  . display list now works :)
+ * | 1.0.1   | 2012/06/18 | * fix bug with jquery 1.7.2
+ * |         |            |   . display list now works :)
  * |         |            |
+ * |         |            | * improve memory managment
  * |         |            |
  * |         |            |
  * |         |            |
@@ -48,17 +48,19 @@
             {
               // default values for the plugin
               var $this=$(this),
+                  timeStamp=new Date(),
                   data = $this.data('options'),
                   objects = $this.data('objects'),
                   properties = $this.data('properties'),
                   options =
                     {
                       serverUrl:'',
+                      postData:{},
                       autoLoad:true,
                       listMaxWidth:0,
                       listMaxHeight:0,
                       multiple:false,
-                      downArrow:'&dArr;',
+                      downArrow:'', //&dArr;
                       popupMode:'click',
                       colsWidth:[],
                       colsDisplayed:[],
@@ -79,6 +81,7 @@
               {
                 $this.data('properties',
                   {
+                    objectId:'il'+Math.ceil(timeStamp.getTime()*Math.random()),
                     index:-1,
                     initialized:false,
                     selectorVisible:false,
@@ -203,11 +206,14 @@
             {
               // default values for the plugin
               var $this=$(this),
+                  properties = $this.data('properties'),
                   objects = $this.data('objects');
               objects.container.unbind().remove();
               objects.list.children().unbind();
-              objects.listContainer.remove();
+              objects.listContainer.unbind().remove();
+              $(document).unbind('focusout.'+properties.objectId+' focusin.'+properties.objectId);
               $this
+                .removeData()
                 .unbind('.inputList')
                 .css(
                   {
@@ -215,6 +221,7 @@
                     height:''
                   }
                 );
+              delete $this;
             }
           );
         }, // destroy
@@ -327,6 +334,27 @@
             }
           }
         }, // serverUrl
+
+      postData: function (value)
+        {
+          if(value!=null)
+          {
+            // set selected value
+            return(
+              this.each(
+                function()
+                {
+                  privateMethods.setPostData($(this), value, true);
+                }
+              )
+            );
+          }
+          else
+          {
+            var options=this.data('options');
+            return(options.postData);
+          }
+        }, // postData
 
       cols: function ()
         {
@@ -746,6 +774,7 @@
           privateMethods.setAutoLoad(object, (value.autoLoad!=null)?value.autoLoad:options.autoLoad);
           privateMethods.setListMaxWidth(object, (value.listMaxWidth!=null)?value.listMaxWidth:options.listMaxWidth);
           privateMethods.setListMaxHeight(object, (value.listMaxHeight!=null)?value.listMaxHeight:options.listMaxHeight);
+          privateMethods.setPostData(object, (value.postData!=null)?value.postData:options.postData);
           privateMethods.setServerUrl(object, (value.serverUrl!=null)?value.serverUrl:options.serverUrl);
           privateMethods.setPopupMode(object, (value.popupMode!=null)?value.popupMode:options.popupMode);
           privateMethods.setDownArrow(object, (value.downArrow!=null)?value.downArrow:options.downArrow);
@@ -758,7 +787,14 @@
           privateMethods.setItems(object, (value.items!=null)?value.items:options.items);
           privateMethods.setMultiple(object, (value.multiple!=null)?value.multiple:options.multiple); // can be set only at the initialization
 
-          if(options.autoLoad) privateMethods.load(object);
+          if(options.autoLoad && options.serverUrl!='')
+          {
+            privateMethods.load(object, (value.value!=null)?value.value:null);
+          }
+          else
+          {
+            privateMethods.setValue(object, (value.value!=null)?value.value:null);
+          }
 
           properties.initialized=true;
         },
@@ -899,6 +935,19 @@
           return(options.serverUrl);
         },
 
+      setPostData : function (object, value)
+        {
+          var properties=object.data('properties'),
+              options=object.data('options');
+
+          if(!properties.initialized || value!=options.postData)
+          {
+            options.postData=value;
+          }
+
+          return(options.postData);
+        }, // setPostData
+
       setMultiple : function (object, value)
         {
           var options=object.data('options'),
@@ -973,12 +1022,12 @@
                     properties.mouseOver=true;
                   }
                 );
-              $(document).bind('focusout focusin',
-                function (event)
-                {
-                  if(!properties.mouseOver) privateMethods.displaySelector(object, false);
-                  event.stopPropagation();
-                }
+                $(document).bind('focusout.'+properties.objectId+' focusin.'+properties.objectId,
+                  function (event)
+                  {
+                    if($.isPlainObject(properties) && !properties.mouseOver) privateMethods.displaySelector(object, false);
+                    event.stopPropagation();
+                  }
               );
             }
           }
@@ -1296,7 +1345,7 @@
           return(properties.selectorVisible);
         },
 
-      load : function (object)
+      load : function (object, defaultValue)
         {
           // load datas from server through an asynchronous ajax call
           var options=object.data('options'),
@@ -1309,6 +1358,7 @@
             {
               type: "POST",
               url: options.serverUrl,
+              data:options.postData,
               async: true,
               success: function(msg)
                 {
@@ -1317,11 +1367,25 @@
                   properties.initialized=false;
                   if(options.multiple)
                   {
-                    privateMethods.setValue(object, ':none');
+                    if(defaultValue!=null)
+                    {
+                      privateMethods.setValue(object, defaultValue);
+                    }
+                    else
+                    {
+                      privateMethods.setValue(object, ':none');
+                    }
                   }
                   else
                   {
-                    privateMethods.setValue(object, ':first');
+                    if(defaultValue!=null)
+                    {
+                      privateMethods.setValue(object, defaultValue);
+                    }
+                    else
+                    {
+                      privateMethods.setValue(object, ':first');
+                    }
                   }
                   properties.initialized=true;
 

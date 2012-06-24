@@ -15,6 +15,12 @@ li.ui-category-selector-item:hover {
   background-color:#777777;
 }
 
+.ui-category-selector-arrow {
+  background-image:url(./../icons/buttons.png);
+  background-repeat:no-repeat;
+  width:15px;
+  height:15px;
+}
 .ui-category-selector-expandable-item {
   background-image:url(./../icons/expand_roma.png);
 }
@@ -45,11 +51,15 @@ li.ui-category-selector-selected-item div.ui-category-selector-check {
 }
 
 .ui-category-selector-arrow {
-  background:none repeat scroll 0 0 #666666;
-  border-color:#999999 #444444 #444444 #999999;
-  color:#FF3363;
+  background-position:-30px -15px;
+  -moz-border-radius:2px;
+  -webkit-border-radius:2px;
+  -khtml-border-radius:2px;
+  border-radius:2px;
+  color:#FF7700;
+  border:0px;
 }
-
-.ui-category-selector-arrow-active {
-  border-color:#444444 #999999 #999999 #444444;
+.ui-category-selector-arrow:hover {
+  background-position:-30px 0px;
+  background-color:#222222;
 }

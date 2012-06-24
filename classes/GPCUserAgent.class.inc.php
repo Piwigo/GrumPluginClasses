@@ -1,51 +1,9 @@
 <?php
-/* -----------------------------------------------------------------------------
-  class name: GPCUserAgent
-  class version  : 1.0.0
-  plugin version : 3.5.2
-  date           : 2012-05-25
-  ------------------------------------------------------------------------------
-  author: grum at piwog.org
-  << May the Little SpaceFrog be with you >>
-  ------------------------------------------------------------------------------
-
-  this classes provides base functions to parse User Agent string and retrieve
-  properties: Browser, OS, Engine
-
-
-  (static public) function parse($userAgent)
-
-| release | date       |
-| 1.0.0   | 2012-05-25 | * implementation of the class
-|         |            |
-|         |            |
-|         |            |
-|         |            |
-|         |            |
-|         |            |
-
------------------------------------------------------------------------------ */
 
 require_once('GPCUserAgent.const.inc.php');
 
-
 class GPCUserAgent
 {
-  /**
-   * returned result is ana array with the following properties:
-   *  'os'              => Operating System id on which the browser run; integer => UA_OS_*
-   *  'os_version'      => Version of the OS; string
-   *
-   *  'browser'         => browser id; integer => UA_BROWSER_*
-   *  'brower_name'     => browser name; string
-   *  'browser_type'    => browser type id (crawler, computer, mobile, ...); integer => UA_PROP_TYPE_*
-   *  'browser_version' => browser version; string
-   *
-   *  'engine'          => engine used by the browser (gecko, khtml, ...); integer => UA_ENGINE_*
-   *
-   * @param String $userAgent: a user agent string
-   * @return Array: array of properties
-   */
   static public function parse($userAgent)
   {
     global $UA_BrowserInfo;
@@ -257,6 +215,9 @@ class GPCUserAgent
         //echo print_r($userAgent, true).print_r($result, true);
         if(is_array($result) and count($result)>2)
         {
+          if($browser==UA_BROWSER_SAFARI and preg_match('/iphone|ipad|ipod/i', $userAgent))
+            $browser=UA_BROWSER_SAFARI_MOBILE;
+
           $returned=array(
             'browser' => $browser,
             'name' => $result[1],

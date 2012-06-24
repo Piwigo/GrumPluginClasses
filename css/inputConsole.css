@@ -15,14 +15,38 @@
   background:transparent;
   display:inline-block;
   padding-right:2px;
+  font-family:monospace;
 }
 .ui-inputConsole-history ul {
   margin:0px;
   padding:0 0 0 20px;
 }
+.ui-inputConsole-history ul li {
+  font-family:monospace;
+}
 .ui-inputConsole-history {
-  overflow:auto;
   border:1px solid;
   border-bottom:1px dotted;
   position:absolute;
+  z-index:1000;
+}
+span.ui-inputConsole-historyResult {
+  display:block;
+  margin-left:15px;
+  font-style:italic;
+}
+.ui-inputConsole-historyBg {
+  position:absolute;
+  width:100%;
+  height:100%;
+  z-index:-1;
+  opacity:0.85;
+  filter:alpha(opacity:85);
+}
+.ui-inputConsole-historyListContainer {
+  width:100%;
+  height:100%;
+  position:absolute;
+  overflow:auto;
+  z-index:-1;
 }

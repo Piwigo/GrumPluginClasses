@@ -51,7 +51,8 @@
             requestResultPagesNavigator:'',
             requestResultRequestNumber:0,
             onPageChange:null,
-            numberPerPage:30
+            numberPerPage:30,
+            token:''
           };
 
     /**
@@ -244,7 +245,12 @@
           type: "POST",
           url: "plugins/GrumPluginClasses/gpc_ajax.php",
           async: true,
-          data: { ajaxfct:"admin.rbuilder.fillCaddie", fillMode:mode, requestNumber:requestNumber },
+          data: {
+              ajaxfct:"admin.rbuilder.fillCaddie",
+              fillMode:mode,
+              requestNumber:requestNumber,
+              token:options.token
+            },
           success:
             function(msg)
             {

@@ -108,7 +108,8 @@ function criteriaBuilder(container)
           helpDeleteUrl:'',
           helpMove:'',
           helpSwitchCondition:'',
-          ajaxUrl:''
+          ajaxUrl:'',
+          token:''
         },
       extraData = new Array();
 
@@ -589,7 +590,7 @@ function criteriaBuilder(container)
       return(false);
     }
 
-    var datas=encodeURI('ajaxfct=public.rbuilder.searchExecute&requestName='+itemsId.container+'&'+getItems());
+    var datas=encodeURI('ajaxfct=public.rbuilder.searchExecute&token='+options.token+'&requestName='+itemsId.container+'&'+getItems());
     $.ajax(
       {
         type: "POST",
@@ -620,7 +621,13 @@ function criteriaBuilder(container)
         type: "POST",
         url: options.ajaxUrl,
         async: true,
-        data: {ajaxfct:'public.rbuilder.searchGetPage', page:pageNumber, requestNumber:requestNumber, numPerPage:numberPerPage},
+        data: {
+            ajaxfct:'public.rbuilder.searchGetPage',
+            page:pageNumber,
+            requestNumber:requestNumber,
+            numPerPage:numberPerPage,
+            token:options.token
+          },
         success: function(msg)
           {
             if(options.onGetPageSuccess!=null && jQuery.isFunction(options.onGetPageSuccess)) options.onGetPageSuccess(msg);

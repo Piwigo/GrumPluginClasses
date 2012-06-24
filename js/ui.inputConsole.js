@@ -2,7 +2,7 @@
  * -----------------------------------------------------------------------------
  * file: ui.inputConsole.js
  * file version: 1.0.1
- * date: 2010-11-05
+ * date: 2012-06-18
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -10,7 +10,6 @@
  * Author     : Grum
  *   email    : grum@piwigo.com
  *   website  : http://photos.grum.fr
- *   PWG user : http://forum.phpwebgallery.net/profile.php?id=3706
  *
  *   << May the Little SpaceFrog be with you ! >>
  * -----------------------------------------------------------------------------
@@ -23,7 +22,7 @@
  * | release | date       |
  * | 1.0.0   | 2010/10/10 | first release
  * |         |            |
- * |         |            |
+ * | 1.0.1   | 2012/06/18 | * improve memory managment
  * |         |            |
  * |         |            |
  * |         |            |
@@ -206,15 +205,23 @@
               var $this=$(this),
                   objects = $this.data('objects');
               objects.input.unbind().remove();
+              objects.prompt.unbind().remove();
+              objects.inputContainer.unbind().remove();
+              objects.historyList.unbind().remove();
+              objects.historyListContainer.unbind().remove();
+              objects.historyBackground.unbind().remove();
+              objects.historyContainer.unbind().remove();
               objects.container.unbind().remove();
               $this
                 .unbind('.inputConsole')
+                .removeData()
                 .css(
                   {
                     width:'',
                     height:''
                   }
                 );
+              delete $this;
             }
           );
         }, // destroy

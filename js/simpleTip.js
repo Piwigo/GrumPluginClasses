@@ -390,16 +390,16 @@ function simpleTip()
       switch(arrowModel)
       {
         case 'Up':
-          bgp='-'+items[itemIndex].options.arrowHeight+'px 0px';
+          bgp='0px -'+items[itemIndex].options.arrowHeight+'px';
           break;
         case 'Left':
-          bgp='0px -'+items[itemIndex].options.arrowWeight+'px';
+          bgp='-'+items[itemIndex].options.arrowWidth+'px 0px';
           break;
         case 'Down':
           bgp='0px 0px';
           break;
         case 'Right':
-          bgp='-'+items[itemIndex].options.arrowHeight+'px -'+items[itemIndex].options.arrowWeight+'px';
+          bgp='-'+items[itemIndex].options.arrowHeight+'px -'+items[itemIndex].options.arrowWidth+'px';
           break;
       }
       $('#iSimpleTipArrow'+options.name).css(

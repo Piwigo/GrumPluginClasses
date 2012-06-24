@@ -60,13 +60,28 @@ table.ui-inputColorPicker-inputContainer div.ui-inputNum div.ui-slider {
   padding-right:12px;
 }
 table.ui-inputColorPicker-inputContainer div.ui-inputNum div.ui-slider-horizontal {
-  height:9px;
+  height:8px;
 }
 
 table.ui-inputColorPicker-inputContainer div.ui-inputNum a.ui-slider-handle {
   height:7px;
   margin-top:0;
+  top:-2px;
 }
+table.ui-inputColorPicker-inputContainer div.ui-inputNum-btInc {
+  background-position: -212px -17px;
+}
+table.ui-inputColorPicker-inputContainer div.ui-inputNum-btInc:hover {
+  background-position: -212px -2px;
+}
+table.ui-inputColorPicker-inputContainer div.ui-inputNum-btDec {
+  background-position: -227px -17px;
+}
+table.ui-inputColorPicker-inputContainer div.ui-inputNum-btDec:hover {
+  background-position: -227px -2px;
+}
+
+
 
 .ui-inputNum-btDec, .ui-inputNum-btInc {
   width:11px;

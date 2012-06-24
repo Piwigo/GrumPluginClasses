@@ -1,0 +1,64 @@
+/* for dynamicTable plugin */
+div.ui-dynamicTable {
+  padding:8px;
+}
+
+table.ui-dynamicTableHeader, table.ui-dynamicTableContent {
+  width:100%;
+  /* border-collapse: collapse; */
+  border-spacing: 1px;
+  padding:0;
+  margin:0;
+}
+
+table.ui-dynamicTableContent {
+  cursor:default;
+}
+
+div.ui-dynamicTableContent {
+  overflow-y:auto;
+}
+
+
+tbody.ui-dynamicTableContent {
+  width:100%;
+}
+
+thead.ui-dynamicTableHeader td,
+table.ui-dynamicTableContent td {
+  padding:0 0 0 2px;
+}
+
+td.ui-dynamicTableSortColumn {
+  width:15px;
+}
+
+div.ui-dynamicTableFilterButton-inactive,
+div.ui-dynamicTableFilterButton-active,
+div.ui-dynamicTableSortButton {
+  float:right;
+  width:14px;
+  cursor:pointer;
+  height: 14px;
+  margin: 1px;
+  padding: 0px;
+}
+
+div.ui-dynamicTableLoading {
+  display:none;
+  position:absolute;
+  z-index:1000;
+  margin: 1px;
+}
+
+div.ui-dynamicTableFooter {
+  display:none;
+  height:15px;
+}
+div.ui-dynamicTableFooter-nbItems {
+  display:inline-block;
+}
+div.ui-dynamicTableFooter-pagesNavigator {
+  display:inline-block;
+  float:right;
+}

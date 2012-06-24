@@ -116,6 +116,7 @@ define('UA_BROWSER_LYNX',             0x1032);
 define('UA_BROWSER_SAFARI',           0x1033);
 define('UA_BROWSER_FIREFOX',          0x1034);
 define('UA_BROWSER_OPERA_WII',        0x1035);
+define('UA_BROWSER_SAFARI_MOBILE',    0x1036);
 
 
 /**
@@ -241,7 +242,8 @@ $UA_BrowserInfo=array(
             UA_BROWSER_KONQUEROR     => array(UA_PROP_NAME => 'Konqueror',              UA_PROP_TYPE=>UA_PROP_TYPE_BROWSER_COMPUTER, UA_PROP_URL => ''),
             UA_BROWSER_LINKS         => array(UA_PROP_NAME => 'Links',                  UA_PROP_TYPE=>UA_PROP_TYPE_BROWSER_COMPUTER, UA_PROP_URL => ''),
             UA_BROWSER_LYNX          => array(UA_PROP_NAME => 'Lynx',                   UA_PROP_TYPE=>UA_PROP_TYPE_BROWSER_COMPUTER, UA_PROP_URL => ''),
-            UA_BROWSER_SAFARI        => array(UA_PROP_NAME => 'Safari',                 UA_PROP_TYPE=>UA_PROP_TYPE_BROWSER_COMPUTER, UA_PROP_URL => '')
+            UA_BROWSER_SAFARI        => array(UA_PROP_NAME => 'Safari',                 UA_PROP_TYPE=>UA_PROP_TYPE_BROWSER_COMPUTER, UA_PROP_URL => ''),
+            UA_BROWSER_SAFARI_MOBILE => array(UA_PROP_NAME => 'Safari',                 UA_PROP_TYPE=>UA_PROP_TYPE_BROWSER_MOBILE, UA_PROP_URL => '')
           ),
 
   UA_DATA_OS => array(

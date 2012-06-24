@@ -8,13 +8,19 @@
 }
 
 .ui-inputList-arrow {
-  background:none repeat scroll 0 0 #999999;
-  border-color:#DDDDDD #666666 #666666 #DDDDDD;
-  color:#005E89;
+  border:0px;
+  color:#FF7700;
+  background-image:url(./../icons/buttons.png);
+  background-repeat:no-repeat;
+  background-position:-30px -90px;
+  -moz-border-radius:2px;
+  -webkit-border-radius:2px;
+  -khtml-border-radius:2px;
+  border-radius:2px;
 }
-
-.ui-inputList-arrow-active {
-  border-color:#666666 #DDDDDD #DDDDDD #666666;
+.ui-inputList-arrow:hover {
+  background-position:-30px -105px;
+  background-color:#999999;
 }
 
 li.ui-inputList-item:hover {
@@ -24,15 +30,29 @@ li.ui-inputList-item:hover {
 
 .ui-inputList-selected-item {
   background-color:#999999;
-  color:#DDDDDD;
+}
+
+li.ui-inputList-item div.ui-inputList-check,
+li.ui-inputList-selected-item div.ui-inputList-check {
+  background-image:url(./../icons/buttons.png);
+  background-repeat:no-repeat;
 }
 
 li.ui-inputList-item div.ui-inputList-check {
-  background-image:url(./../icons/check_notchecked_clear.png);
+  background-position:-180px -90px;
 }
+li.ui-inputList-item:hover div.ui-inputList-check {
+  background-position:-180px -105px;
+}
+
 li.ui-inputList-selected-item div.ui-inputList-check {
-  background-image:url(./../icons/check_checked_clear.png);
+  background-position:-195px -90px;
 }
+li.ui-inputList-selected-item:hover div.ui-inputList-check {
+  background-position:-195px -105px;
+}
+
+
 
 .ui-error, input[type='text'].ui-error {
   background:#ff8080;

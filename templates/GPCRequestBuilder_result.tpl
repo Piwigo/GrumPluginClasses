@@ -3,7 +3,7 @@
   <li>
     <table>
       <tr>
-        <td>
+        <td class="rbResultItemImg">
           <img class="thumbnail" src='{$row.imageThumbnail}'>
         </td>
 

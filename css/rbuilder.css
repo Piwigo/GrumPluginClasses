@@ -47,7 +47,7 @@ div#iMenuCriterions div#iMenuCItems {
   max-height:30px;
   position:absolute;
   padding:0px;
-  margin-top:-1px;
+  margin-top:-15px;
   z-index:949;
 }
 div#iMenuCriterions ul { padding:2px; }
@@ -90,8 +90,21 @@ div#iMenuCaddieBar ul {
 }
 div#iMenuCaddieBar ul li { list-style-type:none; padding:4px; }
 div#iMenuCaddieBar:hover  div#iMenuCaddieItems { cursor:pointer; display:block; }
-.iconEdit, .iconDelete, .iconSwitchCondition { width:18px; height:18px; cursor:pointer; display:inline-block; }
-.iconMove { width:18px; height:18px; cursor:move; display:inline-block; }
+
+.iconMove,
+.iconEdit,
+.iconDelete,
+.iconSwitchCondition {
+  width:15px;
+  height:15px;
+  cursor:pointer;
+  display:inline-block;
+}
+.iconMove { cursor:move; }
 .itemContent { padding-left:24px; }
 .cbItemUnique { border:none; }
 .cbItemMultiple { border:1px solid; }
+
+.ui-dialog-titlebar-close {
+    display: none;
+}

@@ -177,7 +177,7 @@ Author URI: http://photos.grum.fr/
 |         |            | * mantis feature:2634
 |         |            |   . Compatibility with Piwigo 2.4
 |         |            |
-|         |            |
+|         |            | * optimization & rename of some JS framework components
 |         |            |
 |         |            |
 |         |            | ===== Don't forget to update the plugin version ! =====
@@ -198,7 +198,6 @@ Classes version for this package
     GPCAjax.class.php
     GPCCategorySelector.class.inc.php
     GPCCore.class.php
-    GPCCss.class.php
     GPCPagesNavigation.class.php
     GPCPublicIntegration.class.php
     GPCRequestBuilder.class.php
@@ -240,8 +239,7 @@ if($config['installed']!=GPC_VERSION2)
   $gpc->activate();
 }
 
-
-if(defined('IN_ADMIN'))
+if(defined('IN_ADMIN') && !defined('AJAX_CALL'))
 {
   //GPC admin interface is loaded and active only if in admin page
   include_once("gpc_aim.class.inc.php");

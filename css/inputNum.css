@@ -18,15 +18,17 @@
   border-width:1px;
   cursor:pointer;
   font-weight:bold;
-  width:14px;
+  width:15px;
   margin-top:1px;
-  height:14px;
+  height:15px;
   text-align:center;
   display:inline-block;
 }
 .ui-inputNum-unit {
   margin-right:4px;
   display:inline-block;
+  position:relative;
+  top:-2px;
 }
 
 div.ui-inputNum div.ui-slider {

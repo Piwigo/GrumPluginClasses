@@ -22,8 +22,8 @@
  *  - public.categorySelector.getList
  *  - public.rbuilder.searchExecute
  *  - public.rbuilder.searchGetPage
- *  - public.tagSelector.get
- *  - admin.tagSelector.get
+ *  - public.inputTag.get
+ *  - admin.inputTag.get
  *  - public.contact.sendMsg
  *
  *
@@ -31,22 +31,19 @@
  */
 
   define('PHPWG_ROOT_PATH',dirname(dirname(dirname(__FILE__))).'/');
-
+  if(!defined('AJAX_CALL')) define('AJAX_CALL', true);
 
   /*
    * set ajax module in admin mode if request is used for admin interface
    */
   if(!isset($_REQUEST['ajaxfct'])) $_REQUEST['ajaxfct']='';
-  if(preg_match('/^admin\./i', $_REQUEST['ajaxfct']))
-  {
-    define('IN_ADMIN', true);
-  }
+  if(preg_match('/^admin\./i', $_REQUEST['ajaxfct'])) define('IN_ADMIN', true);
 
   // the common.inc.php file loads all the main.inc.php plugins files
   include_once(PHPWG_ROOT_PATH.'include/common.inc.php' );
   include_once(PHPWG_ROOT_PATH.'include/functions_mail.inc.php' );
-  include_once(PHPWG_PLUGINS_PATH.'GrumPluginClasses/classes/CommonPlugin.class.inc.php');
   include_once(PHPWG_PLUGINS_PATH.'GrumPluginClasses/classes/GPCAjax.class.inc.php');
+  include_once(PHPWG_PLUGINS_PATH.'GrumPluginClasses/classes/CommonPlugin.class.inc.php');
 
   global $page;
   $page['root_path']='./';
@@ -76,7 +73,6 @@
 
       $tableList=array('result_cache');
       $this->setTablesList($tableList);
-
       $this->loadConfig();
       $this->checkRequest();
       $this->returnAjaxContent();
@@ -99,8 +95,8 @@
            $_REQUEST['ajaxfct']=='public.rbuilder.searchGetPage' or
            $_REQUEST['ajaxfct']=='admin.categorySelector.getList' or
            $_REQUEST['ajaxfct']=='public.categorySelector.getList' or
-           $_REQUEST['ajaxfct']=='public.tagSelector.get' or
-           $_REQUEST['ajaxfct']=='admin.tagSelector.get' or
+           $_REQUEST['ajaxfct']=='public.inputTag.get' or
+           $_REQUEST['ajaxfct']=='admin.inputTag.get' or
            $_REQUEST['ajaxfct']=='public.contact.sendMsg'
           )
         ) $_REQUEST['ajaxfct']='';
@@ -148,10 +144,10 @@
 
 
         /*
-         * check admin.tagSelector.get values
+         * check admin.inputTag.get values
          */
-        if($_REQUEST['ajaxfct']=="admin.tagSelector.get" or
-           $_REQUEST['ajaxfct']=="public.tagSelector.get")
+        if($_REQUEST['ajaxfct']=="admin.inputTag.get" or
+           $_REQUEST['ajaxfct']=="public.inputTag.get")
         {
           if(!isset($_REQUEST['letters'])) $_REQUEST['ajaxfct']="";
           if(!isset($_REQUEST['filter'])) $_REQUEST['filter']="affected";
@@ -235,11 +231,11 @@
         case 'public.categorySelector.getList':
           $result=$this->ajax_gpc_public_CategorySelectorGetList($_REQUEST['filter'], $_REQUEST['galleryRoot'], $_REQUEST['tree']);
           break;
-        case 'admin.tagSelector.get':
-          $result=$this->ajax_gpc_both_TagSelectorGet('admin', $_REQUEST['letters'], $_REQUEST['filter'], $_REQUEST['maxTags'], $_REQUEST['ignoreCase']);
+        case 'admin.inputTag.get':
+          $result=$this->ajax_gpc_both_InputTagGet('admin', $_REQUEST['letters'], $_REQUEST['filter'], $_REQUEST['maxTags'], $_REQUEST['ignoreCase']);
           break;
-        case 'public.tagSelector.get':
-          $result=$this->ajax_gpc_both_TagSelectorGet('public', $_REQUEST['letters'], $_REQUEST['filter'], $_REQUEST['maxTags'], $_REQUEST['ignoreCase']);
+        case 'public.inputTag.get':
+          $result=$this->ajax_gpc_both_InputTagGet('public', $_REQUEST['letters'], $_REQUEST['filter'], $_REQUEST['maxTags'], $_REQUEST['ignoreCase']);
           break;
         case 'public.contact.sendMsg':
           $result=$this->ajax_gpc_public_contactSendMsg($_REQUEST['email'], $_REQUEST['subject'], $_REQUEST['msg']);
@@ -407,7 +403,7 @@
      * @param Integer $maxTags : maximum of items returned ; 0 = no limits
      * @return String : json string
      */
-    private function ajax_gpc_both_TagSelectorGet($mode, $letters, $filter, $maxTags, $ignoreCase)
+    private function ajax_gpc_both_InputTagGet($mode, $letters, $filter, $maxTags, $ignoreCase)
     {
       global $user;
 
@@ -481,7 +477,7 @@
       }
 
       return(json_encode($returned));
-    } //ajax_gpc_both_TagSelectorGet
+    } //ajax_gpc_both_InputTagGet
 
 
     /**

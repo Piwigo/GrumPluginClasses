@@ -2,7 +2,7 @@
  * -----------------------------------------------------------------------------
  * file: ui.categorySelector.js
  * file version: 1.1.1
- * date: 2012-05-25
+ * date: 2012-06-18
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -10,7 +10,6 @@
  * Author     : Grum
  *   email    : grum@piwigo.com
  *   website  : http://photos.grum.fr
- *   PWG user : http://forum.phpwebgallery.net/profile.php?id=3706
  *
  *   << May the Little SpaceFrog be with you ! >>
  * -----------------------------------------------------------------------------
@@ -39,9 +38,10 @@
  * |         |            |
  * |         |            | * add 'displayPath' property
  * |         |            |
- * | 1.1.1   | 2012-05-25 | * fix bug with jquery 1.7.2
+ * | 1.1.1   | 2012-06-18 | * fix bug with jquery 1.7.2
  * |         |            |   . display list now works :)
  * |         |            |
+ * |         |            | * improve memory managment
  * |         |            |
  * |         |            |
  * |         |            |
@@ -64,6 +64,7 @@
             {
               // default values for the plugin
               var $this=$(this),
+                  timeStamp=new Date(),
                   data = $this.data('options'),
                   objects = $this.data('objects'),
                   properties = $this.data('properties'),
@@ -78,6 +79,7 @@
                       levelIndent:16,
                       iconWidthEC:15,
                       serverUrl:'plugins/GrumPluginClasses/gpc_ajax.php',
+                      postData:{},
                       filter:'accessible',
                       popup:null,
                       change:null,
@@ -86,7 +88,7 @@
                       userMode:'public',
                       popupMode:'click',
                       displayPath:false,
-                      downArrow:'&dArr;'
+                      downArrow:'' //'&dArr;'
                     };
 
               // if options given, merge it
@@ -99,6 +101,7 @@
               {
                 $this.data('properties',
                   {
+                    objectId:'cs'+Math.ceil(timeStamp.getTime()*Math.random()),
                     index:-1,
                     initialized:false,
                     selectorVisible:false,
@@ -141,7 +144,7 @@
                       {
                         'class':'ui-category-selector-status',
                         css: {
-                          float:'right',
+                          'float':'right',
                           display:(options.displayStatus)?'block':'none'
                         }
                       }
@@ -212,10 +215,16 @@
               // default values for the plugin
               var $this=$(this),
                   objects = $this.data('objects');
+              objects.containerName.unbind().remove();
+              objects.containerList.unbind().remove();
+              objects.containerStatus.unbind().remove();
+              objects.containerArrow.unbind().remove();
               objects.container.unbind().remove();
               objects.list.children().unbind();
               objects.listContainer.remove();
+              $(document).unbind('focusout.'+properties.objectId+' focusin.'+properties.objectId);
               $this
+                .removeData()
                 .unbind('.categorySelector')
                 .css(
                   {
@@ -223,6 +232,7 @@
                     height:''
                   }
                 );
+              delete $this;
             }
           );
         }, // destroy
@@ -411,6 +421,27 @@
             }
           }
         }, // serverUrl
+
+      postData: function (value)
+        {
+          if(value!=null)
+          {
+            // set selected value
+            return(
+              this.each(
+                function()
+                {
+                  privateMethods.setPostData($(this), value, true);
+                }
+              )
+            );
+          }
+          else
+          {
+            var options=this.data('options');
+            return(options.postData);
+          }
+        }, // postData
 
       filter: function (value)
         {
@@ -812,6 +843,7 @@
           privateMethods.setListMaxHeight(object, (value.listMaxHeight!=null)?value.listMaxHeight:options.listMaxHeight);
           privateMethods.setLevelIndent(object, (value.levelIndent!=null)?value.levelIndent:options.levelIndent);
           privateMethods.setIconWidthEC(object, (value.iconWidthEC!=null)?value.iconWidthEC:options.iconWidthEC);
+          privateMethods.setPostData(object, (value.postData!=null)?value.postData:options.postData);
           privateMethods.setServerUrl(object, (value.serverUrl!=null)?value.serverUrl:options.serverUrl);
           privateMethods.setFilter(object, (value.filter!=null)?value.filter:options.filter);
           privateMethods.setUserMode(object, (value.userMode!=null)?value.userMode:options.userMode);
@@ -968,6 +1000,19 @@
           return(options.serverUrl);
         },
 
+      setPostData : function (object, value)
+        {
+          var properties=object.data('properties'),
+              options=object.data('options');
+
+          if(!properties.initialized || value!=options.postData)
+          {
+            options.postData=value;
+          }
+
+          return(options.postData);
+        }, // setPostData
+
       setFilter : function (object, value)
         {
           var options=object.data('options'),
@@ -1093,7 +1138,7 @@
                     properties.mouseOver=true;
                   }
                 );
-              $(document).bind('focusout focusin',
+              $(document).bind('focusout.'+properties.objectId+' focusin.'+properties.objectId,
                 function (event)
                 {
                   if(!properties.mouseOver) privateMethods.displaySelector(object, false);
@@ -1613,7 +1658,8 @@
                   ajaxfct:options.userMode+'.categorySelector.getList',
                   filter:options.filter,
                   galleryRoot:options.galleryRoot?'y':'n',
-                  tree:'y'
+                  tree:'y',
+                  data:options.postData
                 },
               success: function(msg)
                 {

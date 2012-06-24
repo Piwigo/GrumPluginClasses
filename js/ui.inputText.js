@@ -1,8 +1,8 @@
 /**
  * -----------------------------------------------------------------------------
  * file: ui.inputText.js
- * file version: 1.1.1
- * date: 2011-01-09
+ * file version: 1.1.2
+ * date: 2012-06-18
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -10,7 +10,6 @@
  * Author     : Grum
  *   email    : grum@piwigo.com
  *   website  : http://photos.grum.fr
- *   PWG user : http://forum.phpwebgallery.net/profile.php?id=3706
  *
  *   << May the Little SpaceFrog be with you ! >>
  * -----------------------------------------------------------------------------
@@ -30,8 +29,9 @@
  * |         |            |
  * | 1.1.1   | 2011/01/31 | * add function ':clear' for 'languagesValues' method
  * |         |            |
+ * | 1.1.2   | 2012/06/18 | * improve memory managment
  * |         |            |
- * |         |            |
+ * |         |            | * fix bug on regExp option
  * |         |            |
  * |         |            |
  * |         |            |
@@ -138,12 +138,14 @@
               objects.container.unbind().remove();
               $this
                 .unbind('.inputText')
+                .removeData()
                 .css(
                   {
                     width:'',
                     height:''
                   }
                 );
+              delete $this;
             }
           );
         }, // destroy
@@ -538,7 +540,7 @@
         {
           var properties=object.data('properties');
 
-          return(properties.re.exec(value))
+          return(properties.re.test(value));
         },
 
       setOptions : function (object, value)
@@ -569,6 +571,8 @@
 
           privateMethods.setTextAlign(object, (value.textAlign!=null)?value.textAlign:options.textAlign);
 
+          privateMethods.setDisabled(object, (value.disabled!=null)?value.disabled:options.disabled);
+
           privateMethods.setEventChange(object, (value.change!=null)?value.change:options.change);
 
           properties.initialized=true;
@@ -597,6 +601,9 @@
         {
           var objects=object.data('objects'),
               properties=object.data('properties');
+
+          if(value=='check')
+            value=privateMethods.isValid(object, properties.value);
 
           if(properties.isValid!=value && properties.initialized)
           {
@@ -891,7 +898,7 @@
             return(properties.value);
           }
 
-          privateMethods.setIsValid(object, true);
+          privateMethods.setIsValid(object, privateMethods.isValid(object, value));
 
           properties.value=value;
 

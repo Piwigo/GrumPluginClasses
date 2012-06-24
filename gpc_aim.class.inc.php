@@ -16,35 +16,30 @@
 if (!defined('PHPWG_ROOT_PATH')) { die('Hacking attempt!'); }
 
 include_once(PHPWG_PLUGINS_PATH.'GrumPluginClasses/classes/CommonPlugin.class.inc.php');
-include_once(PHPWG_PLUGINS_PATH.'GrumPluginClasses/classes/GPCCss.class.inc.php');
 
 class GPC_AIM extends CommonPlugin
 {
-  protected $css = null;
-
   public function __construct($prefixeTable, $filelocation)
   {
     $this->setPluginName("Grum Plugin Classes");
     $this->setPluginNameFiles("gpc");
     parent::__construct($prefixeTable, $filelocation);
-    $this->css = new GPCCss(dirname($this->getFileLocation()).'/'.$this->getPluginNameFiles().".css");
-  }
-
-  public function __destruct()
-  {
-    unset($this->css);
-    parent::__destruct();
   }
 
   /*
     initialize events call for the plugin
   */
-  function initEvents()
+  public function initEvents()
   {
+    parent::initEvents();
     add_event_handler('get_admin_plugin_menu_links', array(&$this, 'pluginAdminMenu') );
   }
 
-
+  public function loadCSS()
+  {
+    parent::loadCSS();
+    GPCCore::addUI('gpcCSS');
+  }
 
   /* ---------------------------------------------------------------------------
   Function needed for plugin activation

@@ -40,8 +40,8 @@
 
 class GPCPublicIntegration
 {
-  var $section;         //section applied to the page viewed
-  var $callback_page_function;        //called function to display page
+  private $section;         //section applied to the page viewed
+  private $callback_page_function;        //called function to display page
 
   public function __construct($section)
   {

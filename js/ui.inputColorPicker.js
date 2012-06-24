@@ -1,8 +1,8 @@
 /**
  * -----------------------------------------------------------------------------
  * file: ui.inputColorPicker.js
- * file version: 1.0.0
- * date: 2010-11-04
+ * file version: 1.0.1
+ * date: 2012-06-18
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -10,7 +10,6 @@
  * Author     : Grum
  *   email    : grum@piwigo.com
  *   website  : http://photos.grum.fr
- *   PWG user : http://forum.phpwebgallery.net/profile.php?id=3706
  *
  *   << May the Little SpaceFrog be with you ! >>
  * -----------------------------------------------------------------------------
@@ -21,9 +20,9 @@
  * :: HISTORY ::
  *
  * | release | date       |
- * | 1.0.0   | 2010/11/04 | first release
+ * | 1.0.0   | 2010/11/04 | * first release
  * |         |            |
- * |         |            |
+ * | 1.0.1   | 2012/06/18 | * improve memory managment
  * |         |            |
  * |         |            |
  * |         |            |
@@ -200,8 +199,8 @@
                     stepValue:1,
                     numDec:0,
                     unitValue:'',
-                    btInc:'+',
-                    btDec:'-',
+                    //btInc:'+',
+                    //btDec:'-',
                     value:0,
                     showSlider:'auto',
                     change: function (event, value)
@@ -217,8 +216,8 @@
                     stepValue:1,
                     numDec:0,
                     unitValue:'',
-                    btInc:'+',
-                    btDec:'-',
+                    //btInc:'+',
+                    //btDec:'-',
                     value:0,
                     showSlider:'auto',
                     change: function (event, value)
@@ -234,8 +233,8 @@
                     stepValue:1,
                     numDec:0,
                     unitValue:'',
-                    btInc:'+',
-                    btDec:'-',
+                    //btInc:'+',
+                    //btDec:'-',
                     value:0,
                     showSlider:'auto',
                     change: function (event, value)
@@ -251,8 +250,8 @@
                     stepValue:1,
                     numDec:0,
                     unitValue:'',
-                    btInc:'+',
-                    btDec:'-',
+                    //btInc:'+',
+                    //btDec:'-',
                     value:0,
                     showSlider:'auto',
                     change: function (event, value)
@@ -268,8 +267,8 @@
                     stepValue:1,
                     numDec:0,
                     unitValue:'',
-                    btInc:'+',
-                    btDec:'-',
+                    //btInc:'+',
+                    //btDec:'-',
                     value:0,
                     showSlider:'auto',
                     change: function (event, value)
@@ -285,8 +284,8 @@
                     stepValue:1,
                     numDec:0,
                     unitValue:'',
-                    btInc:'+',
-                    btDec:'-',
+                    //btInc:'+',
+                    //btDec:'-',
                     value:0,
                     showSlider:'auto',
                     change: function (event, value)
@@ -302,8 +301,8 @@
                     stepValue:1,
                     numDec:0,
                     unitValue:'',
-                    btInc:'+',
-                    btDec:'-',
+                    //btInc:'+',
+                    //btDec:'-',
                     value:0,
                     showSlider:'auto',
                     change: function (event, value)
@@ -372,6 +371,12 @@
               objects.inputCcolorI.remove();
               objects.inputContainer.remove();
               objects.container.remove();
+
+              $this
+                .unbind()
+                .removeData();
+
+              delete $this;
             }
           );
         }, // destroy
@@ -1114,34 +1119,33 @@ $.inputDialogColor = function(opt)
             close: function ()
                     {
                       objects.colorPicker.inputColorPicker('destroy').remove();
-                      $(this).dialog('destroy');
+                      $(this).dialog('destroy').remove();
                     }
           };
 
       if(options.modal)
       {
-        dialogOpt.buttons=
+        dialogOpt.buttons[options.buttons.ok]=function (event)
           {
-            'ok' : function (event)
-                      {
-                        if(options.change)
-                        {
-                          if(options.mode==1)
-                          {
-                            options.change(event, objects.colorPicker.inputColorPicker('colors').fg );
-                          }
-                          else
-                          {
-                            options.change(event, objects.colorPicker.inputColorPicker('colors') );
-                          }
-                        }
-                        $(this).dialog('close');
-                      },
-            'cancel' : function (event)
-                      {
-                        $(this).dialog('close');
-                      }
+            if(options.change)
+            {
+              if(options.mode==1)
+              {
+                options.change(event, objects.colorPicker.inputColorPicker('colors').fg );
+              }
+              else
+              {
+                options.change(event, objects.colorPicker.inputColorPicker('colors') );
+              }
+            }
+            $(this).dialog('close');
           };
+
+        dialogOpt.buttons[options.buttons.cancel]=function (event)
+          {
+            $(this).dialog('close');
+          };
+
         dialogOpt.open= function ()
           {
             objects.colorPicker

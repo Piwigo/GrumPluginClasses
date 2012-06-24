@@ -1,9 +1,9 @@
 <?php
 /* -----------------------------------------------------------------------------
   class name: GCPRequestBuilder
-  class version  : 1.1.6
-  plugin version : 3.5.1
-  date           : 2011-05-15
+  class version  : 1.1.7
+  plugin version : 3.5.2
+  date           : 2012-06-24
 
   ------------------------------------------------------------------------------
   Author     : Grum
@@ -88,6 +88,7 @@
 | 1.1.6   | 2011/05/15 | * mantis bug:2302
 |         |            |   . Request builder user interface don't work
 |         |            |
+| 1.1.7   | 2012/06/24 | * use some GPCCore function instead of code
 |         |            |
 |         |            |
 |         |            |
@@ -538,7 +539,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     GPCCore::addHeaderCSS('gpc.rbuilder', 'plugins/'.$baseName.'rbuilder.css', 25);
 
     //$template->append('head_elements', '<link href="plugins/'.$baseName.'rbuilder.css" type="text/css" rel="stylesheet"/>');
-    if(defined('IN_ADMIN')) GPCCore::addHeaderCSS('gpc.rbuilder', 'plugins/'.$baseName.'rbuilder_'.$template->get_themeconf('name').'.css', 26);
+    if(defined('IN_ADMIN')) GPCCore::addHeaderCSS('gpc.rbuilderT', 'plugins/'.$baseName.'rbuilder_'.$template->get_themeconf('name').'.css', 26);
     //$template->append('head_elements', '<link href="plugins/'.$baseName.'rbuilder_'.$template->get_themeconf('name').'.css" type="text/css" rel="stylesheet"/>');
 
 
@@ -555,21 +556,23 @@ CHARACTER SET utf8 COLLATE utf8_general_ci";
     GPCCore::addHeaderJS('gpc.external.inestedsortable', 'plugins/'.$baseName.'external/iNestedSortablePack.js', array('jquery', 'jquery.ui'));
     GPCCore::addHeaderJS('gpc.rbCriteriaBuilder', 'plugins/'.$baseName.'rbCriteriaBuilder.js', array('gpc.external.inestedsortable'));
 
-    $template->append('head_elements',
-"<script type=\"text/javascript\">
-  requestBuilderOptions = {
-    textAND:\"".l10n('gpc_rb_textAND')."\",
-    textOR:\"".l10n('gpc_rb_textOR')."\",
-    textNoCriteria:\"".l10n('There is no criteria ! At least, one criteria is required to do search...')."\",
-    textSomethingWrong:\"".l10n('gpc_something_is_wrong_on_the_server_side')."\",
-    textCaddieUpdated:\"".l10n('gpc_the_caddie_is_updated')."\",
-    helpEdit:\"".l10n('gpc_help_edit_criteria')."\",
-    helpDelete:\"".l10n('gpc_help_delete_criteria')."\",
-    helpMove:\"".l10n('gpc_help_move_criteria')."\",
-    helpSwitchCondition:\"".l10n('gpc_help_switch_condition')."\",
-    ajaxUrl:'plugins/GrumPluginClasses/gpc_ajax.php',
-  }
-</script>");
+    GPCCore::addHeaderContent('js',
+"
+var requestBuilderOptions = {
+      textAND:\"".l10n('gpc_rb_textAND')."\",
+      textOR:\"".l10n('gpc_rb_textOR')."\",
+      textNoCriteria:\"".l10n('There is no criteria ! At least, one criteria is required to do search...')."\",
+      textSomethingWrong:\"".l10n('gpc_something_is_wrong_on_the_server_side')."\",
+      textCaddieUpdated:\"".l10n('gpc_the_caddie_is_updated')."\",
+      helpEdit:\"".l10n('gpc_help_edit_criteria')."\",
+      helpDelete:\"".l10n('gpc_help_delete_criteria')."\",
+      helpMove:\"".l10n('gpc_help_move_criteria')."\",
+      helpSwitchCondition:\"".l10n('gpc_help_switch_condition')."\",
+      ajaxUrl:'plugins/GrumPluginClasses/gpc_ajax.php',
+      token:'".get_pwg_token()."'
+    };
+"
+);
   }
 
 

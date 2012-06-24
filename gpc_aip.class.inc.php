@@ -35,20 +35,6 @@ class GPC_AIP extends GPC_AIM
                           '');
   }
 
-  public function __destruct()
-  {
-    parent::__destruct();
-  }
-
-  /*
-    initialize events call for the plugin
-  */
-  function initEvents()
-  {
-    add_event_handler('loc_end_page_header', array(&$this->css, 'applyCSS'));
-  }
-
-
   /* ---------------------------------------------------------------------------
   Public classe functions
   --------------------------------------------------------------------------- */

@@ -1,13 +1,22 @@
 
 /* clear css */
 .ui-inputSwitchButton-unchecked {
-  background:none repeat scroll 0 0 #999999;
-  border-color:#DDDDDD #666666 #666666 #DDDDDD;
-  color:#005E89;
+  background:#005e89;
+  border: 0px;
+  -moz-border-radius:2px;
+  -webkit-border-radius:2px;
+  -khtml-border-radius:2px;
+  border-radius:2px;
+  color: #FFFFFF;
 }
 
 .ui-inputSwitchButton-checked {
-  background:none repeat scroll 0 0 #666666;
-  border-color:#666666 #DDDDDD #DDDDDD #666666;
-  color:#ff3363;
+  background:#d54e21;
+  border: 0px;
+  -moz-border-radius:2px;
+  -webkit-border-radius:2px;
+  -khtml-border-radius:2px;
+  border-radius:2px;
+  color: #FFFFFF;
 }
+

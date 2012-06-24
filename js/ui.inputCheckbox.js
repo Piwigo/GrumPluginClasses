@@ -1,8 +1,8 @@
 /**
  * -----------------------------------------------------------------------------
  * file: ui.inputCheckbox.js
- * file version: 1.0.0
- * date: 2010-11-04
+ * file version: 1.0.1
+ * date: 2012-06-18
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -10,7 +10,6 @@
  * Author     : Grum
  *   email    : grum@piwigo.com
  *   website  : http://photos.grum.fr
- *   PWG user : http://forum.phpwebgallery.net/profile.php?id=3706
  *
  *   << May the Little SpaceFrog be with you ! >>
  * -----------------------------------------------------------------------------
@@ -21,9 +20,9 @@
  * :: HISTORY ::
  *
  * | release | date       |
- * | 1.0.0   | 2010/11/04 | first release
+ * | 1.0.0   | 2010/11/04 | * first release
  * |         |            |
- * |         |            |
+ * | 1.0.1   | 2012/06/18 | * improve memory managment
  * |         |            |
  * |         |            |
  * |         |            |
@@ -52,7 +51,7 @@
                   objects = $this.data('objects'),
                   properties = $this.data('properties'),
                   options =
-                    {                      
+                    {
                       values:
                         {
                           forced:false,
@@ -110,9 +109,15 @@
             function()
             {
               // default values for the plugin
-              var properties=this.data('properties');
+              var $this=$(this),
+                  properties=$this.data('properties');
               properties.checkboxList.unbind('.inputCheckbox');
-              this.removeClass('ui-inputCheckbox');
+
+              $this
+                .unbind('.inputCheckbox')
+                .removeData()
+                .removeClass('ui-inputCheckbox');
+              delete $this;
             }
           );
         }, // destroy
@@ -415,7 +420,7 @@
                   );
                   break;
               }
-            } 
+            }
             else if($.isArray(value) && !properties.isCB)
             {
               /* array of values :
@@ -424,7 +429,7 @@
                *  [{id:'id1', value:'value1'}, {id:'idN', value:'valueN'}, ..., {id:'idN', value:'valueN'}]
                */
               properties.checkboxList.attr('checked', false);
-              
+
               for(var i=0;i<value.length;i++)
               {
                 if(value[i].id!=null && value[i].value!=null)
@@ -436,12 +441,12 @@
                   properties.checkboxList.filter('[value='+value[i]+']').attr('checked', true);
                 }
               }
-              
+
             }
-            else 
+            else
             {
               // a single value
-              
+
               if(options.values.checked==value)
               {
                 if(properties.isCB)
@@ -452,7 +457,7 @@
                 {
                   if(id=='')
                   {
-                    properties.checkboxList.attr('checked', true); 
+                    properties.checkboxList.attr('checked', true);
                   }
                   else
                   {
@@ -470,7 +475,7 @@
                 {
                   if(id=='')
                   {
-                    properties.checkboxList.attr('checked', false); 
+                    properties.checkboxList.attr('checked', false);
                   }
                   else
                   {

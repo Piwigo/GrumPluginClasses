@@ -15,7 +15,7 @@ table.ui-inputColorPicker-inputContainer div.ui-inputNum div.ui-slider {
 .ui-inputDialogColor div.ui-dialog-buttonpane button {
   background:none repeat scroll 0 0 #666666;
   border-color:#999999 #444444 #444444 #999999;
-  color:#ff3363;
+  color:#222222;
 }
 .ui-inputDialogColor div.ui-dialog-buttonpane button:active {
   border-color:#444444 #999999 #999999 #444444;

@@ -1,9 +1,9 @@
 <?php
 /* -----------------------------------------------------------------------------
   class name: CommonPlugin
-  class version  : 2.2.0
-  plugin version : 3.2.0
-  date           : 2010-07-28
+  class version  : 2.3.0
+  plugin version : 3.5.2
+  date           : 2012-06-24
 
   ------------------------------------------------------------------------------
   Author     : Grum
@@ -50,6 +50,8 @@
 |         |            | * Change parameters mode for the checkGPCRelease
 |         |            |   function
 |         |            |
+| 2.3.0   | 2012/06/24 | * Add loadCSS() function
+|         |            |
 |         |            |
 |         |            |
 
@@ -63,6 +65,7 @@ class CommonPlugin
   private $prefixeTable;  // prefixe for tables names
   private $page_link; //link to admin page
   private $fileLocation; //files plugin location on server
+  private $pluginDirectory;    //directory of plugin
   private $displayResult_ok;
   private $displayResult_ko;
   private $plugin_name;   // used for interface display
@@ -121,13 +124,18 @@ class CommonPlugin
     return(false);
   }
 
-  /* constructor allows to initialize $prefixeTable value */
+  /**
+   * constructor allows to initialize $prefixeTable value
+   * @param String $prefixeTable: prefix used for tables
+   * @param String $filelocation: file calling the constructor (__FILE__)
+   */
   public function __construct($prefixeTable, $filelocation)
   {
     $this->debug_file=GPCCore::getPiwigoSystemPath()."/_data/debug.txt";
 
     $this->fileLocation=$filelocation;
     $this->prefixeTable=$prefixeTable;
+    $this->pluginDirectory=basename(dirname($filelocation));
     $this->page_link=get_root_url().'admin.php?page=plugin-'.basename(dirname($this->getFileLocation()));
     //$this->page_link="admin.php?page=plugin&section=".basename(dirname($this->getFileLocation()))."/admin/".$this->plugin_admin_file.".php";
     $this->initConfig();
@@ -149,39 +157,79 @@ class CommonPlugin
     unset($this->config);
   }
 
+  /**
+   * return the file location
+   * @return String: file location
+   */
   public function getFileLocation()
   {
     return($this->fileLocation);
   }
 
+  /**
+   * return the plugin directory
+   * @return String: directory
+   */
+  public function getDirectory()
+  {
+    return($this->pluginDirectory);
+  }
+
+  /**
+   * return the link of plugin in admin pages
+   * @return String: url
+   */
   public function getAdminLink()
   {
     return($this->page_link);
   }
 
+  /**
+   * set the link of plugin in admin pages
+   * @param String $link: url to set
+   * @return String: url
+   */
   public function setAdminLink($link)
   {
     $this->page_link=$link;
     return($this->page_link);
   }
 
+  /**
+   * set the plugin name
+   * @param String $name: plugin's name
+   * @return String: plugin's name
+   */
   public function setPluginName($name)
   {
     $this->plugin_name=$name;
     return($this->plugin_name);
   }
 
+  /**
+   * set the plugin name for file system useage
+   * @param String $name: plugin's name
+   * @return String: plugin's name
+   */
   public function setPluginNameFiles($name)
   {
     $this->plugin_name_files=$name;
     return($this->plugin_name_files);
   }
 
+  /**
+   * get the plugin name
+   * @return String: plugin's name
+   */
   public function getPluginName()
   {
     return($this->plugin_name);
   }
 
+  /**
+   * get the plugin name for file system useage
+   * @return String: plugin's name
+   */
   public function getPluginNameFiles()
   {
     return($this->plugin_name_files);
@@ -191,13 +239,18 @@ class CommonPlugin
      CONFIGURATION RELATED FUNCTIONS
   --------------------------------------------------------------------------- */
 
-  /* this function initialize var $config with default values */
+  /**
+   * this function initialize var $this->config with default values
+   */
   public function initConfig()
   {
     $this->config=array();
   }
 
-  /* load config from CONFIG_TABLE into var $my_config */
+  /**
+   * load config from CONFIG_TABLE into var $this->config
+   * @return Boolean: true if config is loaded, otherwiser false
+   */
   public function loadConfig()
   {
     $this->initConfig();
@@ -205,25 +258,32 @@ class CommonPlugin
   }
 
   /**
-   * load config from a file into var $my_config
+   * load config from a file into var $this->config
    *
    * this function don't initialize the default value !
    * if needed, use the loadConfig() function before using it
    *
    * @param String $fileName : name of file to load
+   * @return Boolean: true if file is loaded, otherwise false
    */
   public function loadConfigFromFile($fileName)
   {
     return(GPCCore::loadConfigFromFile($fileName, $this->config));
   }
 
-  /* save var $my_config into CONFIG_TABLE */
+  /**
+   * save var $this->config into CONFIG_TABLE
+   * @return Boolean: true if config is saved, otherwise false
+   */
   public function saveConfig()
   {
     return(GPCCore::saveConfig($this->plugin_name_files, $this->config));
   }
 
-  /* delete config from CONFIG_TABLE */
+  /**
+   * delete config from CONFIG_TABLE
+   * @return Boolean: true if config is deleted, otherwise false
+   */
   public function deleteConfig()
   {
     return(GPCCore::deleteConfig($this->plugin_name_files));
@@ -233,11 +293,13 @@ class CommonPlugin
      PLUGIN INITIALIZATION RELATED FUNCTIONS
   --------------------------------------------------------------------------- */
 
-  /*
-      initialize tables list used by the plugin
-        $list = array('table1', 'table2')
-        $this->tables_list['table1'] = $prefixeTable.$plugin_name.'_table1'
-  */
+  /**
+   * initialize tables list used by the plugin; tables name will be prefixed
+   * automatically
+   *     $list = array('table1', 'table2')
+   *     $this->tables_list['table1'] = $prefixeTable.$plugin_name.'_table1'
+   * @param Array $list: a list of table name
+   */
   protected function setTablesList($list)
   {
     for($i=0;$i<count($list);$i++)
@@ -250,7 +312,10 @@ class CommonPlugin
      ADMINISTRATOR CONSOLE RELATED FUNCTIONS
   --------------------------------------------------------------------------- */
 
-  /* add plugin into administration menu */
+  /**
+   * add plugin into administration menu; url is built automatically
+   * @param String $menu:
+   */
   public function pluginAdminMenu($menu)
   {
     array_push(
@@ -260,32 +325,41 @@ class CommonPlugin
         'URL' => get_root_url().'admin.php?page=plugin-'.basename(dirname($this->getFileLocation()))
         )
     );
-    /*
-    array_push($menu,
-               array(
-                  'NAME' => $this->plugin_name,
-                  'URL' => get_admin_plugin_menu_link(dirname($this->getFileLocation()).
-                                '/admin/'.$this->plugin_admin_file.'.php')
-                   ));*/
-    return $menu;
+    return($menu);
   }
 
-  /*
-    manage plugin integration into piwigo's admin interface
-
-    to be surcharged by child's classes
-  */
+  /**
+   * manage plugin integration into piwigo's admin interface
+   *
+   * to be surcharged by child's classes
+   */
   public function manage()
   {
   }
 
-  /*
-    initialize plugin's events
-    to be surcharged by child's classes
-  */
+  /**
+   * initialize plugin's events
+   * by default, call the loadCSS() function on the 'loc_begin_page_header' events
+   *
+   * to be surcharged by child's classes
+   */
   public function initEvents()
   {
+    global $plugin_id;
+
+    if($plugin_id==$this->getDirectory() or !defined('IN_ADMIN'))
+        add_event_handler('loc_begin_page_header', array(&$this, 'loadCSS'));
   }
+
+  /**
+   * called on the 'loc_begin_page_header' event
+   *
+   * to be surcharged by child's classes
+   */
+  public function loadCSS()
+  {
+  }
+
 
   protected function debug($text, $rewrite=false)
   {
@@ -305,9 +379,6 @@ class CommonPlugin
     }
   }
 
-  /*
-    manage infos & errors display
-  */
   protected function displayResult($action_msg, $result)
   {
     global $page;

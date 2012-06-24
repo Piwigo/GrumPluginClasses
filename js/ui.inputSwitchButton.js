@@ -1,8 +1,8 @@
 /**
  * -----------------------------------------------------------------------------
- * file: ui.inputCheckbox.js
- * file version: 1.0.0
- * date: 2011-06-18
+ * file: ui.inputSwitchButton.js
+ * file version: 1.0.1
+ * date: 2012-06-18
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -10,7 +10,6 @@
  * Author     : Grum
  *   email    : grum@piwigo.com
  *   website  : http://photos.grum.fr
- *   PWG user : http://forum.phpwebgallery.net/profile.php?id=3706
  *
  *   << May the Little SpaceFrog be with you ! >>
  * -----------------------------------------------------------------------------
@@ -23,7 +22,7 @@
  * | release | date       |
  * | 1.0.0   | 2011/06/18 | first release
  * |         |            |
- * |         |            |
+ * | 1.0.1   | 2012/06/18 | * improve memory managment
  * |         |            |
  * |         |            |
  * |         |            |
@@ -52,7 +51,7 @@
                   objects = $this.data('objects'),
                   properties = $this.data('properties'),
                   options =
-                    {                      
+                    {
                       values:
                         {
                           checked:'yes',
@@ -98,9 +97,13 @@
             function()
             {
               // default values for the plugin
-              var properties=this.data('properties');
-              $this.unbind('.inputSwitchButton');
-              this.removeClass('ui-inputSwitchButton');
+              var $this=$(this);
+
+              $this
+                .unbind('.inputSwitchButton')
+                .removeData()
+                .removeClass('ui-inputSwitchButton ui-inputSwitchButton-unchecked ui-inputSwitchButton-checked');
+              delete $this;
             }
           );
         }, // destroy
@@ -135,7 +138,7 @@
             return(privateMethods.getDisabled($(this)));
           }
         }, // disabled
-        
+
       values: function (values)
         {
           if(value!=null)
@@ -190,7 +193,7 @@
           else
           {
             var options = this.data('options');
-            
+
             return(properties.checked?options.values.checked:options.values.unchecked);
           }
 
@@ -282,8 +285,8 @@
 
           return(options.values);
         }, //setValues
-        
-        
+
+
       setGroup: function (object, value)
         {
           var options=object.data('options'),
@@ -297,17 +300,17 @@
                   p=-1;
               if(listGroup==null) listGroup=[];
               p=$.inArray(object.attr('id'), listGroup);
-              if(p>-1) listGroup.splice(p,1);              
+              if(p>-1) listGroup.splice(p,1);
               $(document).data('isbGroup_'+options.group, listGroup);
-            }            
+            }
             options.group=value;
             listGroup=$(document).data('isbGroup_'+value);
             if(listGroup==null) listGroup=[];
             listGroup.push(object.attr('id'));
             $(document).data('isbGroup_'+value, listGroup);
           }
-        },        
-        
+        },
+
       switchValue: function (object)
         {
           var options=object.data('options'),
@@ -339,7 +342,7 @@
                 if(listGroup[i]!=object.attr('id')) $('#'+listGroup[i]).inputSwitchButton('value', options.values.unchecked);
               }
             }
-            
+
             object
               .addClass('ui-inputSwitchButton-checked')
               .removeClass('ui-inputSwitchButton-unchecked');

@@ -1,8 +1,8 @@
 /**
  * -----------------------------------------------------------------------------
  * file: ui.iconSelector.js
- * file version: 1.0.0
- * date: 2010-10-10
+ * file version: 1.0.1
+ * date: 2012-06-18
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -10,7 +10,6 @@
  * Author     : Grum
  *   email    : grum@piwigo.com
  *   website  : http://photos.grum.fr
- *   PWG user : http://forum.phpwebgallery.net/profile.php?id=3706
  *
  *   << May the Little SpaceFrog be with you ! >>
  * -----------------------------------------------------------------------------
@@ -86,6 +85,7 @@
  * | release | date       |
  * | 1.0.0   | 2010/10/10 | first release
  * |         |            |
+ * | 1.0.1   | 2012/06/18 | * imoprove memory managment
  * |         |            |
  * |         |            |
  * |         |            |
@@ -219,6 +219,7 @@
               objects.listContainer.remove();
               $this
                 .unbind('.iconSelector')
+                .removeData()
                 .css(
                   {
                     width:'',
@@ -226,6 +227,7 @@
                     backgroundImage:''
                   }
                 );
+              delete $this;
             }
           );
         }, // destroy
