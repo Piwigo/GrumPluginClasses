@@ -3,8 +3,7 @@
   Plugin     : Grum Plugin Class
   Author     : Grum
     email    : grum@piwigo.org
-    website  : http://photos.grum.fr
-    PWG user : http://forum.phpwebgallery.net/profile.php?id=3706
+    website  : http://www.grum.fr
 
     << May the Little SpaceFrog be with you ! >>
   ------------------------------------------------------------------------------
