@@ -264,11 +264,16 @@ class GPCCore
         foreach($val as $key2 => $val2)
         {
           $config[$key][$key2]=$val2;
+
+          if(isset($conf['plugin.'.$pluginName]) and isset($conf['plugin.'.$pluginName][$key]) and isset($conf['plugin.'.$pluginName][$key][$key2]))
+              $config[$key][$key2]=$conf['plugin.'.$pluginName][$key][$key2];
         }
       }
       else
       {
-        $config[$key] =$val;
+        $config[$key]=$val;
+        if(isset($conf['plugin.'.$pluginName]) and isset($conf['plugin.'.$pluginName][$key]))
+            $config[$key]=$conf['plugin.'.$pluginName][$key];
       }
     }
 
@@ -855,7 +860,6 @@ class GPCCore
           self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
           self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
 
-          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
           self::addHeaderJS('jquery.ui.mouse', 'themes/default/js/ui/jquery.ui.mouse.js', array('jquery.ui.widget'));
           self::addHeaderJS('jquery.ui.position', 'themes/default/js/ui/jquery.ui.position.js', array('jquery.ui.mouse'));
           self::addHeaderJS('jquery.ui.resizable', 'themes/default/js/ui/jquery.ui.resizable.js', array('jquery.ui.position'));
@@ -871,6 +875,21 @@ class GPCCore
           self::addHeaderJS('gpc.inputSortBox', GPC_PATH.'js/ui.inputSortBox.js', array('jquery.ui.dialog'));
           self::addHeaderJS('gpc.inputPages', GPC_PATH.'js/ui.inputPages.js', array('jquery.ui.dialog'));
           self::addHeaderJS('gpc.dynamicTable', GPC_PATH.'js/ui.dynamicTable.js', array('jquery.ui.dialog'));
+          break;
+        case 'progressArea':
+          self::addHeaderCSS('gpc.progressArea', GPC_PATH.'css/progressArea.css');
+          self::addHeaderCSS('gpc.progressAreaT', sprintf($themeFile, 'progressArea'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('jquery.ui.mouse', 'themes/default/js/ui/jquery.ui.mouse.js', array('jquery.ui.widget'));
+          self::addHeaderJS('jquery.ui.position', 'themes/default/js/ui/jquery.ui.position.js', array('jquery.ui.mouse'));
+          self::addHeaderJS('jquery.ui.draggable', 'themes/default/js/ui/jquery.ui.draggable.js', array('jquery.ui.position'));
+          self::addHeaderJS('jquery.ui.sortable', 'themes/default/js/ui/jquery.ui.sortable.js', array('jquery.ui.draggable'));
+          self::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/jquery.ui.dialog.js', array('jquery.ui.sortable'));
+          self::addHeaderJS('gpc.progressArea', GPC_PATH.'js/ui.progressArea.js', array('jquery.ui.dialog'));
+          break;
+        case 'timer':
+          self::addHeaderJS('gpc.timer', GPC_PATH.'js/ui.timer.js', array('jquery'));
           break;
       }
     }
