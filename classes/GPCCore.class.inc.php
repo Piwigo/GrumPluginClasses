@@ -2,9 +2,9 @@
 
 /* -----------------------------------------------------------------------------
   class name     : GPCCore
-  class version  : 1.4.1
-  plugin version : 3.5.2
-  date           : 2011-09-19
+  class version  : 1.4.2
+  plugin version : 3.5.3
+  date           : 2012-07-27
   ------------------------------------------------------------------------------
   author: grum at piwigo.org
   << May the Little SpaceFrog be with you >>
@@ -59,7 +59,7 @@
 |         | 2012/05/25 | * Add GPCUserAgent class
 |         |            |
 |         |            | * Compatibility with jquery 1.7.2 & jquery-ui 1.8.16
-|         |            |   . implement getMinified() & setMinifiedState() functions
+|         |            |   . remove getMinified() & setMinifiedState() functions
 |         |            |        (let piwigo combined function manage the minified
 |         |            |         state)
 |         |            |   . add manually each component for ui functionnalities
@@ -72,6 +72,7 @@
 |         |            |
 |         |            | * AddHeaderCSS and AddJS are ignored if called in an ajax session (AJAX_CALL defined)
 |         |            |
+| 1.4.2   | 2012/07/27 | * AddHeaderContent can manage 'raw' content
 |         |            |
 |         |            |
 |         |            |
@@ -142,13 +143,13 @@ class GPCCore
         Array('name' => "CommonPlugin", 'version' => "2.3.0"),
         Array('name' => "GPCAjax", 'version' => "3.1.0"),
         Array('name' => "GPCCategorySelector", 'version' => "1.0.1"),
-        Array('name' => "GPCCore", 'version' => "1.4.1"),
+        Array('name' => "GPCCore", 'version' => "1.4.2"),
         //Array('name' => "GPCCss", 'version' => "3.1.0"),  removed with v1.4.1
         Array('name' => "GPCPagesNavigation", 'version' => "2.0.0"),
         Array('name' => "GPCPublicIntegration", 'version' => "2.0.0"),
         Array('name' => "GPCRequestBuilder", 'version' => "1.1.7"),
         Array('name' => "GPCTables", 'version' => "1.5.0"),
-        Array('name' => "GPCTabSheet", 'version' => "1.1.1"),
+        Array('name' => "GPCTabSheet", 'version' => "1.1.2"),
         Array('name' => "GPCTranslate", 'version' => "2.1.1"),
         Array('name' => "GPCUsersGroups", 'version' => "2.1.0"),
         Array('name' => "GPCUserAgent", 'version' => "1.0.0")
@@ -554,6 +555,7 @@ class GPCCore
 
   /**
    * used to add a js or css directly in the header
+   * use 'raw' type to add any raw data in the header
    *
    * @param String $id : a unique id for the file
    * @param String $file : the css file
@@ -573,6 +575,9 @@ class GPCCore
         break;
       case 'js':
         $template->block_html_head(null, '<script type="text/javascript">'.$content.'</script>', $null, $null);
+        break;
+      case 'raw':
+        $template->block_html_head(null, $content);
         break;
     }
   }
@@ -639,7 +644,7 @@ class GPCCore
    */
   static public function addUI($list)
   {
-    global $template;
+    global $template, $lang_info;
 
     if(is_string($list)) $list=explode(',', $list);
     if(!is_array($list)) return(false);
@@ -661,6 +666,17 @@ class GPCCore
           $fileName='./plugins/'.basename(dirname(dirname(__FILE__))).'/css/gpc';
           self::addHeaderCSS('gpc.css', $fileName.'.css', 10);
           self::addHeaderCSS('gpc.cssT', $fileName.'_'.$template->get_themeconf('name').'.css', 15);
+          break;
+        case 'canvasDraw.graph':
+          self::addHeaderCSS('gpc.canvasDrawT', sprintf($themeFile, 'canvasDraw'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('jquery.ui.mouse', 'themes/default/js/ui/jquery.ui.mouse.js', array('jquery.ui.widget'));
+          self::addHeaderJS('gpc.canvasDraw.commonClasses', GPC_PATH.'js/CanvasDraw.CommonClasses.js', array('jquery.ui.widget'));
+          self::addHeaderJS('gpc.canvasDraw.graphClasses', GPC_PATH.'js/CanvasDraw.GraphClasses.js', array('gpc.canvasDraw.commonClasses'));
+          self::addHeaderJS('gpc.canvasDraw.drawing', GPC_PATH.'js/CanvasDraw.Drawing.js', array('gpc.canvasDraw.graphClasses'));
+          self::addHeaderJS('gpc.canvasDraw', GPC_PATH.'js/canvasDraw.js', array('gpc.canvasDraw.drawing'));
+          self::addHeaderJS('gpc.canvasDraw.drawingGraph', GPC_PATH.'js/canvasDraw.ui.drawingGraph.js', array('gpc.canvasDraw'));
           break;
         case 'categorySelector':
           self::addHeaderCSS('gpc.categorySelector', GPC_PATH.'css/categorySelector.css');
@@ -714,11 +730,13 @@ class GPCCore
           self::addHeaderJS('gpc.inputConsole', GPC_PATH.'js/ui.inputConsole.js', array('jquery.ui.widget'));
           break;
         case 'inputDate':
+          self::addHeaderCSS('jquery.ui.datepicker', 'themes/default/js/ui/theme/jquery.ui.datepicker.css');
           self::addHeaderCSS('gpc.inputDate', GPC_PATH.'css/inputDate.css');
           self::addHeaderCSS('gpc.inputDateT', sprintf($themeFile, 'inputDate'));
           self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
-          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('jquery.ui.widget',     'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
           self::addHeaderJS('jquery.ui.datepicker', 'themes/default/js/ui/jquery.ui.datepicker.js', array('jquery.ui.widget'));
+          self::addHeaderJS('jquery.ui.datepicker-'.$lang_info['code'], self::getPiwigoSystemPath().'themes/default/js/ui/i18n/jquery.ui.datepicker-'.$lang_info['code'].'.js');
           self::addHeaderJS('gpc.inputDate', GPC_PATH.'js/ui.inputDate.js', array('jquery.ui.widget'));
           break;
         case 'inputDotArea':
@@ -729,6 +747,7 @@ class GPCCore
           self::addHeaderJS('gpc.inputDotArea', GPC_PATH.'js/ui.inputDotArea.js', array('jquery.ui.widget'));
           break;
         case 'inputFilterBox':
+          self::addHeaderCSS('jquery.ui.datepicker', 'themes/default/js/ui/theme/jquery.ui.datepicker.css');
           self::addHeaderCSS('gpc.inputNum', GPC_PATH.'css/inputNum.css');
           self::addHeaderCSS('gpc.inputNumT', sprintf($themeFile, 'inputNum'));
           self::addHeaderCSS('gpc.inputDate', GPC_PATH.'css/inputDate.css');
@@ -750,6 +769,8 @@ class GPCCore
           self::addHeaderJS('jquery.ui.draggable', 'themes/default/js/ui/jquery.ui.draggable.js', array('jquery.ui.resizable'));
           self::addHeaderJS('jquery.ui.sortable', 'themes/default/js/ui/jquery.ui.sortable.js', array('jquery.ui.draggable'));
           self::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/jquery.ui.dialog.js', array('jquery.ui.sortable'));
+          self::addHeaderJS('jquery.ui.datepicker', 'themes/default/js/ui/jquery.ui.datepicker.js', array('jquery.ui.widget'));
+          self::addHeaderJS('jquery.ui.datepicker-'.$lang_info['code'], self::getPiwigoSystemPath().'themes/default/js/ui/i18n/jquery.ui.datepicker-'.$lang_info['code'].'.js');
 
           self::addHeaderJS('gpc.inputNum', GPC_PATH.'js/ui.inputNum.js', array('jquery.ui.dialog'));
           self::addHeaderJS('gpc.inputList', GPC_PATH.'js/ui.inputList.js', array('jquery.ui.dialog'));
@@ -840,6 +861,7 @@ class GPCCore
           self::addHeaderJS('gpc.simpleTip', GPC_PATH.'js/simpleTip.js', array('jquery.ui.widget'));
           break;
         case 'dynamicTable':
+          self::addHeaderCSS('jquery.ui.datepicker', 'themes/default/js/ui/theme/jquery.ui.datepicker.css');
           self::addHeaderCSS('gpc.inputNum', GPC_PATH.'css/inputNum.css');
           self::addHeaderCSS('gpc.inputNumT', sprintf($themeFile, 'inputNum'));
           self::addHeaderCSS('gpc.inputDate', GPC_PATH.'css/inputDate.css');
@@ -854,8 +876,8 @@ class GPCCore
           self::addHeaderCSS('gpc.inputFilterBoxT', sprintf($themeFile, 'inputFilterBox'));
           self::addHeaderCSS('gpc.inputPages', GPC_PATH.'css/inputPages.css');
           self::addHeaderCSS('gpc.inputPagesT', sprintf($themeFile, 'inputPages'));
-          self::addHeaderCSS('gpc.inputDynamicTable', GPC_PATH.'css/inputDynamicTable.css');
-          self::addHeaderCSS('gpc.inputDynamicTableT', sprintf($themeFile, 'inputDynamicTable'));
+          self::addHeaderCSS('gpc.dynamicTable', GPC_PATH.'css/dynamicTable.css');
+          self::addHeaderCSS('gpc.dynamicTableT', sprintf($themeFile, 'dynamicTable'));
 
           self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
           self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
@@ -866,6 +888,8 @@ class GPCCore
           self::addHeaderJS('jquery.ui.draggable', 'themes/default/js/ui/jquery.ui.draggable.js', array('jquery.ui.resizable'));
           self::addHeaderJS('jquery.ui.sortable', 'themes/default/js/ui/jquery.ui.sortable.js', array('jquery.ui.draggable'));
           self::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/jquery.ui.dialog.js', array('jquery.ui.sortable'));
+          self::addHeaderJS('jquery.ui.datepicker', 'themes/default/js/ui/jquery.ui.datepicker.js', array('jquery.ui.widget'));
+          self::addHeaderJS('jquery.ui.datepicker-'.$lang_info['code'], self::getPiwigoSystemPath().'themes/default/js/ui/i18n/jquery.ui.datepicker-'.$lang_info['code'].'.js');
 
           self::addHeaderJS('gpc.inputNum', GPC_PATH.'js/ui.inputNum.js', array('jquery.ui.dialog'));
           self::addHeaderJS('gpc.inputList', GPC_PATH.'js/ui.inputList.js', array('jquery.ui.dialog'));

@@ -89,6 +89,9 @@ table.ui-inputColorPicker-inputContainer div.ui-inputNum-btDec:hover {
 }
 
 /* --- */
+.ui-inputDialogColor {
+  text-align:justify;
+}
 .ui-inputDialogColor div.ui-inputColorPicker {
   min-width:346px;
   min-height:140px;

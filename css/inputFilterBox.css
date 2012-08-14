@@ -20,6 +20,9 @@ div.ui-inputFilterBox-dateValue {
 }
 
 /* dialog box */
+.ui-inputDialogFilterBox {
+  text-align:justify;
+}
 .ui-inputDialogFilterBox div.ui-dialog-titlebar {
   cursor:move;
 }

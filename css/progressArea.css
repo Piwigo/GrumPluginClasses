@@ -32,6 +32,9 @@
 }
 
 /* dialog box */
+.ui-dialogProgressArea {
+  text-align:justify;
+}
 .ui-dialogProgressArea div.ui-dialog-titlebar {
   cursor:move;
 }

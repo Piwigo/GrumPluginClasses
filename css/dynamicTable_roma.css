@@ -8,6 +8,11 @@ div.ui-dynamicTableContent {
   border:1px solid #666666;
 }
 
+table.ui-dynamicTableTotalRow {
+  border:1px solid #666666;
+  border-top:none;
+}
+
 thead.ui-dynamicTableHeader {
   background:#333333;
   color:#FF7700;

@@ -1,18 +1,18 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.5.2
+Version: 3.5.3
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
-Author URI: http://photos.grum.fr/
+Author URI: http://www.grum.fr/
 */
 
 /*
 --------------------------------------------------------------------------------
   Author     : Grum
     email    : grum@piwigo.org
-    website  : http://photos.grum.fr
+    website  : http://www.grum.fr
 
     << May the Little SpaceFrog be with you ! >>
 --------------------------------------------------------------------------------
@@ -162,7 +162,7 @@ Author URI: http://photos.grum.fr/
 | 3.5.1   | 2011/05/15 | * mantis bug:2302
 |         |            |   . Request builder interface don't work
 |         |            |
-| 3.5.2   | 2011/05/15 | * Add function to manage special markup
+| 3.5.2   | 2012/05/15 | * Add function to manage special markup
 |         |            |   . BB like markup [b],[i],[url]...
 |         |            |   . [var=<name>] markup
 |         |            |   . [tabs],[tab=id(;default);<tab title>]
@@ -178,6 +178,10 @@ Author URI: http://photos.grum.fr/
 |         |            |   . Compatibility with Piwigo 2.4
 |         |            |
 |         |            | * optimization & rename of some JS framework components
+|         |            |
+| 3.5.3   | 2012/08/14 | * mantis bug:2723
+|         |            |   . Error message when on page using GPC tabsheets
+|         |            |
 |         |            |
 |         |            |
 |         |            | ===== Don't forget to update the plugin version ! =====

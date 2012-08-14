@@ -53,6 +53,7 @@
                   properties = $this.data('properties'),
                   options =
                     {
+                      autoLoad:true,
                       columns:[],
                       postUrl:'',
                       postData:{},
@@ -64,6 +65,7 @@
                       nbItemsPage:50,
                       currentPage:1,
                       sortBoxTitle:'Sort by',
+                      showTotalRow:'auto',     // visible, hidden, auto
                       footerString:
                         {
                           singular:'% item',
@@ -92,7 +94,8 @@
                     nbItems:0,
                     sortedColumns:[],
                     filteredColumns:[],
-                    loadedData:[]
+                    loadedData:[],
+                    totalRowHasData:false
                   }
                 );
                 properties=$this.data('properties');
@@ -130,6 +133,19 @@
                           class:'ui-dynamicTableLoading'
                         }
                       ),
+                    loadingContentWorkInProgress:$('<div/>',
+                        {
+                          class:'ui-dynamicTableLoadingWorkInProgress'
+                        }
+                      ),
+
+                    totalRowContent:$('<table/>',
+                        {
+                          'class':'ui-dynamicTableTotalRow'
+                        }
+                      ),
+                    totalRowTr:$('<tr/>'),
+
 
                     footer:$('<div/>',
                         {
@@ -153,7 +169,9 @@
                   .addClass('ui-dynamicTable')
                   .append(objects.headerContainer.append(objects.header.append(objects.headerTr)))
                   .append(objects.loadingContent)
+                  .append(objects.loadingContentWorkInProgress)
                   .append(objects.contentContainer.append(objects.content))
+                  .append(objects.totalRowContent.append(objects.totalRowTr))
                   .append(objects.footer
                             .append(objects.footerNbItems)
                             .append(objects.footerPagesNavigator)
@@ -283,6 +301,50 @@
             return(options.footerString);
           }
         }, // footerString
+
+      autoLoad: function (value)
+        {
+          if(value!=null)
+          {
+            // set selected value
+            return(
+              this.each(
+                function()
+                {
+                  privateMethods.setAutoLoad($(this), value, true);
+                }
+              )
+            );
+          }
+          else
+          {
+            var options=this.data('options');
+            return(options.autoLoad);
+          }
+        }, // autoLoad
+
+
+      showTotalRow : function (value)
+        {
+          if(value!=null)
+          {
+            // set selected value
+            return(
+              this.each(
+                function()
+                {
+                  privateMethods.setShowTotalRow($(this), value);
+                }
+              )
+            );
+          }
+          else
+          {
+            var options=this.data('options');
+            return(options.showTotalRow);
+          }
+        }, // showTotalRow
+
 
        currentPage: function (value)
         {
@@ -508,7 +570,25 @@
             return(properties.loadedData[value]);
 
           return(properties.loadedData);
-        } // loadedData
+        }, // loadedData
+
+      /**
+       * refresh table content
+       * @param Integer value: page; if not specified, refresh current page
+       */
+      refreshContent: function (value)
+        {
+          privateMethods.loadContent($(this), value);
+        },
+
+      /**
+       * force table to resize columns
+       */
+      resizeContent: function (value)
+        {
+          privateMethods.setColumnsSize($(this));
+        },
+
 
     }; // methods
 
@@ -527,6 +607,8 @@
 
           properties.initialized=false;
 
+          privateMethods.setAutoLoad(object, (value.autoLoad!=null)?value.autoLoad:options.autoLoad);
+          privateMethods.setShowTotalRow(object, (value.showTotalRow!=null)?value.showTotalRow:options.showTotalRow);
           privateMethods.setPostData(object, (value.postData!=null)?value.postData:options.postData);
           privateMethods.setPostUrl(object, (value.postUrl!=null)?value.postUrl:options.postUrl);
           privateMethods.setMaxHeight(object, (value.maxHeight!=null)?value.maxHeight:options.maxHeight);
@@ -548,10 +630,39 @@
           properties.initialized=true;
 
 
-
-          privateMethods.loadContent(object);
+          if(options.autoLoad)
+            privateMethods.loadContent(object);
 
         },
+
+      setAutoLoad : function (object, value)
+        {
+          var properties=object.data('properties'),
+              options=object.data('options');
+
+          if((!properties.initialized || value!=options.autoLoad) && (value==true || value==false))
+          {
+            options.autoLoad=value;
+          }
+
+          return(options.autoLoad);
+        }, // setAutoLoad
+
+      setShowTotalRow : function (object, value)
+        {
+          var properties=object.data('properties'),
+              options=object.data('options');
+
+          if((!properties.initialized || value!=options.showTotalRow) && (value=='visible' || value=='hidden' || value=='auto'))
+          {
+            options.showTotalRow=value;
+            if(properties.initialized)
+              privateMethods.showTotalRow(object);
+          }
+
+          return(options.showTotalRow);
+        }, // setAutoLoad
+
 
       setColumns : function (object, value)
         {
@@ -826,7 +937,7 @@
         }, //setPagesNavigator
 
       /*
-       * update DOM for headers & footer
+       * update DOM for headers & footer & total row
        */
       updateTable : function (object)
         {
@@ -839,6 +950,7 @@
               properties=object.data('properties');
 
           objects.headerTr.children().remove();
+          objects.totalRowTr.children().remove();
 
           properties.hasSortableButton=false;
           properties.sortedColumns=[];
@@ -929,6 +1041,10 @@
             }
 
             objects.headerTr.append(td);
+
+            td=$('<td/>');
+            if(options.columns[i].width!='') td.attr('style', 'width:'+options.columns[i].width+';');
+            objects.totalRowTr.append(td);
           }
 
           if(properties.hasSortableButton)
@@ -958,7 +1074,7 @@
                             },
                             modal:true,
                             width:cWidth,
-                            height:150,
+                            height:250,
                             autoHeight:false,
                             title:options.sortBoxTitle,
                             mode:'direction',
@@ -981,11 +1097,18 @@
                   }
                 ).append(button);
             objects.headerTr.append(td);
+
+            td=$('<td/>');
+            objects.totalRowTr.append(td);
           }
         }, //updateTable
 
-
-      loadContent : function (object)
+      /**
+       * load table content
+       *
+       * @param Integer page: page to load; if not specified, use the current page
+       */
+      loadContent : function (object, page)
         {
           var data=null,
               tr=null,
@@ -996,6 +1119,8 @@
 
           if(options.postUrl=='') return(false);
 
+          if(page>0 && page <= objects.footerPagesNavigator.inputPages('nbPages'))
+            options.currentPage=page;
           privateMethods.displayLoading(object, true);
 
           data=options.postData;
@@ -1029,12 +1154,17 @@
                 {
                   msg=$.parseJSON(msg);
 
-                  if(msg==null) return(false);
+                  if(msg==null || msg.rows==null)
+                  {
+                    privateMethods.displayLoading(object, false);
+                    return(false);
+                  }
 
                   if(options.contentLoaded) object.trigger('dynamicTableContentLoaded', msg);
 
                   objects.content.find('tr').unbind('click.dynamicTable');
                   objects.content.children().remove();
+                  objects.contentContainer.scrollTop('0px');
 
                   delete properties.loadedData;
                   properties.loadedData=[];
@@ -1077,9 +1207,25 @@
                     objects.footer.css('display', 'none');
                   }
 
+                  if(msg.total!=null && $.isArray(msg.total))
+                  {
+                    properties.totalRowHasData=true;
+                    objects.totalRowTr.children().each(
+                      function (index)
+                      {
+                        $(this).html(msg.total[index]);
+                      }
+                    );
+                  }
+                  else
+                  {
+                    properties.totalRowHasData=false;
+                  }
+
                   if(options.click)
                     objects.content.find('tr').bind('click.dynamicTable', options.click);
 
+                  privateMethods.showTotalRow(object);
                   privateMethods.setColumnsSize(object);
                   privateMethods.displayLoading(object, false);
                 },
@@ -1087,6 +1233,7 @@
                 {
                   //
                   objects.loadingContent.attr('style', 'display:none;');
+                  objects.loadingContentWorkInProgress.attr('style', 'display:none;');
                 },
             }
          );
@@ -1095,6 +1242,8 @@
       setColumnsSize : function (object)
         {
           var cols=[],
+              options=object.data('options'),
+              properties=object.data('properties'),
               objects=object.data('objects');
 
           if(!(objects.header || objects.content)) return(false);
@@ -1106,7 +1255,7 @@
             }
           );
 
-
+          // resize first row of table content
           objects.content.find('tr:first td').each(
             function (index)
             {
@@ -1124,6 +1273,28 @@
             }
           );
 
+          // resize total row if displayed
+          if(options.showTotalRow=='visible' ||
+             options.showTotalRow=='auto' && properties.totalRowHasData)
+          {
+            objects.totalRowTr.find('td').each(
+              function (index)
+              {
+                var style='';
+
+                if(index==(cols.length-1))
+                {
+                  style='max-width:';
+                }
+                else
+                {
+                  style='width:';
+                }
+                $(this).attr('style', style+cols[index]+'px;');
+              }
+            );
+          }
+
           return(true);
         }, //setColumnsSize
 
@@ -1134,12 +1305,48 @@
           if(display)
           {
             objects.loadingContent.attr('style', 'display:block;width:'+objects.contentContainer.width()+'px;height:'+objects.contentContainer.height()+'px;');
+            objects.loadingContentWorkInProgress.css(
+              {
+                'display':'block',
+                'width':objects.contentContainer.width()+'px',
+                'height':objects.contentContainer.height()+'px',
+                'background-position':Math.round((objects.contentContainer.width()-16)/2)+'px '+Math.round((objects.contentContainer.height()-16)/2)+'px'
+              }
+            );
           }
           else
           {
             objects.loadingContent.attr('style', 'display:none;');
+            objects.loadingContentWorkInProgress.attr('style', 'display:none;');
           }
         }, //displayLoading
+
+      showTotalRow : function (object)
+        {
+          var options=object.data('options'),
+              objects=object.data('objects'),
+              properties=object.data('properties');
+
+          switch(options.showTotalRow)
+          {
+            case 'visible':
+              objects.totalRowContent.css('display',  'block');
+              break;
+            case 'hidden':
+              objects.totalRowContent.css('display', 'none');
+              break;
+            case 'auto':
+              if(properties.totalRowHasData)
+              {
+                objects.totalRowContent.css('display', 'block');
+              }
+              else
+              {
+                objects.totalRowContent.css('display', 'none');
+              }
+              break;
+          }
+        }, // showTotalRow
 
       updateNbItems: function (object)
         {
@@ -1156,7 +1363,7 @@
             objects.footerNbItems.html(options.footerString.singular.replace('%', properties.nbItems));
           }
 
-        }
+        } // updateNbItems
 
     };
 

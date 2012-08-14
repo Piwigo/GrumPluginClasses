@@ -20,6 +20,9 @@ span.ui-inputSortBoxAsc, span.ui-inputSortBoxDesc {
 }
 
 /* dialog box */
+.ui-inputDialogSortBox {
+  text-align:justify;
+}
 .ui-inputDialogSortBox div.ui-dialog-titlebar {
   cursor:move;
 }

@@ -24,15 +24,13 @@ class GPCUserAgent
    */
   static public function parse($userAgent)
   {
-    global $UA_BrowserInfo;
-
     $returned=array(
       UA_DATA_OS              => UA_OS_UNKNOWN,
       UA_DATA_OS_VERSION      => '',
 
       UA_DATA_BROWSER         => UA_BOT_UNKNOWN,
       UA_DATA_BROWSER_NAME    => '',
-      UA_DATA_BROWSER_TYPE    => UA_PROP_TYPE_UNKNOWN,
+      UA_DATA_BROWSER_TYPE    => UA_BROWSER_TYPE_UNKNOWN,
       UA_DATA_BROWSER_VERSION => '',
 
       UA_DATA_ENGINE          => UA_ENGINE_UNKNOWN,
@@ -50,7 +48,7 @@ class GPCUserAgent
 
     $tmp=self::getBrowser($userAgent);
     $returned[UA_DATA_BROWSER]=$tmp[UA_DATA_BROWSER];
-    $returned[UA_DATA_BROWSER_TYPE]=$UA_BrowserInfo[UA_DATA_BROWSER][$tmp[UA_DATA_BROWSER]][UA_PROP_TYPE];
+    $returned[UA_DATA_BROWSER_TYPE]=GPCUserAgentValues::$UA_BrowserInfo[UA_DATA_BROWSER][$tmp[UA_DATA_BROWSER]][UA_PROP_TYPE];
     $returned[UA_DATA_BROWSER_VERSION]=str_replace(array(';', '(', ')'), array('', '', ''), $tmp[UA_DATA_BROWSER_VERSION]);
 
     $tmp=self::getOs($userAgent);
@@ -87,38 +85,36 @@ class GPCUserAgent
    */
   static public function getProperties($userAgent)
   {
-    global $UA_BrowserInfo;
-
     $returned=array();
-    if(isset($userAgent[UA_DATA_BROWSER]) and isset($UA_BrowserInfo[UA_DATA_BROWSER][$userAgent[UA_DATA_BROWSER]]))
+    if(isset($userAgent[UA_DATA_BROWSER]) and isset(GPCUserAgentValues::$UA_BrowserInfo[UA_DATA_BROWSER][$userAgent[UA_DATA_BROWSER]]))
     {
       $returned[UA_DATA_BROWSER]=$userAgent[UA_DATA_BROWSER];
-      $returned[UA_DATA_BROWSER_NAME]=$UA_BrowserInfo[UA_DATA_BROWSER][$userAgent[UA_DATA_BROWSER]][UA_PROP_NAME];
-      $returned[UA_DATA_BROWSER_URL]=$UA_BrowserInfo[UA_DATA_BROWSER][$userAgent[UA_DATA_BROWSER]][UA_PROP_URL];
+      $returned[UA_DATA_BROWSER_NAME]=GPCUserAgentValues::$UA_BrowserInfo[UA_DATA_BROWSER][$userAgent[UA_DATA_BROWSER]][UA_PROP_NAME];
+      $returned[UA_DATA_BROWSER_URL]=GPCUserAgentValues::$UA_BrowserInfo[UA_DATA_BROWSER][$userAgent[UA_DATA_BROWSER]][UA_PROP_URL];
     }
 
     if(!isset($userAgent[UA_DATA_BROWSER_TYPE]) and isset($userAgent[UA_DATA_BROWSER]))
-      $userAgent[UA_DATA_BROWSER_TYPE]=$UA_BrowserInfo[UA_DATA_BROWSER][$userAgent[UA_DATA_BROWSER]][UA_PROP_TYPE];
+      $userAgent[UA_DATA_BROWSER_TYPE]=GPCUserAgentValues::$UA_BrowserInfo[UA_DATA_BROWSER][$userAgent[UA_DATA_BROWSER]][UA_PROP_TYPE];
 
-    if(isset($userAgent[UA_DATA_BROWSER_TYPE]) and isset($UA_BrowserInfo[UA_DATA_BROWSER_TYPE][$userAgent[UA_DATA_BROWSER_TYPE]]))
+    if(isset($userAgent[UA_DATA_BROWSER_TYPE]) and isset(GPCUserAgentValues::$UA_BrowserInfo[UA_DATA_BROWSER_TYPE][$userAgent[UA_DATA_BROWSER_TYPE]]))
     {
       $returned[UA_DATA_BROWSER_TYPE]=$userAgent[UA_DATA_BROWSER_TYPE];
-      $returned[UA_DATA_BROWSER_TYPE_NAME]=$UA_BrowserInfo[UA_DATA_BROWSER_TYPE][$userAgent[UA_DATA_BROWSER_TYPE]];
+      $returned[UA_DATA_BROWSER_TYPE_NAME]=GPCUserAgentValues::$UA_BrowserInfo[UA_DATA_BROWSER_TYPE][$userAgent[UA_DATA_BROWSER_TYPE]];
     }
 
 
-    if(isset($userAgent[UA_DATA_OS]) and isset($UA_BrowserInfo[UA_DATA_OS][$userAgent[UA_DATA_OS]]))
+    if(isset($userAgent[UA_DATA_OS]) and isset(GPCUserAgentValues::$UA_BrowserInfo[UA_DATA_OS][$userAgent[UA_DATA_OS]]))
     {
       $returned[UA_DATA_OS]=$userAgent[UA_DATA_OS];
-      $returned[UA_DATA_OS_NAME]=$UA_BrowserInfo[UA_DATA_OS][$userAgent[UA_DATA_OS]][UA_PROP_NAME];
-      $returned[UA_DATA_OS_URL]=$UA_BrowserInfo[UA_DATA_OS][$userAgent[UA_DATA_OS]][UA_PROP_URL];
+      $returned[UA_DATA_OS_NAME]=GPCUserAgentValues::$UA_BrowserInfo[UA_DATA_OS][$userAgent[UA_DATA_OS]][UA_PROP_NAME];
+      $returned[UA_DATA_OS_URL]=GPCUserAgentValues::$UA_BrowserInfo[UA_DATA_OS][$userAgent[UA_DATA_OS]][UA_PROP_URL];
     }
 
-    if(isset($userAgent[UA_DATA_ENGINE]) and isset($UA_BrowserInfo[UA_DATA_ENGINE][$userAgent[UA_DATA_ENGINE]]))
+    if(isset($userAgent[UA_DATA_ENGINE]) and isset(GPCUserAgentValues::$UA_BrowserInfo[UA_DATA_ENGINE][$userAgent[UA_DATA_ENGINE]]))
     {
       $returned[UA_DATA_ENGINE]=$userAgent[UA_DATA_ENGINE];
-      $returned[UA_DATA_ENGINE_NAME]=$UA_BrowserInfo[UA_DATA_ENGINE][$userAgent[UA_DATA_ENGINE]][UA_PROP_NAME];
-      $returned[UA_DATA_ENGINE_URL]=$UA_BrowserInfo[UA_DATA_ENGINE][$userAgent[UA_DATA_ENGINE]][UA_PROP_URL];
+      $returned[UA_DATA_ENGINE_NAME]=GPCUserAgentValues::$UA_BrowserInfo[UA_DATA_ENGINE][$userAgent[UA_DATA_ENGINE]][UA_PROP_NAME];
+      $returned[UA_DATA_ENGINE_URL]=GPCUserAgentValues::$UA_BrowserInfo[UA_DATA_ENGINE][$userAgent[UA_DATA_ENGINE]][UA_PROP_URL];
     }
 
     return($returned);

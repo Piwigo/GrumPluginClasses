@@ -643,6 +643,7 @@ var inputFilterBoxLang={
                   value:options.defaultValue.value,
                   multiple:($.inArray('in', options.filterOperators)>-1),
                   colsWidth:[],
+                  colsCss:['col1', 'col2', 'col3'],
                   items:itemsList,
                   serverUrl:serverUrl,
                   listMaxHeight:options.datasetData.listMaxHeight,

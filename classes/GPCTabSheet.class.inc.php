@@ -1,9 +1,9 @@
 <?php
 /* -----------------------------------------------------------------------------
   class name     : GPCTabSheet
-  class version  : 1.1.1
-  plugin version : 3.2.1
-  date           : 2010-10-01
+  class version  : 1.1.2
+  plugin version : 3.5.3
+  date           : 2012-08-14
   ------------------------------------------------------------------------------
   author: grum at piwigo.org
   << May the Little SpaceFrog be with you >>
@@ -18,7 +18,8 @@
 |         |            |
 | 1.1.1   | 2010/10/01 | * add attribute 'id' for tabs (<li> items)
 |         |            |
-|         |            |
+| 1.1.2   | 2012/08/14 | * bug:2723 - set select() function to be compatible with
+|         |            |   piwigo 2.4.3
 |         |            |
 |         |            |
 
@@ -51,6 +52,7 @@ class GPCTabSheet extends tabsheet
     parent::tabsheet($name, $titlename);
     $this->classes=$classes;
     $this->id=$id;
+    $this->set_id($this->id);
     $this->setTplFile($tplFile);
   }
 
@@ -138,6 +140,39 @@ class GPCTabSheet extends tabsheet
     return($this->tplFile);
   }
 
+
+  public function select($name)
+  {
+    /*
+     * override the tabsheet->select() function (to fix bug:2723)
+     */
+    if($this->id!='')
+    {
+      $this->sheets = trigger_event('gpc_tabsheet_before_select', $this->sheets, $this->id);
+      if (!array_key_exists($name, $this->sheets))
+      {
+        $keys = array_keys($this->sheets);
+        if(isset($keys[0]))
+          $name = $keys[0];
+      }
+    }
+    $this->selected = $name;
+  }
+
+  function set_id($id)
+  {
+    /*
+     * override the tabsheet->select() function (to fix bug:2723)
+     */
+    if(method_exists('tabsheet', 'set_id'))
+    {
+      parent::set_id($id);
+    }
+    else
+    {
+      $this->uniqid = $id;
+    }
+  }
 
   /*
    * Build TabSheet and assign this content to current page

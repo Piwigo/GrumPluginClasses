@@ -3,7 +3,9 @@ div.ui-dynamicTable {
   padding:8px;
 }
 
-table.ui-dynamicTableHeader, table.ui-dynamicTableContent {
+table.ui-dynamicTableHeader,
+table.ui-dynamicTableContent,
+table.ui-dynamicTableTotalRow {
   width:100%;
   /* border-collapse: collapse; */
   border-spacing: 1px;
@@ -25,12 +27,17 @@ tbody.ui-dynamicTableContent {
 }
 
 thead.ui-dynamicTableHeader td,
-table.ui-dynamicTableContent td {
+table.ui-dynamicTableContent td,
+table.ui-dynamicTableTotalRow td {
   padding:0 0 0 2px;
 }
 
 td.ui-dynamicTableSortColumn {
   width:15px;
+}
+
+table.ui-dynamicTableTotalRow {
+  display:'none';
 }
 
 div.ui-dynamicTableFilterButton-inactive,
@@ -50,6 +57,16 @@ div.ui-dynamicTableLoading {
   z-index:1000;
   margin: 1px;
 }
+div.ui-dynamicTableLoadingWorkInProgress {
+  display:none;
+  position:absolute;
+  z-index:1000;
+  margin: 1px;
+  width:16px;
+  height:16px;
+  background:url(./../icons/processing.gif) no-repeat scroll 0 40px transparent;
+}
+
 
 div.ui-dynamicTableFooter {
   display:none;
