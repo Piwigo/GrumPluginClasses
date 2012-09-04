@@ -2,8 +2,8 @@
 
 /* -----------------------------------------------------------------------------
   class name     : GPCCore
-  class version  : 1.4.2
-  plugin version : 3.5.3
+  class version  : 1.4.3
+  plugin version : 3.5.4
   date           : 2012-07-27
   ------------------------------------------------------------------------------
   author: grum at piwigo.org
@@ -74,6 +74,12 @@
 |         |            |
 | 1.4.2   | 2012/07/27 | * AddHeaderContent can manage 'raw' content
 |         |            |
+| 1.4.3   | 2012/08/29 | * Add js objects: inputTreeList + inputExportBox + download
+|         |            |
+|         |            | * Update js objects: inputText (bug fix)
+|         |            |
+|         |            | * Add urlBuild function
+|         |            |
 |         |            |
 |         |            |
 
@@ -101,6 +107,7 @@
     - static function applyMarkups
     - static function setTemplateToken
     - static function addHeaderContent
+    - static function urlBuild
    ---------------------------------------------------------------------- */
 
 
@@ -143,16 +150,18 @@ class GPCCore
         Array('name' => "CommonPlugin", 'version' => "2.3.0"),
         Array('name' => "GPCAjax", 'version' => "3.1.0"),
         Array('name' => "GPCCategorySelector", 'version' => "1.0.1"),
-        Array('name' => "GPCCore", 'version' => "1.4.2"),
+        Array('name' => "GPCCompress", 'version' => "1.4.0"),
+        Array('name' => "GPCCore", 'version' => "1.4.3"),
         //Array('name' => "GPCCss", 'version' => "3.1.0"),  removed with v1.4.1
+        Array('name' => "GPCExport", 'version' => "1.0.0"),
         Array('name' => "GPCPagesNavigation", 'version' => "2.0.0"),
         Array('name' => "GPCPublicIntegration", 'version' => "2.0.0"),
         Array('name' => "GPCRequestBuilder", 'version' => "1.1.7"),
         Array('name' => "GPCTables", 'version' => "1.5.0"),
         Array('name' => "GPCTabSheet", 'version' => "1.1.2"),
-        Array('name' => "GPCTranslate", 'version' => "2.1.1"),
-        Array('name' => "GPCUsersGroups", 'version' => "2.1.0"),
-        Array('name' => "GPCUserAgent", 'version' => "1.0.0")
+        //Array('name' => "GPCTranslate", 'version' => "2.1.1"), doesn't exist anymore
+        Array('name' => "GPCUserAgent", 'version' => "1.0.1"),
+        Array('name' => "GPCUsersGroups", 'version' => "2.1.0")
       )
     );
   }
@@ -668,6 +677,7 @@ class GPCCore
           self::addHeaderCSS('gpc.cssT', $fileName.'_'.$template->get_themeconf('name').'.css', 15);
           break;
         case 'canvasDraw.graph':
+          self::addHeaderCSS('gpc.canvasDraw', GPC_PATH.'css/canvasDraw.css');
           self::addHeaderCSS('gpc.canvasDrawT', sprintf($themeFile, 'canvasDraw'));
           self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
           self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
@@ -746,6 +756,29 @@ class GPCCore
           self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
           self::addHeaderJS('gpc.inputDotArea', GPC_PATH.'js/ui.inputDotArea.js', array('jquery.ui.widget'));
           break;
+        case 'inputExportBox':
+          self::addHeaderCSS('gpc.inputText', GPC_PATH.'css/inputText.css');
+          self::addHeaderCSS('gpc.inputTextT', sprintf($themeFile, 'inputText'));
+          self::addHeaderCSS('gpc.inputList', GPC_PATH.'css/inputList.css');
+          self::addHeaderCSS('gpc.inputListT', sprintf($themeFile, 'inputList'));
+          self::addHeaderCSS('gpc.inputExportBox', GPC_PATH.'css/inputExportBox.css');
+          self::addHeaderCSS('gpc.inputExportBoxT', sprintf($themeFile, 'inputExportBox'));
+
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('jquery.ui.mouse', 'themes/default/js/ui/jquery.ui.mouse.js', array('jquery.ui.widget'));
+          self::addHeaderJS('jquery.ui.position', 'themes/default/js/ui/jquery.ui.position.js', array('jquery.ui.mouse'));
+          self::addHeaderJS('jquery.ui.resizable', 'themes/default/js/ui/jquery.ui.resizable.js', array('jquery.ui.position'));
+          self::addHeaderJS('jquery.ui.draggable', 'themes/default/js/ui/jquery.ui.draggable.js', array('jquery.ui.resizable'));
+          self::addHeaderJS('jquery.ui.sortable', 'themes/default/js/ui/jquery.ui.sortable.js', array('jquery.ui.draggable'));
+          self::addHeaderJS('jquery.ui.dialog', 'themes/default/js/ui/jquery.ui.dialog.js', array('jquery.ui.sortable'));
+
+          self::addHeaderJS('gpc.inputText', GPC_PATH.'js/ui.inputText.js', array('jquery.ui.dialog'));
+          self::addHeaderJS('gpc.inputList', GPC_PATH.'js/ui.inputList.js', array('jquery.ui.dialog'));
+          self::addHeaderJS('gpc.inputExportBox', GPC_PATH.'js/ui.inputExportBox.js', array('jquery.ui.dialog'));
+          break;
         case 'inputFilterBox':
           self::addHeaderCSS('jquery.ui.datepicker', 'themes/default/js/ui/theme/jquery.ui.datepicker.css');
           self::addHeaderCSS('gpc.inputNum', GPC_PATH.'css/inputNum.css');
@@ -801,6 +834,13 @@ class GPCCore
           self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
           self::addHeaderJS('gpc.inputPages', GPC_PATH.'js/ui.inputPages.js', array('jquery','jquery.ui.widget'));
           break;
+        case 'inputPath':
+          self::addHeaderCSS('gpc.inputPath', GPC_PATH.'css/inputPath.css');
+          self::addHeaderCSS('gpc.inputPathT', sprintf($themeFile, 'inputPath'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('gpc.inputPath', GPC_PATH.'js/ui.inputPath.js', array('jquery','jquery.ui.widget'));
+          break;
         case 'inputPosition':
           self::addHeaderCSS('gpc.inputPosition', GPC_PATH.'css/inputPosition.css');
           self::addHeaderCSS('gpc.inputPositionT', sprintf($themeFile, 'inputPosition'));
@@ -853,12 +893,23 @@ class GPCCore
           self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
           self::addHeaderJS('gpc.inputText', GPC_PATH.'js/ui.inputText.js', array('jquery.ui.widget'));
           break;
+        case 'inputTreeList':
+          self::addHeaderCSS('gpc.inputTreeList', GPC_PATH.'css/inputTreeList.css');
+          self::addHeaderCSS('gpc.inputTreeListT', sprintf($themeFile, 'inputTreeList'));
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('gpc.inputTreeList', GPC_PATH.'js/ui.inputTreeList.js', array('jquery.ui.widget'));
+          break;
         case 'simpleTip':
           self::addHeaderCSS('gpc.simpleTip', GPC_PATH.'css/simpleTip.css');
           self::addHeaderCSS('gpc.simpleTipT', sprintf($themeFile, 'simpleTip'));
           self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
           self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
           self::addHeaderJS('gpc.simpleTip', GPC_PATH.'js/simpleTip.js', array('jquery.ui.widget'));
+          break;
+        case 'download':
+          self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
+          self::addHeaderJS('gpc.download', GPC_PATH.'js/ui.download.js', array('jquery'));
           break;
         case 'dynamicTable':
           self::addHeaderCSS('jquery.ui.datepicker', 'themes/default/js/ui/theme/jquery.ui.datepicker.css');
@@ -917,6 +968,36 @@ class GPCCore
           break;
       }
     }
+  }
+
+
+  /**
+   * build an url from given properties
+   *
+   * @param String $urlType: type of url to build
+   * @param Array $properties: properties used to build url
+   * @return String: url, or empty string if not possible to build it
+   */
+  static public function urlBuild($type, $properties=array())
+  {
+    $returned='';
+    switch($type)
+    {
+      case 'admin.picture':
+        if(isset($properties['pictureId']))
+        {
+          $returned='./admin.php?page=photo-'.$properties['pictureId'];
+        }
+        break;
+      case 'admin.category':
+      case 'admin.album':
+        if(isset($properties['categoryId']))
+        {
+          $returned='./admin.php?page=album-'.$properties['categoryId'];
+        }
+        break;
+    }
+    return($returned);
   }
 
 

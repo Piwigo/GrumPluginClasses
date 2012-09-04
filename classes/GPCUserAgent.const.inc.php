@@ -262,6 +262,7 @@ class GPCUserAgentValues
               UA_BOT_MSN_SEARCH        => array(UA_PROP_NAME => 'Microsoft MSN Search', UA_PROP_TYPE=>UA_BROWSER_TYPE_CRAWLER, UA_PROP_URL => 'http://search.msn.com/msnbot.htm'),
               UA_BOT_EXALEAD           => array(UA_PROP_NAME => 'Exalead',              UA_PROP_TYPE=>UA_BROWSER_TYPE_CRAWLER, UA_PROP_URL => ''),
               UA_BOT_GAMESPY           => array(UA_PROP_NAME => 'GameSpy',              UA_PROP_TYPE=>UA_BROWSER_TYPE_CRAWLER, UA_PROP_URL => ''),
+              UA_BOT_GIGABLAST         => array(UA_PROP_NAME => 'Gigabot',              UA_PROP_TYPE=>UA_BROWSER_TYPE_CRAWLER, UA_PROP_URL => 'http://www.gigablast.com/spider.html'),
               UA_BOT_INKTOMI           => array(UA_PROP_NAME => 'Inktomi',              UA_PROP_TYPE=>UA_BROWSER_TYPE_CRAWLER, UA_PROP_URL => ''),
               UA_BOT_YAHOO_SEARCH      => array(UA_PROP_NAME => 'Yahoo! Search',        UA_PROP_TYPE=>UA_BROWSER_TYPE_CRAWLER, UA_PROP_URL => 'http://www.yahoo.com/'),
               UA_BOT_LWEBIS            => array(UA_PROP_NAME => 'L.webis',              UA_PROP_TYPE=>UA_BROWSER_TYPE_CRAWLER, UA_PROP_URL => 'http://webalgo.iit.cnr.it/index.php?pg=lwebis'),

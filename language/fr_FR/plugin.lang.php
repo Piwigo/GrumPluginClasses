@@ -29,4 +29,26 @@ $lang['[%s][Message from %s] %s']='[%s][Message de %s] %s';
 $lang['Sorry, an error has occured while sending the message to the webmaster']='D&eacute;sol&eacute;, une erreur est survenue lors de l\'envoi du message au webmaster';
 $lang['Your message was sent to the webmaster!']='Votre message a bien &eacute;t&eacute; transmis !';
 
+// gpc 3.5.4
+$lang['filter_operator']='Opérateur';
+$lang['filter_value']='Valeur';
+$lang['filter_minValue']='Valeur minimale';
+$lang['filter_maxValue']='Valeur maximale';
+$lang['filter_gt']='Supérieur à';
+$lang['filter_lt']='Inférieur à';
+$lang['filter_ge']='Supérieur ou égal à';
+$lang['filter_le']='Inférieur ou égal à';
+$lang['filter_equal']='Egal à';
+$lang['filter_notEqual']='Différent de';
+$lang['filter_between']='Entre';
+$lang['filter_and']='et';
+$lang['filter_like']='Ressemble à';
+$lang['filter_notLike']='Ne ressemble pas à';
+$lang['filter_invalid']='Le filtre n\'est pas valide';
+
+$lang['export_dialogTitle']='Export des données';
+$lang['export_Name']='Nom du fichier';
+$lang['export_Format']='Format';
+$lang['export_Compression']='Compression';
+
 ?>

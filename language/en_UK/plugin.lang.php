@@ -14,4 +14,27 @@ $lang['Public'] = 'Public';
 $lang['Private'] = 'Private';
 $lang['All the gallery'] = 'All the gallery';
 
+
+// gpc 3.5.4
+$lang['filter_operator']='Operator';
+$lang['filter_value']='Value';
+$lang['filter_minValue']='Minimal value';
+$lang['filter_maxValue']='Maximal value';
+$lang['filter_gt']='Greater than';
+$lang['filter_lt']='Less than';
+$lang['filter_ge']='Greater or equal to';
+$lang['filter_le']='Less or equal to';
+$lang['filter_equal']='Equal to';
+$lang['filter_notEqual']='Different than';
+$lang['filter_between']='Between';
+$lang['filter_and']='and';
+$lang['filter_like']='Like';
+$lang['filter_notLike']='Not like';
+$lang['filter_invalid']='Filter is not valid';
+
+$lang['export_dialogTitle']='Data export';
+$lang['export_Name']='File name';
+$lang['export_Format']='Format';
+$lang['export_Compression']='Compression';
+
 ?>

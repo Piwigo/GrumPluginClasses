@@ -334,6 +334,11 @@ function CDAxis(options, values)
             if(value.display.visible.XY.cursorH==true || value.display.visible.XY.cursorH==false) properties.display.visible.XY.cursorH=value.display.visible.XY.cursorH;
             if(value.display.visible.XY.cursorV==true || value.display.visible.XY.cursorV==false) properties.display.visible.XY.cursorV=value.display.visible.XY.cursorV;
           }
+          if(value.display.visible.pie!=null)
+          {
+            if(value.display.visible.pie==true || value.display.visible.pie==false) properties.display.visible.pie=value.display.visible.pie;
+          }
+
         }
       }
 
@@ -846,7 +851,7 @@ function CDSerieOptionsPie(initProperties)
 
       if(!$.isPlainObject(values)) return(false);
 
-      if(values.backgroundColor!=null && $.isArray(values.backgroundColors)) properties.backgroundColors=values.backgroundColors;
+      if(values.backgroundColors!=null && $.isArray(values.backgroundColors)) properties.backgroundColors=values.backgroundColors;
       if(values.borderColor!=null) properties.borderColor=values.borderColor;
       if(values.borderWidth!=null && values.borderWidth>=0) properties.borderWidth=values.borderWidth;
 

@@ -15,7 +15,7 @@ table.ui-dynamicTableTotalRow {
 
 thead.ui-dynamicTableHeader {
   background:#333333;
-  color:#FF7700;
+  color:#FF3366;
   font-weight:bold;
 }
 
@@ -31,7 +31,10 @@ div.ui-dynamicTableLoading {
 
 div.ui-dynamicTableFilterButton-inactive,
 div.ui-dynamicTableFilterButton-active,
-div.ui-dynamicTableSortButton {
+div.ui-dynamicTableSortButton,
+div.ui-dynamicTableGroupButton-inactive,
+div.ui-dynamicTableGroupButton-active,
+div.ui-dynamicTableFooter-saveButton {
   background-image:url(./../icons/buttons.png);
   background-repeat:no-repeat;
   background-color:transparent;
@@ -42,7 +45,10 @@ div.ui-dynamicTableSortButton {
 
 div.ui-dynamicTableFilterButton-inactive:hover,
 div.ui-dynamicTableFilterButton-active:hover,
-div.ui-dynamicTableSortButton:hover {
+div.ui-dynamicTableSortButton:hover,
+div.ui-dynamicTableGroupButton-inactive:hover ,
+div.ui-dynamicTableGroupButton-active:hover,
+div.ui-dynamicTableFooter-saveButton:hover {
   background-color:#222222;
 }
 
@@ -67,3 +73,22 @@ div.ui-dynamicTableSortButton:hover {
   background-position:-105px 0px;
 }
 
+div.ui-dynamicTableGroupButton-active {
+  background-position:-360px -15px;
+}
+div.ui-dynamicTableGroupButton-active:hover {
+  background-position:-360px 0px;
+}
+div.ui-dynamicTableGroupButton-inactive {
+  background-position:-345px -15px;
+}
+div.ui-dynamicTableGroupButton-inactive:hover {
+  background-position:-345px 0px;
+}
+
+div.ui-dynamicTableFooter-saveButton {
+  background-position:-375px -15px;
+}
+div.ui-dynamicTableFooter-saveButton:hover {
+  background-position:-375px 0px;
+}

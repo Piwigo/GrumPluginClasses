@@ -1,8 +1,8 @@
 /**
  * -----------------------------------------------------------------------------
  * file: ui.inputText.js
- * file version: 1.1.2
- * date: 2012-06-18
+ * file version: 1.1.3
+ * date: 2012-09-03
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -32,6 +32,8 @@
  * | 1.1.2   | 2012/06/18 | * improve memory managment
  * |         |            |
  * |         |            | * fix bug on regExp option
+ * |         |            |
+ * | 1.1.3   | 2012/09/03 | * fix bug on initial value settings & check value validity
  * |         |            |
  * |         |            |
  * |         |            |
@@ -87,7 +89,7 @@
                   {
                     initialized:false,
                     re:/.*/,
-                    value:0,
+                    value:'',
                     isValid:true,
                     languagesValues:{}
                   }
@@ -600,12 +602,16 @@
       setIsValid : function (object, value)
         {
           var objects=object.data('objects'),
-              properties=object.data('properties');
+              properties=object.data('properties'),
+              check=false;
 
           if(value=='check')
+          {
             value=privateMethods.isValid(object, properties.value);
+            check=true;
+          }
 
-          if(properties.isValid!=value && properties.initialized)
+          if(properties.isValid!=value && properties.initialized || check)
           {
             properties.isValid=value;
             if(properties.isValid)

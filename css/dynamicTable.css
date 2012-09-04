@@ -42,7 +42,10 @@ table.ui-dynamicTableTotalRow {
 
 div.ui-dynamicTableFilterButton-inactive,
 div.ui-dynamicTableFilterButton-active,
-div.ui-dynamicTableSortButton {
+div.ui-dynamicTableSortButton,
+div.ui-dynamicTableGroupButton-inactive,
+div.ui-dynamicTableGroupButton-active,
+div.ui-dynamicTableFooter-saveButton {
   float:right;
   width:14px;
   cursor:pointer;
@@ -50,6 +53,7 @@ div.ui-dynamicTableSortButton {
   margin: 1px;
   padding: 0px;
 }
+
 
 div.ui-dynamicTableLoading {
   display:none;
@@ -74,8 +78,22 @@ div.ui-dynamicTableFooter {
 }
 div.ui-dynamicTableFooter-nbItems {
   display:inline-block;
+  margin-top: 2px;
 }
 div.ui-dynamicTableFooter-pagesNavigator {
   display:inline-block;
   float:right;
+}
+div.ui-dynamicTableFooter-saveButton {
+  display:inline-block;
+  float:left;
+  margin-right:4px;
+}
+div.ui-dynamicTableFooter-saveButtonWait {
+  display:inline-block;
+  float:left;
+  margin-right:4px;
+  background:url(./../icons/processing.gif) no-repeat scroll 0 0 transparent;
+  width:16px;
+  height:16px;
 }

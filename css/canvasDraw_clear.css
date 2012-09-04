@@ -1,4 +1,5 @@
-/* --------------------------- roma --------------------------- */
+
+/* --------------------------- clear --------------------------- */
 
 
 div.cd-mainWindow div.ui-dialog-content {
@@ -57,7 +58,7 @@ div#iBtToolsImages.ui-inputSwitchButton-checked {
 
 div.ui-drawingArea-sheet,
 div.ui-drawingGraph-sheet {
-  background:#000000;
+  background:#F1F1F1;
 }
 div.ui-drawingArea-viewport,
 div.ui-drawingGraph-viewport {

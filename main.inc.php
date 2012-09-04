@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.5.3
+Version: 3.5.4
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -181,6 +181,13 @@ Author URI: http://www.grum.fr/
 |         |            |
 | 3.5.3   | 2012/08/14 | * mantis bug:2723
 |         |            |   . Error message when on page using GPC tabsheets
+|         |            |
+| 3.5.4   | 2012/08/29 | * Add ui.inputTreeList object
+|         |            |
+|         |            | * Improve ui.dynamicTable object
+|         |            |
+|         |            |
+|         |            |
 |         |            |
 |         |            |
 |         |            |

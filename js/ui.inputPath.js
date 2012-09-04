@@ -606,9 +606,11 @@
           if(options.click)
           {
             var item=privateMethods.getItemLevel(event.data, $(this).attr('ip-level'));
-            event.data.trigger('inputPathClick', item);
+
             if(options.autoSetLevel)
               privateMethods.setLevel(event.data, item.level);
+
+            event.data.trigger('inputPathClick', item);
           }
         }
 

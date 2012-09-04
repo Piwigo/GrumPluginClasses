@@ -30,23 +30,24 @@
  *
  */
 
+
 var inputFilterBoxLang={
-  'Operator':'Operator',
-  'Value':'Value',
-  'MinValue':'Minimum value',
-  'MaxValue':'Maximum value',
-  '>':'Greater than',
-  '<':'Less than',
-  '>=':'Greater or equal to',
-  '<=':'Less or equal to',
-  '=':'Equal to',
-  '!=':'Different than',
-  'between':'Between',
-  'and':'and',
-  'like':'Like',
-  'not like':'Not like',
-  'invalidParam':'Filter is not valid'
-};
+    'Operator':'Operator',
+    'Value':'Value',
+    'MinValue':'Minimum value',
+    'MaxValue':'Maximum value',
+    '>':'Greater than',
+    '<':'Less than',
+    '>=':'Greater or equal to',
+    '<=':'Less or equal to',
+    '=':'Equal to',
+    '!=':'Different than',
+    'between':'Between',
+    'and':'and',
+    'like':'Like',
+    'not like':'Not like',
+    'invalidParam':'Filter is not valid'
+  };
 
 (
   function($)

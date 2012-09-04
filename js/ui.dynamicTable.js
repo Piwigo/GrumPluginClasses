@@ -1,8 +1,8 @@
 /**
  * -----------------------------------------------------------------------------
  * file: ui.dynamicTable.js
- * file version: 1.0.0
- * date: 2012-06-09
+ * file version: 1.0.1
+ * date: 2012-09-01
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -21,8 +21,13 @@
  * :: HISTORY ::
  *
  * | release | date       |
- * | 1.0.0   | 2012/06/09 | first release
+ * | 1.0.0   | 2012/06/09 | * first release
  * |         |            |
+ * | 1.0.1   | 2012/09/01 |  * fix bugs
+ * |         |            |
+ * |         |            |  * add 'group' icon
+ * |         |            |
+ * |         |            |  * add 'save' button
  * |         |            |
  * |         |            |
  * |         |            |
@@ -61,15 +66,20 @@
                       maxHeight:300,
                       contentLoading:null,
                       contentLoaded:null,
+                      contentDisplayed:null,
                       pageChanged:null,
+                      click:null,
+                      saveButtonClick:null,
                       nbItemsPage:50,
                       currentPage:1,
                       sortBoxTitle:'Sort by',
                       showTotalRow:'auto',     // visible, hidden, auto
+                      showSaveButton:false,
                       footerString:
                         {
                           singular:'% item',
-                          plural:'% items'
+                          plural:'% items',
+                          waitForDownload:'Please wait, download will start...'
                         },
                       pagesNavigator:{},
                       dialogsButtons:{
@@ -94,8 +104,10 @@
                     nbItems:0,
                     sortedColumns:[],
                     filteredColumns:[],
+                    groupedColumns:[],
                     loadedData:[],
-                    totalRowHasData:false
+                    totalRowHasData:false,
+                    downloadWaitState:false
                   }
                 );
                 properties=$this.data('properties');
@@ -152,6 +164,11 @@
                           'class':'ui-dynamicTableFooter'
                         }
                       ),
+                    footerSaveButton:$('<div/>',
+                        {
+                          'class':'ui-dynamicTableFooter-saveButton'
+                        }
+                      ),
                     footerNbItems:$('<div/>',
                         {
                           'class':'ui-dynamicTableFooter-nbItems'
@@ -173,6 +190,7 @@
                   .append(objects.contentContainer.append(objects.content))
                   .append(objects.totalRowContent.append(objects.totalRowTr))
                   .append(objects.footer
+                            .append(objects.footerSaveButton)
                             .append(objects.footerNbItems)
                             .append(objects.footerPagesNavigator)
                          );
@@ -302,6 +320,27 @@
           }
         }, // footerString
 
+      waitForDownload: function (value)
+        {
+          if(value!=null)
+          {
+            // set selected value
+            return(
+              this.each(
+                function()
+                {
+                  privateMethods.setDownloadWaitState($(this), value);
+                }
+              )
+            );
+          }
+          else
+          {
+            var properties=this.data('properties');
+            return(properties.downloadWaitState);
+          }
+        }, // waitForDownload
+
       autoLoad: function (value)
         {
           if(value!=null)
@@ -344,6 +383,29 @@
             return(options.showTotalRow);
           }
         }, // showTotalRow
+
+
+
+      showSaveButton : function (value)
+        {
+          if(value!=null)
+          {
+            // set selected value
+            return(
+              this.each(
+                function()
+                {
+                  privateMethods.setShowSaveButton($(this), value);
+                }
+              )
+            );
+          }
+          else
+          {
+            var options=this.data('options');
+            return(options.showSaveButton);
+          }
+        }, // showSaveButton
 
 
        currentPage: function (value)
@@ -472,9 +534,70 @@
           }
         }, // maxHeight
 
+      click: function (value)
+        {
+          if(value!=null && ($.isFunction(value) || value=='clear'))
+          {
+            // set selected value
+            return(
+              this.each(
+                function()
+                {
+                  privateMethods.setEventClick($(this), value);
+                }
+              )
+            );
+          }
+          else
+          {
+            // return the selected value
+            var options=this.data('options');
+
+            if(options)
+            {
+              return(options.click);
+            }
+            else
+            {
+              return(null);
+            }
+          }
+        }, // click
+
+
+      saveButtonClick: function (value)
+        {
+          if(value!=null && ($.isFunction(value) || value=='clear'))
+          {
+            // set selected value
+            return(
+              this.each(
+                function()
+                {
+                  privateMethods.setEventSaveButtonClick($(this), value);
+                }
+              )
+            );
+          }
+          else
+          {
+            // return the selected value
+            var options=this.data('options');
+
+            if(options)
+            {
+              return(options.saveButtonClick);
+            }
+            else
+            {
+              return(null);
+            }
+          }
+        }, // saveButtonClick
+
       contentLoading: function (value)
         {
-          if(value!=null && $.isFunction(value))
+          if(value!=null && ($.isFunction(value) || value=='clear'))
           {
             // set selected value
             return(
@@ -504,7 +627,7 @@
 
       contentLoaded: function (value)
         {
-          if(value!=null && $.isFunction(value))
+          if(value!=null && ($.isFunction(value) || value=='clear'))
           {
             // set selected value
             return(
@@ -532,9 +655,39 @@
           }
         }, // contentLoaded
 
+      contentDisplayed: function (value)
+        {
+          if(value!=null && ($.isFunction(value) || value=='clear'))
+          {
+            // set selected value
+            return(
+              this.each(
+                function()
+                {
+                  privateMethods.setEventContentDisplayed($(this), value);
+                }
+              )
+            );
+          }
+          else
+          {
+            // return the selected value
+            var options=this.data('options');
+
+            if(options)
+            {
+              return(options.contentDisplayed);
+            }
+            else
+            {
+              return(null);
+            }
+          }
+        }, // contentDisplayed
+
       pageChanged: function (value)
         {
-          if(value!=null && $.isFunction(value))
+          if(value!=null && ($.isFunction(value) || value=='clear'))
           {
             // set selected value
             return(
@@ -609,6 +762,7 @@
 
           privateMethods.setAutoLoad(object, (value.autoLoad!=null)?value.autoLoad:options.autoLoad);
           privateMethods.setShowTotalRow(object, (value.showTotalRow!=null)?value.showTotalRow:options.showTotalRow);
+          privateMethods.setShowSaveButton(object, (value.showSaveButton!=null)?value.showSaveButton:options.showSaveButton);
           privateMethods.setPostData(object, (value.postData!=null)?value.postData:options.postData);
           privateMethods.setPostUrl(object, (value.postUrl!=null)?value.postUrl:options.postUrl);
           privateMethods.setMaxHeight(object, (value.maxHeight!=null)?value.maxHeight:options.maxHeight);
@@ -623,7 +777,9 @@
 
           privateMethods.setEventContentLoading(object, (value.contentLoading!=null)?value.contentLoading:options.contentLoading);
           privateMethods.setEventContentLoaded(object, (value.contentLoaded!=null)?value.contentLoaded:options.contentLoaded);
+          privateMethods.setEventContentDisplayed(object, (value.contentDisplayed!=null)?value.contentDisplayed:options.contentDisplayed);
           privateMethods.setEventPageChanged(object, (value.pageChanged!=null)?value.pageChanged:options.pageChanged);
+          privateMethods.setEventSaveButtonClick(object, (value.saveButtonClick!=null)?value.saveButtonClick:options.saveButtonClick);
           privateMethods.setEventClick(object, (value.click!=null)?value.click:options.click);
 
           $(window).bind('resize.'+properties.objectId, function (event) { privateMethods.setColumnsSize(object); });
@@ -661,7 +817,23 @@
           }
 
           return(options.showTotalRow);
-        }, // setAutoLoad
+        }, // setShowTotalRow
+
+
+      setShowSaveButton : function (object, value)
+        {
+          var properties=object.data('properties'),
+              options=object.data('options');
+
+          if((!properties.initialized || value!=options.showSaveButton) && (value==true || value==false))
+          {
+            options.showSaveButton=value;
+            if(properties.initialized)
+              privateMethods.showSaveButton(object);
+          }
+
+          return(options.showSaveButton);
+        }, // setShowSaveButton
 
 
       setColumns : function (object, value)
@@ -695,6 +867,7 @@
             newCol.title=(value.title!=null)?value.title:'';
             newCol.width=(value.width!=null)?value.width:'';
             newCol.sortable=(value.sortable=='asc' || value.sortable=='desc')?value.sortable:'no';
+            newCol.group=(value.group==true||value.group==false)?value.group:false;
             newCol.filter=null;
 
             if($.isValidFilter(value.filter))
@@ -766,6 +939,9 @@
             if((!properties.initialized || value.plural!=null) && value.plural!='' && value.plural!=options.footerString.plural)
               options.footerString.plural=value.plural;
 
+            if((!properties.initialized || value.waitForDownload!=null) && value.waitForDownload!='' && value.waitForDownload!=options.footerString.waitForDownload)
+              options.footerString.waitForDownload=value.waitForDownload;
+
             privateMethods.updateNbItems(object);
           }
           else if(!properties.initialized || value!=options.footerString)
@@ -777,6 +953,19 @@
 
           return(options.footerString);
         }, // setFooterString
+
+      setDownloadWaitState: function (object, value)
+        {
+          var options=object.data('options'),
+              properties=object.data('properties');
+
+          if((!properties.initialized || value!=null) && (value==true || value==false) && (value!=properties.downloadWaitState))
+          {
+            properties.downloadWaitState=value;
+            privateMethods.applyDownloadWaitState(object);
+          }
+          return(properties.downloadWaitState);
+        }, // setDownloadWaitState
 
       setDialogsButtons: function (object, value)
         {
@@ -831,6 +1020,7 @@
         {
           var options=object.data('options');
 
+          if(value=='clear') value=null;
           options.contentLoading=value;
           object.unbind('dynamicTableContentLoading');
           if(value) object.bind('dynamicTableContentLoading', options.contentLoading);
@@ -841,16 +1031,29 @@
         {
           var options=object.data('options');
 
+          if(value=='clear') value=null;
           options.contentLoaded=value;
           object.unbind('dynamicTableContentLoaded');
           if(value) object.bind('dynamicTableContentLoaded', options.contentLoaded);
           return(options.contentLoaded);
         }, //setEventContentLoaded
 
+      setEventContentDisplayed : function (object, value)
+        {
+          var options=object.data('options');
+
+          if(value=='clear') value=null;
+          options.contentDisplayed=value;
+          object.unbind('dynamicTableContentDisplayed');
+          if(value) object.bind('dynamicTableContentDisplayed', options.contentDisplayed);
+          return(options.contentDisplayed);
+        }, //setEventContentDisplayed
+
       setEventPageChanged : function (object, value)
         {
           var options=object.data('options');
 
+          if(value=='clear') value=null;
           options.pageChanged=value;
           object.unbind('dynamicTablePageChanged');
           if(value) object.bind('dynamicTablePageChanged', options.pageChanged);
@@ -862,6 +1065,7 @@
           var options=object.data('options'),
               objects=object.data('objects');
 
+          if(value=='clear') value=null;
           options.click=value;
           objects.content.find('tr').unbind('click.dynamicTable');
           if(value)
@@ -875,6 +1079,26 @@
           }
           return(options.click);
         }, //setEventClick
+
+
+      setEventSaveButtonClick : function (object, value)
+        {
+          var options=object.data('options'),
+              objects=object.data('objects');
+
+          if(value=='clear') value=null;
+          options.saveButtonClick=value;
+          objects.footerSaveButton.unbind('click.dynamicTable');
+          if(value)
+            objects.footerSaveButton.bind('click.dynamicTable', function (event)
+              {
+                options.saveButtonClick(event, privateMethods.getPostProperties(object));
+              }
+            );
+
+          return(options.saveButtonClick);
+        }, //setEventSaveButtonClick
+
 
       setNbItems: function (object, value)
         {
@@ -980,6 +1204,7 @@
 
             if(options.columns[i].filter!=null)
             {
+              // filter button
               button=$('<div/>',
                         {
                           class:'ui-dynamicTableFilterButton-inactive'
@@ -1038,7 +1263,40 @@
                          }
                        );
               td.append(button);
-            }
+            } // filter button
+
+
+            if(options.columns[i].group==true)
+            {
+              // groupable button
+              button=$('<div/>',
+                        {
+                          class:'ui-dynamicTableGroupButton-inactive'
+                        }
+                      )
+                      .bind('click', i,
+                         function (event)
+                         {
+                           var columnIndex=event.data,
+                               $button=$(this);
+
+                          $button.toggleClass('ui-dynamicTableGroupButton-inactive ui-dynamicTableGroupButton-active');
+
+                          if($button.hasClass('ui-dynamicTableGroupButton-active'))
+                          {
+                            properties.groupedColumns[columnIndex]=options.columns[columnIndex].id;
+                          }
+                          else
+                          {
+                            delete properties.groupedColumns[columnIndex];
+                          }
+
+                          privateMethods.setCurrentPage(object, 1);
+                         }
+                       );
+              td.append(button);
+            } // groupable button
+
 
             objects.headerTr.append(td);
 
@@ -1110,7 +1368,8 @@
        */
       loadContent : function (object, page)
         {
-          var data=null,
+          var tmpData=null,
+              data=null,
               tr=null,
               td=null,
               options=object.data('options'),
@@ -1126,21 +1385,11 @@
           data=options.postData;
           data.currentPage=options.currentPage;
           data.nbItemsPage=options.nbItemsPage;
-          data.sort=[];
-          for(var i=0;i<properties.sortedColumns.length;i++)
-          {
-            data.sort.push(
-              {
-                id:properties.sortedColumns[i].id,
-                direction:(properties.sortedColumns[i].direction=='asc')?'A':'D'
-              }
-            );
-          }
-          data.filter=[];
-          for(var i in properties.filteredColumns)
-          {
-            data.filter.push(properties.filteredColumns[i]);
-          }
+
+          tmpData=privateMethods.getPostProperties(object);
+          data.sort=tmpData.sort;
+          data.filter=tmpData.filter;
+          data.group=tmpData.group;
 
           if(options.contentLoading) object.trigger('dynamicTableContentLoading', data);
 
@@ -1177,10 +1426,13 @@
 
                     for(var col=0;col<msg.rows[row].length;col++)
                     {
-                      td=$('<td/>').html(msg.rows[row][col]);
+                      if(col<options.columns.length)
+                      {
+                        td=$('<td/>').html(msg.rows[row][col]);
 
-                      if((col==msg.rows[row].length-1) && properties.hasSortableButton) td.attr('colspan', '2');
-                      tr.append(td);
+                        if((col==msg.rows[row].length-1) && properties.hasSortableButton) td.attr('colspan', '2');
+                        tr.append(td);
+                      }
                     }
                     objects.content.append(tr);
                   }
@@ -1227,6 +1479,8 @@
 
                   privateMethods.showTotalRow(object);
                   privateMethods.setColumnsSize(object);
+
+                  if(options.contentDisplayed) object.trigger('dynamicTableContentDisplayed', msg);
                   privateMethods.displayLoading(object, false);
                 },
               error: function(msg)
@@ -1238,6 +1492,36 @@
             }
          );
         }, //loadContent
+
+      // return a ready-to-use filter/group/sort object
+      getPostProperties: function (object)
+        {
+          var data={},
+              properties=object.data('properties');
+
+          data.sort=[];
+          for(var i=0;i<properties.sortedColumns.length;i++)
+          {
+            data.sort.push(
+              {
+                id:properties.sortedColumns[i].id,
+                direction:(properties.sortedColumns[i].direction=='asc')?'A':'D'
+              }
+            );
+          }
+          data.filter=[];
+          for(var i in properties.filteredColumns)
+          {
+            data.filter.push(properties.filteredColumns[i]);
+          }
+
+          data.group=[];
+          for(var i in properties.groupedColumns)
+          {
+            data.group.push(properties.groupedColumns[i]);
+          }
+          return(data);
+        }, //getPostProperties
 
       setColumnsSize : function (object)
         {
@@ -1363,8 +1647,55 @@
             objects.footerNbItems.html(options.footerString.singular.replace('%', properties.nbItems));
           }
 
-        } // updateNbItems
+          if(properties.nbItems>0)
+          {
+            privateMethods.showSaveButton(object);
+          }
+          else
+          {
+            privateMethods.showSaveButton(object, true); // force button hide
+          }
 
+        }, // updateNbItems
+
+      showSaveButton : function (object, hide)
+        {
+          var options=object.data('options'),
+              objects=object.data('objects');
+
+          if(hide==null) hide=false;
+
+          if(options.showSaveButton && hide!=true)
+          {
+            objects.footerSaveButton.css('display',  'block');
+          }
+          else
+          {
+            objects.footerSaveButton.css('display',  'none');
+          }
+        }, // showSaveButton
+
+      applyDownloadWaitState: function (object)
+        {
+          var options=object.data('options'),
+              objects=object.data('objects'),
+              properties=object.data('properties');
+
+          if(properties.downloadWaitState)
+          {
+            objects.footerSaveButton
+              .removeClass('ui-dynamicTableFooter-saveButton')
+              .addClass('ui-dynamicTableFooter-saveButtonWait');
+            objects.footerNbItems.html(options.footerString.waitForDownload);
+          }
+          else
+          {
+            objects.footerSaveButton
+              .removeClass('ui-dynamicTableFooter-saveButtonWait')
+              .addClass('ui-dynamicTableFooter-saveButton');
+            privateMethods.updateNbItems(object);
+          }
+        } // applyDownloadWaitState
     };
 
 
