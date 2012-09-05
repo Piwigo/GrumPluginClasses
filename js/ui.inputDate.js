@@ -1,8 +1,8 @@
 /**
  * -----------------------------------------------------------------------------
  * file: ui.inputDate.js
- * file version: 1.0.0
- * date: 2012-06-17
+ * file version: 1.0.1
+ * date: 2012-09-05
  *
  * A jQuery plugin provided by the piwigo's plugin "GrumPluginClasses"
  *
@@ -22,7 +22,7 @@
  * | release | date       |
  * | 1.0.0   | 2012/06/17 | * first release
  * |         |            |
- * |         |            |
+ * | 1.0.1   | 2012/09/05 | * add possibility for time to be optional in datetime mode
  * |         |            |
  * |         |            |
  * |         |            |
@@ -53,6 +53,7 @@
                   options =
                     {
                       dateType:'date', // date, datetime
+                      timeMandatory:false, // used for datetime type only
                       timepicker:{
                         timeFormat:'hh:mm',  // hh:mm, hh:mm:ss
                         minTime:null,
@@ -267,6 +268,30 @@
           }
         }, // timeValue
 
+       timeMandatory: function (value)
+        {
+          if(value!=null)
+          {
+            var options=this.data('options');
+
+            // set selected value
+            return(
+              this.each(
+                function()
+                {
+                  privateMethods.setTimeMandatory($(this), value, true);
+                }
+              )
+            );
+          }
+          else
+          {
+            // return the selected tags
+            var properties=this.data('properties');
+            return(properties.timeMandatory);
+          }
+        }, // timeMandatory
+
       isValid: function (value)
         {
           if(value!=null)
@@ -349,6 +374,8 @@
               re=/^(\d{1,2}):(\d{2})(?::(\d{2})){0,1}$/i,
               hms=[];
 
+          if(value=='' && !options.timeMandatory) return(true);
+
           if(re.test(value))
           {
             hms=re.exec(value);
@@ -386,6 +413,7 @@
 
           properties.initialized=false;
 
+          privateMethods.setTimeMandatory(object, (value.timeMandatory!=null)?value.timeMandatory:options.timeMandatory);
           privateMethods.setDateType(object, (value.dateType!=null)?value.dateType:options.dateType);
           privateMethods.setTimePicker(object, (value.timepicker!=null)?value.timepicker:options.timepicker);
           privateMethods.setDatePicker(object, (value.datepicker!=null)?value.datepicker:options.datepicker);
@@ -493,6 +521,19 @@
           }
           return(options.disabled);
         }, //setDateType
+
+      setTimeMandatory : function (object, value)
+        {
+          var options=object.data('options'),
+              objects=object.data('objects'),
+              properties=object.data('properties');
+
+          if((!properties.initialized || options.timeMandatory!=value) && (value==true || value==false))
+          {
+            options.timeMandatory=value;
+          }
+          return(options.timeMandatory);
+        }, //setTimeMandatory
 
       setDatePicker : function (object, value)
         {
