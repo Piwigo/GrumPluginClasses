@@ -43,6 +43,7 @@ var inputFilterBoxLang={
     '=':'Equal to',
     '!=':'Different than',
     'between':'Between',
+    'not between':'Not between',
     'and':'and',
     'like':'Like',
     'not like':'Not like',
@@ -288,7 +289,8 @@ var inputFilterBoxLang={
                    value.filterOperators[i]=='<=' ||
                    value.filterOperators[i]=='=' ||
                    value.filterOperators[i]=='!=' ||
-                   value.filterOperators[i]=='between') options.filterOperators.push(value.filterOperators[i]);
+                   value.filterOperators[i]=='between' ||
+                   value.filterOperators[i]=='not between') options.filterOperators.push(value.filterOperators[i]);
               }
               break;
             case 'string':
@@ -302,7 +304,8 @@ var inputFilterBoxLang={
                   value.filterOperators[i]=='!=' ||
                   value.filterOperators[i]=='like' ||
                   value.filterOperators[i]=='not like' ||
-                  value.filterOperators[i]=='between') options.filterOperators.push(value.filterOperators[i]);
+                  value.filterOperators[i]=='between' ||
+                  value.filterOperators[i]=='not between') options.filterOperators.push(value.filterOperators[i]);
               }
               break;
             case 'dataset-url':
@@ -671,7 +674,7 @@ var inputFilterBoxLang={
 
           properties.filter.operator=value;
 
-          if(value=='between')
+          if(value=='between' || value=='not between')
           {
             objects.valueBox1.css('display', 'none');
             objects.valueBox2.css('display', 'block');
@@ -860,7 +863,7 @@ var inputFilterBoxLang={
           switch(options.dataType)
           {
             case 'numeric':
-              if(properties.filter.operator=='between')
+              if(properties.filter.operator=='between' || properties.filter.operator=='not between')
               {
                 return(objects.value1.inputNum('isValid') && objects.value2.inputNum('isValid'));
               }
@@ -870,7 +873,7 @@ var inputFilterBoxLang={
               }
               break;
             case 'string':
-              if(properties.filter.operator=='between')
+              if(properties.filter.operator=='between' || properties.filter.operator=='not between')
               {
                 return(objects.value1.inputText('isValid') && objects.value2.inputText('isValid'));
               }
@@ -882,7 +885,7 @@ var inputFilterBoxLang={
             case 'date':
             case 'time':
             case 'datetime':
-              if(properties.filter.operator=='between')
+              if(properties.filter.operator=='between' || properties.filter.operator=='not between')
               {
                 return(objects.value1.inputDate('isValid') && objects.value2.inputDate('isValid'));
               }
@@ -993,7 +996,8 @@ $.isValidFilter = function (filter)
            filter.filterOperators[i]=='<=' ||
            filter.filterOperators[i]=='=' ||
            filter.filterOperators[i]=='!=' ||
-           filter.filterOperators[i]=='between') validFilterTypes.push(filter.filterOperators[i]);
+           filter.filterOperators[i]=='between' ||
+           filter.filterOperators[i]=='not between') validFilterTypes.push(filter.filterOperators[i]);
       }
       break;
     case 'string':
@@ -1007,7 +1011,8 @@ $.isValidFilter = function (filter)
           filter.filterOperators[i]=='!=' ||
           filter.filterOperators[i]=='like' ||
           filter.filterOperators[i]=='not like' ||
-          filter.filterOperators[i]=='between') validFilterTypes.push(filter.filterOperators[i]);
+          filter.filterOperators[i]=='between' ||
+          filter.filterOperators[i]=='not between') validFilterTypes.push(filter.filterOperators[i]);
       }
       break;
     case 'dataset-values':

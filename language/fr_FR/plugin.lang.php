@@ -41,6 +41,7 @@ $lang['filter_le']='Inférieur ou égal à';
 $lang['filter_equal']='Egal à';
 $lang['filter_notEqual']='Différent de';
 $lang['filter_between']='Entre';
+$lang['filter_notbetween']='N\'est pas entre';
 $lang['filter_and']='et';
 $lang['filter_like']='Ressemble à';
 $lang['filter_notLike']='Ne ressemble pas à';

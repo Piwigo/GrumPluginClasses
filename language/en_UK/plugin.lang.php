@@ -27,6 +27,7 @@ $lang['filter_le']='Less or equal to';
 $lang['filter_equal']='Equal to';
 $lang['filter_notEqual']='Different than';
 $lang['filter_between']='Between';
+$lang['filter_notbetween']='Not between';
 $lang['filter_and']='and';
 $lang['filter_like']='Like';
 $lang['filter_notLike']='Not like';

@@ -469,6 +469,7 @@ class GPCODSExport extends GPCGenericExport {
     $ods->setDescription($this->options['comments']);
 
     $sheet=new odsTable($this->options['sheetName']);
+    $sheet->setVerticalSplit(1);
 
     // columns name
     $headerStyle = new odsStyleTableCell();
@@ -543,30 +544,8 @@ class GPCSQLiteExport extends GPCGenericExport {
     {
       switch($option)
       {
-        case 'separator':
-          if($value=='tab') $value=chr(9);
+        case 'tableName':
           $this->options[$option]=$value;
-          break;
-        case 'decimalDot':
-          if($value=='.' or $value==',')
-            $this->options[$option]=$value;
-          break;
-        case 'useQuotes':
-          if($value==true or $value==false)
-            $this->options[$option]=$value;
-          break;
-        case 'lineFeed':
-          if($value=='unix')
-          {
-            $value="\x0A";
-          }
-          elseif($value=='windows')
-          {
-            $value="\x0D\x0A";
-          }
-
-          if($value=="\x0A" or $value=="\x0D\x0A")
-            $this->options[$option]=$value;
           break;
       }
     }
