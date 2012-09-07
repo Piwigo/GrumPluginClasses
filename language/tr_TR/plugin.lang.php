@@ -51,4 +51,5 @@ $lang['filter_notEqual'] = 'Bundan farklı:';
 $lang['filter_notLike'] = 'Benzer değil';
 $lang['filter_operator'] = 'Operatör';
 $lang['filter_value'] = 'Değer';
+$lang['filter_notbetween'] = 'arasında olmayan';
 ?>
