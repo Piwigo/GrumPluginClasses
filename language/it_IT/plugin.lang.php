@@ -33,4 +33,7 @@ $lang['filter_notEqual'] = 'Diverso da';
 $lang['filter_notbetween'] = 'Non compreso tra';
 $lang['filter_operator'] = 'Operatore';
 $lang['filter_value'] = 'Valore';
+$lang['export_dialogTitle'] = 'Esportazione dati';
+$lang['filter_like'] = 'Piace';
+$lang['filter_notLike'] = 'Non piace';
 ?>
