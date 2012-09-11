@@ -773,7 +773,7 @@
           privateMethods.setDialogsButtons(object, (value.dialogsButtons!=null)?value.dialogsButtons:options.dialogsButtons);
           privateMethods.setPagesNavigator(object, (value.pagesNavigator!=null)?value.pagesNavigator:options.pagesNavigator);
           //privateMethods.setCurrentPage(object, (value.currentPage!=null)?value.currentPage:options.currentPage);
-          //privateMethods.setNbItemsPage(object, (value.nbItemsPage!=null)?value.nbItemsPage:options.nbItemsPage);
+          privateMethods.setNbItemsPage(object, (value.nbItemsPage!=null)?value.nbItemsPage:options.nbItemsPage);
 
           privateMethods.setEventContentLoading(object, (value.contentLoading!=null)?value.contentLoading:options.contentLoading);
           privateMethods.setEventContentLoaded(object, (value.contentLoaded!=null)?value.contentLoaded:options.contentLoaded);

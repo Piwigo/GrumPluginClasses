@@ -17,7 +17,7 @@
 
 .ui-progressArea-globalBarProgress,
 .ui-progressArea-detailBarProgress {
-  background:#f9f9f9;
+  background:#999999;
 }
 
 .ui-progressArea-workInProgress {
@@ -27,12 +27,13 @@
 
 /* dialog box */
 .ui-dialogProgressArea {
-  background:#AAAAAA;
+  color:#666666;
+  background:#DDDDDD;
   border:1px solid #999999;
 }
 .ui-dialogProgressArea div.ui-dialog-titlebar {
-  background:#DDDDDD;
-  color:#666666;
+  background:#999999;
+  color:#444444; /* #666666 is too light... */
 }
 .ui-dialogProgressArea div.ui-dialog-buttonpane button {
   background:none repeat scroll 0 0 #999999;

@@ -72,7 +72,7 @@ div.ui-dynamicTableSortButton {
 div.ui-dynamicTableSortButton:hover {
   background-position:-105px 0px;
 }
-
+/*
 div.ui-dynamicTableGroupButton-active {
   background-position:-360px -15px;
 }
@@ -85,6 +85,23 @@ div.ui-dynamicTableGroupButton-inactive {
 div.ui-dynamicTableGroupButton-inactive:hover {
   background-position:-345px 0px;
 }
+*/
+
+/* group button => display/hide lines */
+div.ui-dynamicTableGroupButton-active {
+  background-position:-405px -15px;
+}
+div.ui-dynamicTableGroupButton-active:hover {
+  background-position:-405px 0px;
+}
+div.ui-dynamicTableGroupButton-inactive {
+  background-position:-390px -15px;
+}
+div.ui-dynamicTableGroupButton-inactive:hover {
+  background-position:-390px 0px;
+}
+
+
 
 div.ui-dynamicTableFooter-saveButton {
   background-position:-375px -15px;

@@ -54,7 +54,7 @@
                   options =
                     {
                       nbItems:0,
-                      nbITemsPage:50,
+                      nbItemsPage:50,
                       currentPage:1,
                       displayedPages:7,
                       showButtons:{
@@ -550,7 +550,7 @@
           var options=object.data('options'),
               properties=object.data('properties');
 
-          properties.nbPages=Math.ceil(options.nbItems/options.nbITemsPage);
+          properties.nbPages=Math.ceil(options.nbItems/options.nbItemsPage);
         }, // calculateNbPages
 
       refreshPages : function (object)

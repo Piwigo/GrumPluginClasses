@@ -33,7 +33,8 @@ div.ui-dynamicTableFilterButton-inactive,
 div.ui-dynamicTableFilterButton-active,
 div.ui-dynamicTableSortButton,
 div.ui-dynamicTableGroupButton-inactive,
-div.ui-dynamicTableGroupButton-active {
+div.ui-dynamicTableGroupButton-active,
+div.ui-dynamicTableFooter-saveButton {
   background-image:url(./../icons/buttons.png);
   background-repeat:no-repeat;
   background-color:transparent;
@@ -41,15 +42,16 @@ div.ui-dynamicTableGroupButton-active {
   color: #005e89;
   border-radius:2px;
 }
-
+/*
 div.ui-dynamicTableFilterButton-inactive:hover,
 div.ui-dynamicTableFilterButton-active:hover,
 div.ui-dynamicTableSortButton:hover,
 div.ui-dynamicTableGroupButton-inactive:hover,
-div.ui-dynamicTableGroupButton-active:hover {
+div.ui-dynamicTableGroupButton-active:hover,
+div.ui-dynamicTableFooter-saveButton:hover {
   background-color:#999999;
 }
-
+*/
 div.ui-dynamicTableFilterButton-inactive {
   background-position:-120px -90px;
 }
@@ -70,7 +72,7 @@ div.ui-dynamicTableSortButton {
 div.ui-dynamicTableSortButton:hover {
   background-position:-105px -105px;
 }
-
+/*
 div.ui-dynamicTableGroupButton-active {
   background-position:-360px -90px;
 }
@@ -82,4 +84,26 @@ div.ui-dynamicTableGroupButton-inactive {
 }
 div.ui-dynamicTableGroupButton-inactive:hover {
   background-position:-345px -105px;
+}
+*/
+
+div.ui-dynamicTableGroupButton-active {
+  background-position:-405px -90px;
+}
+div.ui-dynamicTableGroupButton-active:hover {
+  background-position:-405px -105px;
+}
+div.ui-dynamicTableGroupButton-inactive {
+  background-position:-390px -90px;
+}
+div.ui-dynamicTableGroupButton-inactive:hover {
+  background-position:-390px -105px;
+}
+
+
+div.ui-dynamicTableFooter-saveButton {
+  background-position:-375px -90px;
+}
+div.ui-dynamicTableFooter-saveButton:hover {
+  background-position:-375px -105px;
 }
