@@ -14,4 +14,24 @@ $lang['Public'] = 'Publiczne';
 $lang['Private'] = 'Prywatne';
 $lang['All the gallery'] = 'Ca³a galeria';
 
+$lang['export_Compression'] = 'Kompresja';
+$lang['export_Format'] = 'Format';
+$lang['export_Name'] = 'Nazwa pliku';
+$lang['export_dialogTitle'] = 'Export danych';
+$lang['filter_and'] = 'i';
+$lang['filter_between'] = 'Pomiędzy';
+$lang['filter_equal'] = 'Równy z';
+$lang['filter_ge'] = 'Większy lub równy z';
+$lang['filter_gt'] = 'Większy niż';
+$lang['filter_invalid'] = 'Filtr jest niewłaściwy';
+$lang['filter_le'] = 'Mniejszy lub równy z';
+$lang['filter_like'] = 'jak';
+$lang['filter_lt'] = 'Mniej niż';
+$lang['filter_maxValue'] = 'Maksymalna wartość';
+$lang['filter_minValue'] = 'Minimalna wartość';
+$lang['filter_notEqual'] = 'Różny niż';
+$lang['filter_notLike'] = 'Nie jak';
+$lang['filter_notbetween'] = 'Nie pomiędzy';
+$lang['filter_operator'] = 'Operator';
+$lang['filter_value'] = 'Wartość';
 ?>
