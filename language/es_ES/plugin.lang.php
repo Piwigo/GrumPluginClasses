@@ -34,4 +34,5 @@ $lang['filter_notEqual'] = 'Diferente que';
 $lang['filter_notLike'] = 'No como';
 $lang['filter_operator'] = 'Operador';
 $lang['filter_value'] = 'Valor';
+$lang['filter_notbetween'] = 'No esta entre';
 ?>
