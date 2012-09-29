@@ -10,10 +10,10 @@ $lang['gpc_rb_search']='Hledat';
 $lang['gpc_rb_textAND']='Všechny podmínky musí být ověřeny';
 $lang['gpc_rb_textOR']='Alespoň jedno kritérium, musí být zkontrolováno';
 
-$lang['gpc_manage_caddie'] = 'Caddie management';
-$lang['gpc_add_caddie'] = 'Výsledek vyhledávání je přidán v caddym';
-$lang['gpc_replace_caddie'] = 'Výsledek vyhledávání nahrazuje caddie';
-$lang['gpc_the_caddie_is_updated'] = 'Caddie byl aktualizován';
+$lang['gpc_manage_caddie'] = 'Správa košíku';
+$lang['gpc_add_caddie'] = 'Výsledek vyhledávání je přidán v košíku';
+$lang['gpc_replace_caddie'] = 'Výsledek vyhledávání nahrazuje obsah košíku';
+$lang['gpc_the_caddie_is_updated'] = 'Košík byl aktualizován';
 $lang['gpc_something_is_wrong_on_the_server_side'] = 'Detekována chyba na straně serveru';
 
 // GPC 3.3.2
