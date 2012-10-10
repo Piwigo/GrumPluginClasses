@@ -15,4 +15,24 @@ $lang['Private'] = 'Privada';
 $lang['All the gallery'] = 'Toda a galeria';
 
 
+$lang['filter_invalid'] = 'O filtro não está válido';
+$lang['filter_le'] = 'Inferior ou Igual à ';
+$lang['filter_like'] = 'como';
+$lang['filter_lt'] = 'Inferior à';
+$lang['filter_maxValue'] = 'Valor Maximo';
+$lang['filter_minValue'] = 'Valor minimo';
+$lang['filter_notEqual'] = 'Diferente de ';
+$lang['filter_notLike'] = 'Não parece com';
+$lang['filter_notbetween'] = 'Não está entre';
+$lang['filter_operator'] = 'Operador';
+$lang['filter_value'] = 'Valor';
+$lang['export_Compression'] = 'Compressão';
+$lang['export_Format'] = 'Formato';
+$lang['export_Name'] = 'Nome do fichiero';
+$lang['export_dialogTitle'] = 'Exportação dos dados';
+$lang['filter_and'] = 'e';
+$lang['filter_between'] = 'entre';
+$lang['filter_equal'] = 'Igual à';
+$lang['filter_ge'] = 'Superior ou igual à';
+$lang['filter_gt'] = 'Superior à';
 ?>
