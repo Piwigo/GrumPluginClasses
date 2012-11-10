@@ -13,4 +13,15 @@ $lang['Public'] = 'Publiek';
 $lang['Private'] = 'Prive';
 $lang['All the gallery'] = 'Heel de galerij';
 
+$lang['filter_le'] = 'Hoogstens';
+$lang['filter_lt'] = 'minder dan';
+$lang['filter_maxValue'] = 'maximale waarde';
+$lang['filter_minValue'] = 'minimale waarde';
+$lang['filter_equal'] = 'gelijk aan';
+$lang['filter_ge'] = 'Groter of gelijk aan';
+$lang['filter_gt'] = 'Groter dan';
+$lang['filter_invalid'] = 'Filter is niet geldig';
+$lang['export_dialogTitle'] = 'Gegevens overdracht';
+$lang['filter_and'] = 'en';
+$lang['export_Name'] = 'Bestandnaam';
 ?>
