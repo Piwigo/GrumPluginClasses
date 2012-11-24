@@ -24,4 +24,13 @@ $lang['filter_invalid'] = 'Filter is niet geldig';
 $lang['export_dialogTitle'] = 'Gegevens overdracht';
 $lang['filter_and'] = 'en';
 $lang['export_Name'] = 'Bestandnaam';
+$lang['filter_operator'] = 'Bewerkingsteken';
+$lang['filter_notEqual'] = 'Verschilt';
+$lang['export_Format'] = 'Layout';
+$lang['export_Compression'] = 'Compressie';
+$lang['filter_notLike'] = 'Ongelijk aan';
+$lang['filter_notbetween'] = 'Niet tussen';
+$lang['filter_between'] = 'Tussen';
+$lang['filter_like'] = 'Zoals';
+$lang['filter_value'] = 'Waarde';
 ?>
