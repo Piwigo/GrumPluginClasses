@@ -15,4 +15,19 @@ $lang['Public'] = 'Publikt';
 $lang['Private'] = 'Privat';
 $lang['All the gallery'] = 'Hela galleriet';
 
+$lang['export_Compression'] = 'Komprimering';
+$lang['export_Format'] = 'Format';
+$lang['export_Name'] = 'Filnamn';
+$lang['export_dialogTitle'] = 'Data export';
+$lang['filter_and'] = 'och';
+$lang['filter_between'] = 'Mellan';
+$lang['filter_equal'] = 'Lika med';
+$lang['filter_ge'] = 'Större än eller lika med';
+$lang['filter_gt'] = 'Större än';
+$lang['filter_invalid'] = 'Filter är inte giltigt';
+$lang['filter_le'] = 'Mindre än eller lika med';
+$lang['filter_like'] = 'Som';
+$lang['filter_lt'] = 'Mindre än';
+$lang['filter_maxValue'] = 'Max värde';
+$lang['filter_minValue'] = 'Min värde';
 ?>
