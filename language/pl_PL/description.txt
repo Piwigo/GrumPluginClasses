@@ -1,1 +1,1 @@
-Klasy wspó³dzielone pomiêdzy wtyczkami
+Klasy współdzielone pomiędzy wtyczkami
