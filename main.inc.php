@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.5.4
+Version: 3.5.5
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -185,6 +185,8 @@ Author URI: http://www.grum.fr/
 | 3.5.4   | 2012/08/29 | * Add ui.inputTreeList object
 |         |            |
 |         |            | * Improve ui.dynamicTable object
+|         |            |
+| 3.5.5   | 2013/03/12 | * Compatibility with Piwigo 2.5
 |         |            |
 |         |            |
 |         |            |
