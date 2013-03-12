@@ -816,6 +816,7 @@ class GPCCore
           self::addHeaderCSS('gpc.inputListT', sprintf($themeFile, 'inputList'));
           self::addHeaderJS('jquery.ui', 'themes/default/js/ui/jquery.ui.core.js', array('jquery'));
           self::addHeaderJS('jquery.ui.widget', 'themes/default/js/ui/jquery.ui.widget.js', array('jquery.ui'));
+          self::addHeaderJS('jquery.ui.button', 'themes/default/js/ui/jquery.ui.button.js', array('jquery.ui'));
           self::addHeaderJS('gpc.inputList', GPC_PATH.'js/ui.inputList.js', array('jquery.ui.widget'));
           break;
         case 'inputNum':
