@@ -30,4 +30,9 @@ $lang['filter_like'] = 'Som';
 $lang['filter_lt'] = 'Mindre än';
 $lang['filter_maxValue'] = 'Max värde';
 $lang['filter_minValue'] = 'Min värde';
+$lang['filter_notLike'] = 'Inte som';
+$lang['filter_notbetween'] = 'Inte mellan';
+$lang['filter_operator'] = 'Operatör';
+$lang['filter_value'] = 'Värde';
+$lang['filter_notEqual'] = 'Annorlunda än';
 ?>
