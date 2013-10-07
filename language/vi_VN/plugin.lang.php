@@ -15,4 +15,24 @@ $lang['Public'] = 'Chung';
 $lang['Private'] = 'Riêng tư';
 $lang['All the gallery'] = 'Tất cả các thư viện';
 
+$lang['export_Compression'] = 'Nén';
+$lang['export_Format'] = 'Định dạng';
+$lang['export_Name'] = 'Tên file';
+$lang['export_dialogTitle'] = 'Xuất dữ liệu';
+$lang['filter_and'] = 'và';
+$lang['filter_between'] = 'Giữa';
+$lang['filter_equal'] = 'Bằng';
+$lang['filter_ge'] = 'Lớn hơn hoặc bằng';
+$lang['filter_gt'] = 'Lớn hơn';
+$lang['filter_invalid'] = 'Bộ lọc không hợp lệ';
+$lang['filter_le'] = 'Nhỏ hơn hoặc bằng';
+$lang['filter_like'] = 'Giống';
+$lang['filter_lt'] = 'Nhỏ hơn';
+$lang['filter_maxValue'] = 'Giá trị lớn nhất';
+$lang['filter_minValue'] = 'Giá trị nhỏ nhất';
+$lang['filter_notEqual'] = 'Khác với';
+$lang['filter_notLike'] = 'Không giống';
+$lang['filter_notbetween'] = 'Không nằm giữa';
+$lang['filter_operator'] = 'Toán tử';
+$lang['filter_value'] = 'Giá trị';
 ?>
