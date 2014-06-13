@@ -148,7 +148,7 @@ class GPCTabSheet extends tabsheet
      */
     if($this->id!='')
     {
-      $this->sheets = trigger_event('gpc_tabsheet_before_select', $this->sheets, $this->id);
+      $this->sheets = trigger_change('gpc_tabsheet_before_select', $this->sheets, $this->id);
       if (!array_key_exists($name, $this->sheets))
       {
         $keys = array_keys($this->sheets);
