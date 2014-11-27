@@ -95,7 +95,7 @@
               properties.checkboxList.bind('click.inputCheckbox',
                 function (event)
                 {
-                  privateMethods.setValue($this, $(this).attr('id'), $(this).attr('checked')?options.values.checked:options.values.unchecked,false);
+                  privateMethods.setValue($this, $(this).attr('id'), $(this).prop('checked')?options.values.checked:options.values.unchecked,false);
                 }
               );
 
@@ -201,7 +201,7 @@
           {
             var options=this.data('options');
             // return the selected tags
-            return($(this).find('#'+id).attr('checked')?options.values.checked:options.values.unchecked);
+            return($(this).find('#'+id).is(':checked')?options.values.checked:options.values.unchecked);
           }
           else
           {
@@ -213,7 +213,7 @@
               $(this).find('input').each(
                 function ()
                 {
-                  returned.push( {id:$(this).attr('id'), value:$(this).attr('checked')?options.values.checked:options.values.unchecked } );
+                  returned.push( {id:$(this).attr('id'), value:$(this).is(':checked')?options.values.checked:options.values.unchecked } );
                 }
               );
             }
@@ -406,16 +406,16 @@
               switch(id)
               {
                 case ':all':
-                  properties.checkboxList.attr('checked', true);
+                  properties.checkboxList.prop('checked', true);
                   break;
                 case ':none':
-                  properties.checkboxList.attr('checked', false);
+                  properties.checkboxList.prop('checked', false);
                   break;
                 case ':invert':
                   properties.checkboxList.each(
                     function ()
                     {
-                      $(this).attr('checked', !$(this).attr('checked'));
+                      $(this).prop('checked', !$(this).prop('checked'));
                     }
                   );
                   break;
@@ -428,17 +428,17 @@
                * or array of object
                *  [{id:'id1', value:'value1'}, {id:'idN', value:'valueN'}, ..., {id:'idN', value:'valueN'}]
                */
-              properties.checkboxList.attr('checked', false);
+              properties.checkboxList.prop('checked', false);
 
               for(var i=0;i<value.length;i++)
               {
                 if(value[i].id!=null && value[i].value!=null)
                 {
-                  if($('#'+value[i].id).attr('value')==value[i].value) $('#'+value[i].id).attr('checked', true);
+                  if($('#'+value[i].id).attr('value')==value[i].value) $('#'+value[i].id).prop('checked', true);
                 }
                 else
                 {
-                  properties.checkboxList.filter('[value='+value[i]+']').attr('checked', true);
+                  properties.checkboxList.filter('[value='+value[i]+']').prop('checked', true);
                 }
               }
 
@@ -451,17 +451,17 @@
               {
                 if(properties.isCB)
                 {
-                  properties.checkboxList.attr('checked', true);
+                  properties.checkboxList.prop('checked', true);
                 }
                 else
                 {
                   if(id=='')
                   {
-                    properties.checkboxList.attr('checked', true);
+                    properties.checkboxList.prop('checked', true);
                   }
                   else
                   {
-                    properties.checkboxList.filter('#'+id).attr('checked', true);
+                    properties.checkboxList.filter('#'+id).prop('checked', true);
                   }
                 }
               }
@@ -469,17 +469,17 @@
               {
                 if(properties.isCB)
                 {
-                  properties.checkboxList.attr('checked', false);
+                  properties.checkboxList.prop('checked', false);
                 }
                 else
                 {
                   if(id=='')
                   {
-                    properties.checkboxList.attr('checked', false);
+                    properties.checkboxList.prop('checked', false);
                   }
                   else
                   {
-                    properties.checkboxList.filter('#'+id).attr('checked', false);
+                    properties.checkboxList.filter('#'+id).prop('checked', false);
                   }
                 }
               }
