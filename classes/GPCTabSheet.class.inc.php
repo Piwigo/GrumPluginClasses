@@ -49,7 +49,7 @@ class GPCTabSheet extends tabsheet
   */
   public function __construct($name = 'TABSHEET', $titlename = 'TABSHEET_TITLE', $classes="", $id="", $tplFile="")
   {
-    parent::tabsheet($name, $titlename);
+    parent::__construct($name, $titlename);
     $this->classes=$classes;
     $this->id=$id;
     $this->set_id($this->id);
