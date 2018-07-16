@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.5.9
+Version: 3.5.10
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -195,6 +195,8 @@ Author URI: http://www.grum.fr/
 | 3.5.8   | 2014/11/27 | * fix jQuery bug on attr('checked')
 |         |            |
 | 3.5.9   | 2016/03/08 | * Compatibility with Piwigo 2.8
+|         |            |
+| 3.5.10  | 2018/07/16 | * Compatibility with PHP 7.2
 |         |            |
 |         |            | ===== Don't forget to update the plugin version ! =====
 |         |            |
