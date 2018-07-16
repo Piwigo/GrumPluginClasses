@@ -267,7 +267,7 @@ class GPCCore
 
     $configValues = unserialize($conf[$pluginName.'_config']);
     reset($configValues);
-    while (list($key, $val) = each($configValues))
+    foreach ($configValues as $key => $val)
     {
       if(is_array($val))
       {

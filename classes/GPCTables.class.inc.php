@@ -104,7 +104,7 @@ class GPCTables
     }
 
     reset($tables_alteration);
-    while (list($key, $val) = each($tables_alteration))
+    foreach ($tables_alteration as $key => $val)
     {
       $sql="SHOW COLUMNS FROM $key";
       $result=pwg_query($sql);
@@ -117,7 +117,7 @@ class GPCTables
         }
 
         reset($val);
-        while (list($attname, $sql) = each($val))
+        foreach ($val as $attname => $sql)
         {
           if(!in_array($attname, $columns))
           {
