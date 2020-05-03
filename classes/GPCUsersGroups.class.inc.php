@@ -187,7 +187,7 @@ class GPCGroups extends GPCAllowedAccess
   protected  function initList()
   {
     $this->accessList=array();
-    $sql="SELECT id, name FROM ".GROUPS_TABLE." ORDER BY name";
+    $sql="SELECT id, name FROM `".GROUPS_TABLE."` ORDER BY name";
     $result=pwg_query($sql);
     if($result)
     {
