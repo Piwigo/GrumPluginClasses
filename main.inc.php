@@ -6,6 +6,7 @@ Description: Collection de classes partag√©es entre mes plugins (existants, ou √
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
 Author URI: http://www.grum.fr/
+Has Settings: true
 */
 
 /*
