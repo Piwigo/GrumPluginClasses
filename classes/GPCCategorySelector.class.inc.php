@@ -240,7 +240,7 @@ class GPCCategorySelector
       $startLevel=0;
     }
 
-    $sql="SELECT DISTINCT pct.id, pct.name, pct.global_rank AS rank, pct.status
+    $sql="SELECT DISTINCT pct.id, pct.name, pct.global_rank AS `rank`, pct.status
           FROM ".CATEGORIES_TABLE." pct ";
 
     switch($this->options['filter'])
