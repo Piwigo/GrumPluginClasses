@@ -625,7 +625,7 @@ class GPCCore
     if(!array_key_exists($id, self::$headerItems['js']) and file_exists($file))
     {
       self::$headerItems['js'][$id]=$file;
-      $template->scriptLoader->add($id, 'header', $require, $file, 0);
+      $template->scriptLoader->add($id, 0, $require, $file, 0);
     }
   }
 
