@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Grum Plugins Classes.3
-Version: 3.5.14
+Version: 3.5.15
 Description: Collection de classes partagées entre mes plugins (existants, ou à venir) / Partaged classes between my plugins (actuals or futures)
 Plugin URI: http://piwigo.org/ext/extension_view.php?eid=199
 Author: grum@piwigo.org
@@ -206,6 +206,8 @@ Has Settings: true
 | 3.5.13  | 2021/11/08 | * Compatibility with Piwigo 12
 |         |            |
 | 3.5.14  | 2022/19/08 | * Compatibility with MySQL 8 (reserved word rank)
+|         |            |
+| 3.5.15  | 2023/12/04 | * Compatibility with PHP 8
 |         |            |
 |         |            | ===== Don't forget to update the plugin version ! =====
 |         |            |
